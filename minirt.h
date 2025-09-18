@@ -6,12 +6,19 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/17 22:56:13 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/18 20:20:23 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
+
+# ifndef WIDTH
+#  define WIDTH 1024
+# endif
+# ifndef HEIGHT
+#  define HEIGHT 512
+# endif
 
 #include <math.h>
 
@@ -27,9 +34,10 @@ typedef struct s_vec
 /* camera information */
 typedef struct s_cam
 {
-	int		fov;
+	double	fov; // converted to rad from degree  ==parsing==
 	t_vec	pos;
 	t_vec	normal;
+	t_vec	viewport[WIDTH][HEIGHT];
 
 }	t_cam;
 
@@ -37,7 +45,7 @@ typedef struct s_cam
 typedef struct s_sphere
 {
 	t_vec	pos;
-	t_vec	r;
+	double	r; // converted to radius from diameter  ==parsing==
 
 }	t_sphere;
 
@@ -49,9 +57,10 @@ typedef struct s_info
 
 }	t_info;
 
+t_vec	vec3(double x, double y, double z);
 t_vec	add(t_vec a, t_vec b);
 t_vec	subtract(t_vec a, t_vec b);
-t_vec	dot(t_vec a, t_vec b);
+double	dot(t_vec a, t_vec b);
 t_vec	cross(t_vec a, t_vec b);
 t_vec	divide(t_vec a, t_vec b);
 
