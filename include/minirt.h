@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/18 20:20:23 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/18 21:58:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 #  define HEIGHT 512
 # endif
 
+# include "../src/libft/libft.h"
+# include "../src/MLX42/include/MLX42/MLX42.h"
+#include <stdlib.h>
 #include <math.h>
 
 /* 3d vector coordinates */
@@ -52,6 +55,8 @@ typedef struct s_sphere
 /* Struct that includes everything */
 typedef struct s_info
 {
+	mlx_t		*mlx;
+	mlx_image_t	*img;
 	t_cam		cam;
 	t_sphere	sphere;
 

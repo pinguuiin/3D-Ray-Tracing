@@ -62,8 +62,8 @@ clean:
 
 fclean: clean
 	@make fclean -C $(LIBFT_DIR)
-	@make fclean -C $(LIBMLX_DIR)/build
-	rm -rf $(LIBMLX_DIR) $(LIBFT_DIR) $(NAME)
+	@rm -rf $(LIBMLX_DIR) $(LIBFT_DIR)
+	rm -rf $(NAME)
 	@echo "$(BBLUE) Cleaned all $(RESET_COLOR)"
 
 re: fclean all

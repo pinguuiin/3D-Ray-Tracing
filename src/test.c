@@ -6,13 +6,24 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/18 20:29:45 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/18 22:19:39 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-int	get_viewport_coordinates(t_info *info)
+int	free_exit(t_info *info, char *s)
+{
+	if (info->img)
+		mlx_delete_image(info->mlx, info->img);
+	if (info->mlx)
+		mlx_terminate(info->mlx);
+	if (s)
+		ft_putendl_fd(s, 2);
+	return (1);
+}
+
+void	get_viewport_coordinates(t_info *info)
 {
 	int		x;
 	int		y;
@@ -33,7 +44,7 @@ int	get_viewport_coordinates(t_info *info)
 	}
 }
 
-int	draw(t_info *info)
+void	draw(t_info *info)
 {
 	int		x;
 	int		y;
@@ -52,10 +63,10 @@ int	draw(t_info *info)
 				dot(info->cam.viewport[x][y], d) - 4.0 *
 				dot(info->cam.viewport[x][y], info->cam.viewport[x][y]) *
 				(dot(d, d) - pow(info->sphere.r, 2));
-			if (delta >= 0)
-				color_object();
-			else
-				color_background();
+			// if (delta >= 0)
+			// 	color_object();
+			// else
+			// 	color_background();
 			y++;
 		}
 		x++;
@@ -64,17 +75,25 @@ int	draw(t_info *info)
 
 void	initialize_mlx(t_info *info)
 {
+	info->mlx = NULL;
+	info->img = NULL;
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
-	fdf->mlx = mlx_init(WIN_W, WIN_H, "Fdf", true);
-	if (!fdf->mlx)
-		free_exit(fdf, "Instance initializing failed", 0);
-	fdf->img = mlx_new_image(fdf->mlx, WIN_W, WIN_H);
-	if (!fdf->img)
-		free_exit(fdf, "Creating new image buffer failed", 0);
-	if (mlx_image_to_window(fdf->mlx, fdf->img, 0, 0) == -1)
-		free_exit(fdf, "Drawing image on the window failed", 0);
+	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
+	if (!info->mlx)
+		exit(free_exit(info, "Instance initialization failed"));
+	info->img = mlx_new_image(info->mlx, WIDTH, HEIGHT);
+	if (!info->img)
+		exit(free_exit(info, "Image buffer creation failed"));
+	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
+		exit(free_exit(info, "Pushing image to window failed"));
 }
 
 int	main(void)
 {
+	t_info	info;
+
+	initialize_mlx(&info);
+	draw(&info);
+	free_exit(&info, NULL);
+	return (0);
 }
