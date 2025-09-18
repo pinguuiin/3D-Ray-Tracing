@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/18 20:22:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/18 20:29:45 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,27 @@ int	draw(t_info *info)
 				dot(info->cam.viewport[x][y], d) - 4.0 *
 				dot(info->cam.viewport[x][y], info->cam.viewport[x][y]) *
 				(dot(d, d) - pow(info->sphere.r, 2));
+			if (delta >= 0)
+				color_object();
+			else
+				color_background();
 			y++;
 		}
 		x++;
 	}
+}
+
+void	initialize_mlx(t_info *info)
+{
+	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
+	fdf->mlx = mlx_init(WIN_W, WIN_H, "Fdf", true);
+	if (!fdf->mlx)
+		free_exit(fdf, "Instance initializing failed", 0);
+	fdf->img = mlx_new_image(fdf->mlx, WIN_W, WIN_H);
+	if (!fdf->img)
+		free_exit(fdf, "Creating new image buffer failed", 0);
+	if (mlx_image_to_window(fdf->mlx, fdf->img, 0, 0) == -1)
+		free_exit(fdf, "Drawing image on the window failed", 0);
 }
 
 int	main(void)
