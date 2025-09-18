@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/18 21:58:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/18 23:47:22 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@
 # include "../src/MLX42/include/MLX42/MLX42.h"
 #include <stdlib.h>
 #include <math.h>
+
+typedef struct s_color
+{
+}	t_color;
 
 /* 3d vector coordinates */
 typedef struct s_vec
@@ -51,6 +55,15 @@ typedef struct s_sphere
 	double	r; // converted to radius from diameter  ==parsing==
 
 }	t_sphere;
+
+/* Coefficient a, b and c for the quadratic equation */
+typedef struct s_quad_coef
+{
+	double	a;
+	double	b;
+	double	c;
+
+}	t_quad_coef;
 
 /* Struct that includes everything */
 typedef struct s_info
