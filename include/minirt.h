@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/18 23:47:22 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/20 00:26:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #  define WIDTH 1024
 # endif
 # ifndef HEIGHT
-#  define HEIGHT 512
+#  define HEIGHT 1024
 # endif
 
 # include "../src/libft/libft.h"
@@ -44,7 +44,6 @@ typedef struct s_cam
 	double	fov; // converted to rad from degree  ==parsing==
 	t_vec	pos;
 	t_vec	normal;
-	t_vec	viewport[WIDTH][HEIGHT];
 
 }	t_cam;
 
@@ -70,6 +69,10 @@ typedef struct s_info
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;
+	double		focal_length;
+	double		viewport_width;
+	double		viewport_height;
+	double		px;
 	t_cam		cam;
 	t_sphere	sphere;
 

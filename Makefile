@@ -10,7 +10,7 @@ RESET_COLOR=\033[0m
 
 NAME = minirt
 CC = cc
-FLAGS = -Wall -Wextra -Werror -g -O3
+FLAGS = -Wall -Wextra -Werror -g
 
 LIBS = -ldl -lglfw -pthread -lm
 
