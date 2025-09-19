@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/20 00:26:16 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/20 01:52:19 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ typedef struct s_cam
 {
 	double	fov; // converted to rad from degree  ==parsing==
 	t_vec	pos;
-	t_vec	normal;
+	t_vec	direction;
 
 }	t_cam;
 
@@ -55,12 +55,13 @@ typedef struct s_sphere
 
 }	t_sphere;
 
-/* Coefficient a, b and c for the quadratic equation */
+/* Coefficient a, b, c and discriminant delta for the quadratic equation */
 typedef struct s_quad_coef
 {
 	double	a;
 	double	b;
 	double	c;
+	double	delta;
 
 }	t_quad_coef;
 

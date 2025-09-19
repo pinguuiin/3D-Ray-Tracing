@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/20 00:32:06 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/20 01:42:40 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,8 @@ void	draw(t_info *info)
 	int			x;
 	int			y;
 	t_vec		oc;
-	double		delta;
 	t_quad_coef	f;
-	t_vec		viewport;
+	t_vec		ray;
 
 	// get_viewport_coordinates(info);
 	oc = subtract(info->cam.pos, info->sphere.pos);
@@ -79,14 +78,14 @@ void	draw(t_info *info)
 		y = 0;
 		while (y < HEIGHT)
 		{
-			viewport = add(info->cam.normal, vec3(x * info->px - info->viewport_width / 2.0, info->viewport_height / 2.0 - y * info->px, 0));
-			f.a = dot(viewport, viewport);
-			f.b = 2 * dot(viewport, oc);
+			ray = add(info->cam.direction, vec3(x * info->px - info->viewport_width / 2.0, info->viewport_height / 2.0 - y * info->px, 0));
+			f.a = dot(ray, ray);
+			f.b = 2 * dot(ray, oc);
 			f.c = dot(oc, oc) - info->sphere.r * info->sphere.r;
-			delta = f.b * f.b - 4.0 * f.a * f.c;
-			if (delta >= 0)
+			f.delta = f.b * f.b - 4.0 * f.a * f.c;
+			if (f.delta >= 0)
 			{
-				color_pixel(info, x, y, (- f.b - sqrt(delta)) / (2 * f.a) * sqrt(f.a) / (sqrt(dot(oc, oc)) - info->sphere.r));
+				color_pixel(info, x, y, (- f.b - sqrt(f.delta)) / (2 * f.a) * sqrt(f.a) / (sqrt(dot(oc, oc)) - info->sphere.r));
 			}
 			else
 				color_pixel(info, x, y, -1);
@@ -100,7 +99,7 @@ void	initialize_mlx(t_info *info)
 {
 	info->mlx = NULL;
 	info->img = NULL;
-	// mlx_set_setting(MLX_STRETCH_IMAGE, 1);
+	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
 		exit(free_exit(info, "Instance initialization failed"));
@@ -120,13 +119,13 @@ int	main(void)
 	info.cam.pos.x = 0.0;
 	info.cam.pos.y = 0.0;
 	info.cam.pos.z = 0.0;
-	info.cam.normal.x = 0.0;
-	info.cam.normal.y = 0.0;
-	info.cam.normal.z = 1.0;
-	info.sphere.r = 9.0;
+	info.cam.direction.x = 0.0;
+	info.cam.direction.y = 0.0;
+	info.cam.direction.z = 1.0;
+	info.sphere.r = 5.0;
 	info.sphere.pos.x = 0.0;
 	info.sphere.pos.y = 0.0;
-	info.sphere.pos.z = 20.6;
+	info.sphere.pos.z = 15.0;
 	info.focal_length = 1.0;
 	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
