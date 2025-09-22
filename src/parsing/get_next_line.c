@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_no_malloc.c                          :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 21:19:02 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/09/21 21:54:39 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/01/15 13:40:53 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,15 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 		read_and_manage_output().
 */
 
-char	*get_next_line(int fd)
+// FIXME: add "set_exit_code()" calls in all relevant spots.
+// TODO: observe output - line
+int	get_next_line_ultimate(int fd, char **output)
 {
 	static char	buffer[BUFFER_SIZE + 1];
-	char		*line;
 	int			line_status;
 	size_t		i;
+	char		*line;
+
 
 	line = NULL;
 	if (fd < 0 || !BUFFER_SIZE)
@@ -52,6 +55,7 @@ char	*get_next_line(int fd)
 		free(line);
 		line = NULL;
 	}
+	*output = line;
 	return (line);
 }
 

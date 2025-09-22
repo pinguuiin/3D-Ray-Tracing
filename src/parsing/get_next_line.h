@@ -25,13 +25,9 @@
 #  define BUFFER_SIZE 1024
 # endif
 
-# include <unistd.h>
 # include <fcntl.h>		// open(), close()
 
 /*
-* FIXME: review ALL comments, since we are trying to implement a non-malloc
-* get_next_line() function.
-*
 * NOTE: get_next_line() uses system call read() with a given file descriptor
 * and returns the next line from that file, in order of appearance: The first
 * call returns the first line, the second returns the second... If it is called
@@ -42,12 +38,11 @@
 * 	a.	if EOF has been reached and there are no more lines to return (or if
 * 		the file is empty)
 * 	b.	upon failure of read()
-* 	c.	upon memory allocation failure // WARN: delete line????????
+* 	c.	upon memory allocation failure
 * 	d.	if BUFFER_SIZE is defined to 0
 * 	e.	if BUFFER_SIZE is unreasonably large
 * 	f.	if the file descriptor is a negative one
 *
-* FIXME: Delete the following comment?
 * WARN: The returned line is dynamically allocated within get_next_line();
 * Therefore, it is the caller's responsibility to remember freeing that memory,
 * if they want to avoid memory leaks.
