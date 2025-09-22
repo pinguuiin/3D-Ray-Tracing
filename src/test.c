@@ -55,9 +55,9 @@ void	color_pixel(t_info *info, int x, int y, double p)
 		mlx_put_pixel(info->img, x, y, 0x000000FF);
 		return ;
 	}
-	r = 255 - (p - 1) * 300;
-	g = 255 - (p - 1) * 300;
-	b = 255 - (p - 1) * 100;
+	r = 255 - log(p) * 600;
+	g = 255 - log(p) * 600;
+	b = 255 - log(p) * 400;
 	color = r << 24 | g << 16 | b << 8 | 255;
 	mlx_put_pixel(info->img, x, y, color);
 }
@@ -66,26 +66,27 @@ void	draw(t_info *info)
 {
 	int			x;
 	int			y;
-	t_vec		oc;
 	t_quad_coef	f;
+	t_vec		viewport;
 	t_vec		ray;
 
 	// get_viewport_coordinates(info);
-	oc = subtract(info->cam.pos, info->sphere.pos);
 	x = 0;
 	while (x < WIDTH)
 	{
 		y = 0;
 		while (y < HEIGHT)
 		{
-			ray = add(info->cam.direction, vec3(x * info->px - info->viewport_width / 2.0, info->viewport_height / 2.0 - y * info->px, 0));
+			viewport = vec3(x * info->px - info->viewport_width / 2.0, info->viewport_height / 2.0 - y * info->px, 0);
+			rotate_viewport(&viewport, vec3(0, 0, 1), info->cam.direction);
+			ray = add(info->cam.direction, viewport);
 			f.a = dot(ray, ray);
-			f.b = 2 * dot(ray, oc);
-			f.c = dot(oc, oc) - info->sphere.r * info->sphere.r;
+			f.b = 2 * dot(ray, info->sphere.oc);
+			f.c = dot(info->sphere.oc, info->sphere.oc) - info->sphere.r * info->sphere.r;
 			f.delta = f.b * f.b - 4.0 * f.a * f.c;
 			if (f.delta >= 0)
 			{
-				color_pixel(info, x, y, (- f.b - sqrt(f.delta)) / (2 * f.a) * sqrt(f.a) / (sqrt(dot(oc, oc)) - info->sphere.r));
+				color_pixel(info, x, y, (- f.b - sqrt(f.delta)) / (2 * f.a) * norm(ray) / (norm(info->sphere.oc) - info->sphere.r));
 			}
 			else
 				color_pixel(info, x, y, -1);
@@ -115,17 +116,18 @@ int	main(void)
 {
 	t_info	info;
 
-	info.cam.fov = 70.0 / 180.0 * M_PI;
+	info.cam.fov = 140.0 / 180.0 * M_PI;
 	info.cam.pos.x = 0.0;
 	info.cam.pos.y = 0.0;
 	info.cam.pos.z = 0.0;
 	info.cam.direction.x = 0.0;
-	info.cam.direction.y = 0.0;
-	info.cam.direction.z = 1.0;
-	info.sphere.r = 5.0;
+	info.cam.direction.y = 0.4;
+	info.cam.direction.z = 0.9;
+	info.sphere.r = 4.0;
 	info.sphere.pos.x = 0.0;
 	info.sphere.pos.y = 0.0;
-	info.sphere.pos.z = 15.0;
+	info.sphere.pos.z = 10.0;
+	info.sphere.oc = subtract(info.cam.pos, info.sphere.pos);
 	info.focal_length = 1.0;
 	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;

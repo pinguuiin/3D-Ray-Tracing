@@ -22,6 +22,11 @@ t_vec	vec3(double x, double y, double z)
 	return (v);
 }
 
+double	norm(t_vec a)
+{
+	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
+}
+
 t_vec	add(t_vec a, t_vec b)
 {
 	t_vec	v;

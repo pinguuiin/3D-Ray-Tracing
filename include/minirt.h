@@ -14,7 +14,7 @@
 # define MINIRT_H
 
 # ifndef WIDTH
-#  define WIDTH 1024
+#  define WIDTH 1536
 # endif
 # ifndef HEIGHT
 #  define HEIGHT 1024
@@ -51,6 +51,7 @@ typedef struct s_cam
 typedef struct s_sphere
 {
 	t_vec	pos;
+	t_vec	oc; // vector from object to camera
 	double	r; // converted to radius from diameter  ==parsing==
 
 }	t_sphere;
@@ -80,10 +81,12 @@ typedef struct s_info
 }	t_info;
 
 t_vec	vec3(double x, double y, double z);
+double	norm(t_vec a);
 t_vec	add(t_vec a, t_vec b);
 t_vec	subtract(t_vec a, t_vec b);
 double	dot(t_vec a, t_vec b);
 t_vec	cross(t_vec a, t_vec b);
 t_vec	divide(t_vec a, t_vec b);
+void	rotate_viewport(t_vec *vec, t_vec v1, t_vec v2);
 
 #endif
