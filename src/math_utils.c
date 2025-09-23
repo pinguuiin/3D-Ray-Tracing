@@ -22,9 +22,26 @@ t_vec	vec3(double x, double y, double z)
 	return (v);
 }
 
+t_vec	scale(t_vec a, double k)
+{
+	t_vec	v;
+
+	v.x = k * a.x;
+	v.y = k * a.y;
+	v.z = k * a.z;
+	return (v);
+}
+
 double	norm(t_vec a)
 {
 	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
+}
+
+t_vec	normalize(t_vec a)
+{
+	if (norm(a) == 0)
+		return (vec3(0.0, 0.0, 0.0));
+	return (scale(a, 1.0 / norm(a)));
 }
 
 t_vec	add(t_vec a, t_vec b)
@@ -69,6 +86,7 @@ t_vec	divide(t_vec a, t_vec b)
 {
 	t_vec	v;
 
+	// need extra action when divided by 0
 	v.x = a.x / b.x;
 	v.y = a.y / b.y;
 	v.z = a.z / b.z;

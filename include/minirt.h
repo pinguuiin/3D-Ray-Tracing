@@ -14,10 +14,10 @@
 # define MINIRT_H
 
 # ifndef WIDTH
-#  define WIDTH 1536
+#  define WIDTH 1024
 # endif
 # ifndef HEIGHT
-#  define HEIGHT 1024
+#  define HEIGHT 768
 # endif
 
 # include "../src/libft/libft.h"
@@ -74,6 +74,7 @@ typedef struct s_info
 	double		focal_length;
 	double		viewport_width;
 	double		viewport_height;
+	double		viewport_rot[3];
 	double		px;
 	t_cam		cam;
 	t_sphere	sphere;
@@ -81,12 +82,15 @@ typedef struct s_info
 }	t_info;
 
 t_vec	vec3(double x, double y, double z);
+t_vec	scale(t_vec a, double k);
 double	norm(t_vec a);
+t_vec	normalize(t_vec a);
 t_vec	add(t_vec a, t_vec b);
 t_vec	subtract(t_vec a, t_vec b);
 double	dot(t_vec a, t_vec b);
 t_vec	cross(t_vec a, t_vec b);
 t_vec	divide(t_vec a, t_vec b);
-void	rotate_viewport(t_vec *vec, t_vec v1, t_vec v2);
+void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
+void	rotate(t_vec *vec, double *theta);
 
 #endif

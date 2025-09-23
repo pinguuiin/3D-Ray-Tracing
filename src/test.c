@@ -19,28 +19,12 @@ int	free_exit(t_info *info, char *s)
 	if (info->mlx)
 		mlx_terminate(info->mlx);
 	if (s)
+	{
+		ft_putendl_fd("Error", 2);
 		ft_putendl_fd(s, 2);
+	}
 	return (1);
 }
-
-// void	get_viewport_coordinates(t_info *info)
-// {
-// 	int		x;
-// 	int		y;
-// 	double	px;
-
-// 	x = 0;
-// 	while (x < WIDTH)
-// 	{
-// 		y = 0;
-// 		while (y < HEIGHT)
-// 		{
-// 			info->cam.viewport[x][y] =
-// 			y++;
-// 		}
-// 		x++;
-// 	}
-// }
 
 void	color_pixel(t_info *info, int x, int y, double p)
 {
@@ -70,15 +54,15 @@ void	draw(t_info *info)
 	t_vec		viewport;
 	t_vec		ray;
 
-	// get_viewport_coordinates(info);
 	x = 0;
 	while (x < WIDTH)
 	{
 		y = 0;
 		while (y < HEIGHT)
 		{
-			viewport = vec3(x * info->px - info->viewport_width / 2.0, info->viewport_height / 2.0 - y * info->px, 0);
-			rotate_viewport(&viewport, vec3(0, 0, 1), info->cam.direction);
+			viewport = vec3(x * info->px - info->viewport_width / 2.0, 
+				info->viewport_height / 2.0 - y * info->px, 0);
+			rotate(&viewport, info->viewport_rot);
 			ray = add(info->cam.direction, viewport);
 			f.a = dot(ray, ray);
 			f.b = 2 * dot(ray, info->sphere.oc);
@@ -86,7 +70,8 @@ void	draw(t_info *info)
 			f.delta = f.b * f.b - 4.0 * f.a * f.c;
 			if (f.delta >= 0)
 			{
-				color_pixel(info, x, y, (- f.b - sqrt(f.delta)) / (2 * f.a) * norm(ray) / (norm(info->sphere.oc) - info->sphere.r));
+				color_pixel(info, x, y, (- f.b - sqrt(f.delta)) / (2 * f.a)
+				* norm(ray) / (norm(info->sphere.oc) - info->sphere.r));
 			}
 			else
 				color_pixel(info, x, y, -1);
@@ -116,13 +101,15 @@ int	main(void)
 {
 	t_info	info;
 
-	info.cam.fov = 140.0 / 180.0 * M_PI;
+	info.cam.fov = 120.0 / 180.0 * M_PI;
 	info.cam.pos.x = 0.0;
 	info.cam.pos.y = 0.0;
 	info.cam.pos.z = 0.0;
-	info.cam.direction.x = 0.0;
-	info.cam.direction.y = 0.4;
-	info.cam.direction.z = 0.9;
+	info.cam.direction.x = 2.5;
+	info.cam.direction.y = 0.0;
+	info.cam.direction.z = 4.0;
+	info.cam.direction = normalize(info.cam.direction);
+	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
 	info.sphere.r = 4.0;
 	info.sphere.pos.x = 0.0;
 	info.sphere.pos.y = 0.0;
