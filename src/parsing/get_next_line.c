@@ -56,7 +56,7 @@ int	get_next_line_ultimate(int fd, char **output)
 		line = NULL;
 	}
 	*output = line;
-	return (line);
+	return (line); // WARN: return int instead?
 }
 
 static char	*review_line_and_clean_buffer(char *line, char *buffer, size_t *i)
