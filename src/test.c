@@ -105,7 +105,6 @@ void	initialize_mlx(t_info *info)
 		exit(free_exit(info, "Image buffer creation failed"));
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
 		exit(free_exit(info, "Pushing image to window failed"));
-	mlx_key_hook(info->mlx, &escape_handler, info->mlx);
 }
 
 int	main(void)
@@ -131,6 +130,7 @@ int	main(void)
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
 	info.px = info.viewport_width / (double)WIDTH;
 	initialize_mlx(&info);
+	mlx_key_hook(info->mlx, &escape_handler, info->mlx);
 	draw(&info);
 	mlx_loop(info.mlx);
 	free_exit(&info, NULL);
