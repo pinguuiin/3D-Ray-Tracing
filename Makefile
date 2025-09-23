@@ -8,7 +8,7 @@ BCYAN=\033[1;36m
 BWHITE=\033[1;37m
 RESET_COLOR=\033[0m
 
-NAME = minirt
+NAME = miniRT
 CC = cc
 FLAGS = -Wall -Wextra -Werror -g
 
