@@ -81,6 +81,16 @@ void	draw(t_info *info)
 	}
 }
 
+static void	escape_handler(mlx_key_data_t keydata, void *param)
+{
+	mlx_t	*mlx;
+
+	mlx = NULL;
+	mlx = (mlx_t *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+		mlx_close_window(mlx);
+}
+
 void	initialize_mlx(t_info *info)
 {
 	info->mlx = NULL;
@@ -120,6 +130,7 @@ int	main(void)
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
 	info.px = info.viewport_width / (double)WIDTH;
 	initialize_mlx(&info);
+	mlx_key_hook(info->mlx, &escape_handler, info->mlx);
 	draw(&info);
 	mlx_loop(info.mlx);
 	free_exit(&info, NULL);
