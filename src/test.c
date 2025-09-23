@@ -81,6 +81,16 @@ void	draw(t_info *info)
 	}
 }
 
+static void	escape_handler(mlx_key_data_t keydata, void *param)
+{
+	mlx_t	*mlx;
+
+	mlx = NULL;
+	mlx = (mlx_t *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+		mlx_close_window(mlx);
+}
+
 void	initialize_mlx(t_info *info)
 {
 	info->mlx = NULL;
@@ -95,6 +105,7 @@ void	initialize_mlx(t_info *info)
 		exit(free_exit(info, "Image buffer creation failed"));
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
 		exit(free_exit(info, "Pushing image to window failed"));
+	mlx_key_hook(info->mlx, &escape_handler, info->mlx);
 }
 
 int	main(void)
