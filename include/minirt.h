@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/24 00:24:20 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/24 22:24:37 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,33 @@
 # include <stdlib.h>
 # include <math.h>
 
-/* camera information */
+/* Type of object */
+typedef enum e_type
+{
+	SPHERE,
+	PLANE,
+	CYLINDER
+
+}	t_type;
+
+/* Ambient light */
+typedef struct s_ambient
+{
+	double		brightness;
+	uint32_t	color;
+
+}	t_ambient;
+
+/* Key light */
+typedef struct s_light
+{
+	t_vec		pos;
+	double		brightness;
+	uint32_t	color;
+
+}	t_light;
+
+/* Camera specs */
 typedef struct s_cam
 {
 	double	fov; // converted to rad from degree  ==parsing==
@@ -38,11 +64,39 @@ typedef struct s_cam
 /* Spheric object information */
 typedef struct s_sphere
 {
-	t_vec	pos;
-	t_vec	oc; // vector from object to camera
-	double	r; // converted to radius from diameter  ==parsing==
+	t_type		type;
+	t_vec		pos;
+	t_vec		oc; // vector from object to camera
+	double		r; // converted to radius from diameter  ==parsing==
+	uint32_t	color; // rgba
+	void		*next;
 
 }	t_sphere;
+
+/* Cylindrical object information */
+typedef struct s_cylinder
+{
+	t_type		type;
+	t_vec		pos;
+	t_vec		oc;
+	t_vec		normal;
+	double		r;
+	double		h;
+	uint32_t	color;
+	void		*next;
+
+}	t_cylinder;
+
+/* Plane object information */
+typedef struct s_plane
+{
+	t_type		type;
+	t_vec		pos;
+	t_vec		normal;
+	uint32_t	color;
+	void		*next;
+
+}	t_plane;
 
 /* Coefficient a, b, c and discriminant delta for the quadratic equation */
 typedef struct s_quad_coef
@@ -65,7 +119,9 @@ typedef struct s_info
 	double		viewport_rot[3];
 	double		px;
 	t_cam		cam;
-	t_sphere	sphere;
+	t_ambient	amb;
+	t_light		light;
+	void		*object;  //linked list of objects; saved as void pointer so that it can contain different structs
 
 }	t_info;
 

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/24 00:23:45 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/24 22:25:02 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,19 +37,21 @@ void	draw_pixel(t_info *info, int x, int y)
 	t_vec		viewport;
 	t_vec		ray;
 	t_quad_coef	f;
+	t_sphere	*sphere;
 
+	sphere = (t_sphere *)info->object;
 	viewport = vec3(x * info->px - info->viewport_width / 2.0,
 		info->viewport_height / 2.0 - y * info->px, 0);
 	rotate(&viewport, info->viewport_rot);
 	ray = add(info->cam.direction, viewport);
 	f.a = dot(ray, ray);
-	f.b = 2 * dot(ray, info->sphere.oc);
-	f.c = dot(info->sphere.oc, info->sphere.oc) - info->sphere.r * info->sphere.r;
+	f.b = 2 * dot(ray, sphere->oc);
+	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
 	if (f.delta >= 0)
 	{
 		color_pixel(info, x, y, (- f.b - sqrt(f.delta)) / (2 * f.a)
-		* norm(ray) / (norm(info->sphere.oc) - info->sphere.r));
+		* norm(ray) / (norm(sphere->oc) - sphere->r));
 	}
 	else
 		color_pixel(info, x, y, -1);

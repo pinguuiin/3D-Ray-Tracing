@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/24 00:25:31 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/24 22:24:27 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ void	initialize_mlx(t_info *info)
 
 int	main(void)
 {
-	t_info	info;
+	t_info		info;
+	t_sphere	sphere;
 
 	info.cam.fov = 120.0 / 180.0 * M_PI;
 	info.cam.pos.x = 0.0;
@@ -65,11 +66,14 @@ int	main(void)
 	info.cam.direction.z = 4.0;
 	info.cam.direction = normalize(info.cam.direction);
 	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
-	info.sphere.r = 4.0;
-	info.sphere.pos.x = 0.0;
-	info.sphere.pos.y = 0.0;
-	info.sphere.pos.z = 10.0;
-	info.sphere.oc = subtract(info.cam.pos, info.sphere.pos);
+	sphere.type = SPHERE;
+	sphere.r = 4.0;
+	sphere.pos.x = 0.0;
+	sphere.pos.y = 0.0;
+	sphere.pos.z = 10.0;
+	sphere.oc = subtract(info.cam.pos, sphere.pos);
+	sphere.next = NULL;
+	info.object = &sphere;
 	info.focal_length = 1.0;
 	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
