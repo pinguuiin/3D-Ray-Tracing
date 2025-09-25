@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/25 15:38:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 00:39:44 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@
 # endif
 # ifndef HEIGHT
 #  define HEIGHT 768
+# endif
+# ifndef KS
+#  define KS 0.5
+# endif
+# ifndef KD
+#  define KD 0.2
+# endif
+# ifndef SHININESS
+#  define SHININESS 30
 # endif
 
 # include "../src/libft/libft.h"
@@ -38,17 +47,17 @@ typedef enum e_type
 /* Ambient light */
 typedef struct s_ambient
 {
-	double		brightness;
-	uint32_t	color;
+	t_vec	color;  // each rgb channel normalized from 0-255 to 0.0-1.0 and saved into xyz  ==parsing==
+	double	ratio;
 
 }	t_ambient;
 
 /* Key light */
 typedef struct s_light
 {
-	t_vec		pos;
-	double		brightness;
-	uint32_t	color;
+	t_vec	pos;
+	t_vec	color;
+	double	ratio;
 
 }	t_light;
 
@@ -64,34 +73,34 @@ typedef struct s_cam
 /* Spheric object information */
 typedef struct s_sphere
 {
-	t_type		type;
-	t_vec		pos;
-	t_vec		oc; // vector from object to camera
-	double		r; // converted to radius from diameter  ==parsing==
-	uint32_t	color; // rgba
+	t_type	type;
+	t_vec	pos;
+	t_vec	oc; // vector from object to camera
+	double	r; // converted to radius from diameter  ==parsing==
+	t_vec	color; // rgba
 
 }	t_sphere;
 
 /* Cylindrical object information */
 typedef struct s_cylinder
 {
-	t_type		type;
-	t_vec		pos;
-	t_vec		oc;
-	t_vec		normal;
-	double		r;
-	double		h;
-	uint32_t	color;
+	t_type	type;
+	t_vec	pos;
+	t_vec	oc;
+	t_vec	normal;
+	double	r;
+	double	h;
+	t_vec	color;
 
 }	t_cylinder;
 
 /* Plane object information */
 typedef struct s_plane
 {
-	t_type		type;
-	t_vec		pos;
-	t_vec		normal;
-	uint32_t	color;
+	t_type	type;
+	t_vec	pos;
+	t_vec	normal;
+	t_vec	color;
 
 }	t_plane;
 
@@ -104,6 +113,17 @@ typedef struct s_quad_coef
 	double	delta;
 
 }	t_quad_coef;
+
+typedef struct s_hit
+{
+	t_vec	pos;  // coordinates of the hit point
+	t_vec	incidence;  // normalized ray direction from hit point to light source
+	t_vec	normal;  // normal at the hit point
+	t_vec	ray;  // normalized ray direction from hit point to camera
+	t_vec	specular; // normalized specular reflected ray direction
+	t_vec	intensity;  // intensity of the ray reaching the camera
+
+}	t_hit;
 
 /* Struct that includes everything */
 typedef struct s_info

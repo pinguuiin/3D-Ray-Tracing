@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 22:15:24 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/23 23:57:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 00:53:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,15 @@ t_vec	divide(t_vec a, t_vec b)
 	v.x = a.x / b.x;
 	v.y = a.y / b.y;
 	v.z = a.z / b.z;
+	return (v);
+}
+
+t_vec	dot_elem(t_vec a, t_vec b)
+{
+	t_vec	v;
+
+	v.x = a.x * b.x;
+	v.y = a.y * b.y;
+	v.z = a.z * b.z;
 	return (v);
 }
