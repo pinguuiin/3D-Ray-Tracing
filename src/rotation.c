@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rotation.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
+/*   Updated: 2025/09/23 23:35:08 by piyu             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minirt.h"
 
 void	rotate_x(t_vec *vec, double theta)
@@ -29,9 +41,14 @@ void	rotate_z(t_vec *vec, double theta)
 
 double	get_angle_between_vectors(double x1, double y1, double x2, double y2)
 {
-	if (x1 * x1 + y1 * y1 == 0 || x2 * x2 + y2 * y2 == 0)
+	double	sq_len1;
+	double	sq_len2;
+
+	sq_len1 = x1 * x1 + y1 * y1;
+	sq_len2 = x2 * x2 + y2 * y2;
+	if (sq_len1 == 0 || sq_len2 == 0)
 		return (0.0);
-	return (acos((x1 * x2 + y1 * y2) / (sqrt(x1 * x1 + y1 * y1) * sqrt(x2 * x2 + y2 * y2))));
+	return (acos((x1 * x2 + y1 * y2) / (sqrt(sq_len1) * sqrt(sq_len2))));
 }
 
 void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2)

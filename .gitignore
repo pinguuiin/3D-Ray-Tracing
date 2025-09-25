@@ -1,1 +1,5 @@
 .vscode/
+miniRT
+obj/
+src/MLX42/
+src/libft/

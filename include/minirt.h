@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/20 01:52:19 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/25 15:38:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,37 @@
 
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"
-#include <stdlib.h>
-#include <math.h>
+# include "vector.h"
+# include <stdlib.h>
+# include <math.h>
 
-typedef struct s_color
+/* Type of object */
+typedef enum e_type
 {
-}	t_color;
+	SPHERE,
+	PLANE,
+	CYLINDER
 
-/* 3d vector coordinates */
-typedef struct s_vec
+}	t_type;
+
+/* Ambient light */
+typedef struct s_ambient
 {
-	double	x;
-	double	y;
-	double	z;
+	double		brightness;
+	uint32_t	color;
 
-}	t_vec;
+}	t_ambient;
 
-/* camera information */
+/* Key light */
+typedef struct s_light
+{
+	t_vec		pos;
+	double		brightness;
+	uint32_t	color;
+
+}	t_light;
+
+/* Camera specs */
 typedef struct s_cam
 {
 	double	fov; // converted to rad from degree  ==parsing==
@@ -50,11 +64,36 @@ typedef struct s_cam
 /* Spheric object information */
 typedef struct s_sphere
 {
-	t_vec	pos;
-	t_vec	oc; // vector from object to camera
-	double	r; // converted to radius from diameter  ==parsing==
+	t_type		type;
+	t_vec		pos;
+	t_vec		oc; // vector from object to camera
+	double		r; // converted to radius from diameter  ==parsing==
+	uint32_t	color; // rgba
 
 }	t_sphere;
+
+/* Cylindrical object information */
+typedef struct s_cylinder
+{
+	t_type		type;
+	t_vec		pos;
+	t_vec		oc;
+	t_vec		normal;
+	double		r;
+	double		h;
+	uint32_t	color;
+
+}	t_cylinder;
+
+/* Plane object information */
+typedef struct s_plane
+{
+	t_type		type;
+	t_vec		pos;
+	t_vec		normal;
+	uint32_t	color;
+
+}	t_plane;
 
 /* Coefficient a, b, c and discriminant delta for the quadratic equation */
 typedef struct s_quad_coef
@@ -77,20 +116,15 @@ typedef struct s_info
 	double		viewport_rot[3];
 	double		px;
 	t_cam		cam;
-	t_sphere	sphere;
+	t_ambient	amb;
+	t_light		light;
+	void		*obj;  // array of objects; saved as void pointer so that it can contain different structs
+	void		*obj_lst;  // list of objects; will be cleared up after parsing
 
 }	t_info;
 
-t_vec	vec3(double x, double y, double z);
-t_vec	scale(t_vec a, double k);
-double	norm(t_vec a);
-t_vec	normalize(t_vec a);
-t_vec	add(t_vec a, t_vec b);
-t_vec	subtract(t_vec a, t_vec b);
-double	dot(t_vec a, t_vec b);
-t_vec	cross(t_vec a, t_vec b);
-t_vec	divide(t_vec a, t_vec b);
 void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
 void	rotate(t_vec *vec, double *theta);
+void	draw(void *param);
 
 #endif

@@ -21,15 +21,16 @@ LIBFT_DIR = ./src/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 
-HEADERS = include/minirt.h
+HEADERS = include/minirt.h include/vector.h
 HEADER_DIR = -I./include -I$(LIBMLX_DIR)/include -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 
 SRC_FILES = test.c \
+			draw.c \
 			rotation.c \
-			math_utils.c
+			vector_operations.c
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
