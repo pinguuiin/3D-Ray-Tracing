@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/25 15:25:48 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/25 15:38:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,8 @@ typedef struct s_info
 	t_cam		cam;
 	t_ambient	amb;
 	t_light		light;
-	void		*object;  // array of objects; saved as void pointer so that it can contain different structs
+	void		*obj;  // array of objects; saved as void pointer so that it can contain different structs
+	void		*obj_lst;  // list of objects; will be cleared up after parsing
 
 }	t_info;
 

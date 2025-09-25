@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/24 22:25:02 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/25 15:37:15 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	draw_pixel(t_info *info, int x, int y)
 	t_quad_coef	f;
 	t_sphere	*sphere;
 
-	sphere = (t_sphere *)info->object;
+	sphere = (t_sphere *)info->obj;
 	viewport = vec3(x * info->px - info->viewport_width / 2.0,
 		info->viewport_height / 2.0 - y * info->px, 0);
 	rotate(&viewport, info->viewport_rot);

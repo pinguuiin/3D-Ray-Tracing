@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/25 15:27:34 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/25 15:37:18 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	main(void)
 	sphere.pos.y = 0.0;
 	sphere.pos.z = 10.0;
 	sphere.oc = subtract(info.cam.pos, sphere.pos);
-	info.object = &sphere;
+	info.obj = &sphere;
 	info.focal_length = 1.0;
 	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
