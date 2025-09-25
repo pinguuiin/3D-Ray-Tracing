@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/24 22:24:37 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/25 15:25:48 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ typedef struct s_sphere
 	t_vec		oc; // vector from object to camera
 	double		r; // converted to radius from diameter  ==parsing==
 	uint32_t	color; // rgba
-	void		*next;
 
 }	t_sphere;
 
@@ -83,7 +82,6 @@ typedef struct s_cylinder
 	double		r;
 	double		h;
 	uint32_t	color;
-	void		*next;
 
 }	t_cylinder;
 
@@ -94,7 +92,6 @@ typedef struct s_plane
 	t_vec		pos;
 	t_vec		normal;
 	uint32_t	color;
-	void		*next;
 
 }	t_plane;
 
@@ -121,7 +118,7 @@ typedef struct s_info
 	t_cam		cam;
 	t_ambient	amb;
 	t_light		light;
-	void		*object;  //linked list of objects; saved as void pointer so that it can contain different structs
+	void		*object;  // array of objects; saved as void pointer so that it can contain different structs
 
 }	t_info;
 
