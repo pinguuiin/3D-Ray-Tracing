@@ -15,4 +15,6 @@
 
 # include <fcntl.h>		// open(), close()
 
+int	minirt_get_next_line(int fd, char **output);
+
 #endif

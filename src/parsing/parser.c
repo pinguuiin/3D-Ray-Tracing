@@ -20,48 +20,81 @@
 // required by the original subject - is that okay?
 // TODO: make a set_exit_code() function like in minishell?
 
+static void	handle_gnl_error(t_info *info, int gnl_flag);
+static int	parse_line(t_info *info, char *line);
+
 void	parse_scene(t_info *info, char *file_name)
 {
 	int		fd;
 	char	*line;
-	// int		flag;
+	int		line_num;
+	int		gnl_flag;
 
 	line = NULL;
-	// flag = 0;
+	line_num = 1;
+	gnl_flag = 0;
 
 // FIXME: should we accept an input argument which contains the filename but
 // also whitespace / extra characters further down the line?
 
+// FIXME: SET STRINGS MANUALLY, FINALLY, don't use strerror()!!!
+// and control the exit values using gnl_flag.
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
+		free_exit(info, "File opening failed");
+	while (!gnl_flag)
 	{
-		perror("open");
-		// TODO: free_all_and_exit();
+		gnl_flag = minirt_get_next_line(fd, &line);
+		if (line)
+		{
+			parse_line(info, line);
+			free(line);
+			line = NULL;
+			line_num++;
+		}
 	}
-
-	// call get_next_line() in a while loop, and parse all elements of the scene!
-	// WARN: remember to check whether the structs that you are using here are
-	// already allocated for previously!!!
-	// NOTE: remember to free() the returned line before each call to
-	// get_next_line() and at the very end, after the loop.
-
-	while (!get_next_line_ultimate(fd, line))
-	{
-		if (!line)
-			return ;
-		// parse 'line', now that it is ready for parsing.
-	}
-	if (line)
-		free(line); // might be unnecessary, have to check it
-	// TODO: free_all_and_exit(); // you can exit with the code of set_exit_code().
-
-
+	if (gnl_flag)
+		handle_gnl_error(info, gnl_flag);
+		// free_exit(info, strerror(errno)); // deprecated
 
 
 	// TODO: consider allowing comments in the .rt scene text file:
 	// All commented lines could, for example, start with a '#' sign - and
 	// those lines would be ignored. Otherwise, the .rt file is so complicated
 	// to make sense of, but comments there would be of great help! :-)
+
+	// FIXME:
+	// once you transfer the objects list/s into into the array of all of the
+	// objects' structs, organize them in order ----> the count for each will
+	// allow us to optimize.
+}
+
+
+static void	handle_gnl_error(t_info *info, int gnl_flag)
+{
+	if (gnl_flag == 1)
+		// free_exit(info, "something "); // TODO: 
+	if (gnl_flag == 2)
+		// free_exit(info, "something "); // TODO: 
+	if (gnl_flag == 3)
+		// free_exit(info, "something "); // TODO: 
+	if (gnl_flag == 4)
+		// free_exit(info, "something "); // TODO: 
+	if (gnl_flag == 5)
+		// free_exit(info, "something "); // TODO: 
+
+}
+
+// NOTE: free the line from here when an invalid input is found!
+// NOTE: Do I need a double pointer? probably not, as I free only if there is an
+// invalid input and then we exit the program anyways.
+static int	parse_line(t_info *info, char *line)
+{
+
+
+
+
+
 
 
 }

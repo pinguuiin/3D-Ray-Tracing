@@ -26,24 +26,29 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 		read_and_manage_output().
 */
 
-// FIXME: add "set_exit_code()" calls in all relevant spots.
 // TODO: observe output - line
-int	get_next_line_ultimate(int fd, char **output)
+//
+// WARN: remember to free(line) in minirt_get_next_line() and its helper
+// functions whenever there is a failure and you return an error!!!
+// TODO: return different values!
+int	minirt_get_next_line(int fd, char **output)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	int			line_status;
 	size_t		i;
 	char		*line;
 
-
 	line = NULL;
-	if (fd < 0 || !BUFFER_SIZE)
-		return (NULL);
+	if (!BUFFER_SIZE) // here there is no need to free the line, it should always be NULL at the beginning of this function
+		return (1);
 	line_status = 0;
 	i = 0;
 	if (buffer[i])
 	{
 		line_status = process_buffer(&line, buffer, &i);
+		if (line_status == -1) // malloc has failed. no need to free the line.
+			return (1);
+		}
 		if (line_status == 1 || line_status == -1)
 			return (line);
 		line = review_line_and_clean_buffer(line, buffer, &i);
@@ -56,7 +61,7 @@ int	get_next_line_ultimate(int fd, char **output)
 		line = NULL;
 	}
 	*output = line;
-	return (line); // WARN: return int instead?
+	return (line); // WARN: return int instead
 }
 
 static char	*review_line_and_clean_buffer(char *line, char *buffer, size_t *i)
