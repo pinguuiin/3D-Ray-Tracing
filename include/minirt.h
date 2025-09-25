@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 00:39:44 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 02:48:04 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #  define HEIGHT 768
 # endif
 # ifndef KS
-#  define KS 0.5
+#  define KS 0.4
 # endif
 # ifndef KD
 #  define KD 0.2

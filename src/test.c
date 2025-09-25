@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 00:33:27 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 02:47:05 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,14 @@ int	main(void)
 
 	info.cam.fov = 120.0 / 180.0 * M_PI;
 	info.cam.pos = vec3(0.0, 0.0, 0.0);
-	info.cam.direction = vec3(2.5, 0.0, 4.0);
+	info.cam.direction = vec3(0.5, 0.0, 4.0);
 	info.cam.direction = normalize(info.cam.direction);
 	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
 
 	sphere.type = SPHERE;
 	sphere.pos = vec3(0.0, 0.0, 10.0);
 	sphere.oc = subtract(info.cam.pos, sphere.pos);
-	sphere.r = 4.0;
+	sphere.r = 5.0;
 	sphere.color = vec3(0.0, 1.0, 1.0);
 	info.obj = &sphere;
 

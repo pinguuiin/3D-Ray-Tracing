@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 01:00:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 02:26:44 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-uint8_t	clamp(uint8_t single_channel_color)
+int	clamp(int single_channel_color)
 {
 	if (single_channel_color > 255)
 		return (255);
@@ -22,19 +22,19 @@ uint8_t	clamp(uint8_t single_channel_color)
 		return (single_channel_color);
 }
 
-uint32_t	scale_color(uint32_t color, double ratio)
+uint32_t	vec_to_color(t_vec color)
 {
 	uint8_t	r;
 	uint8_t	g;
 	uint8_t	b;
 
-	r = (color >> 24 & 0xFF) * ratio;
-	g = (color >> 16 & 0xFF) * ratio;
-	b = (color >> 8 & 0xFF) * ratio;
+	r = clamp(round(color.x * 255));
+	g = clamp(round(color.y * 255));
+	b = clamp(round(color.z * 255));
 	return (r << 24 | g << 16 | b << 8 | 255);
 }
 
-uint32_t	reflect_ray(t_info *info, t_sphere *sp, t_vec ray, t_quad_coef f)
+t_vec	reflection(t_info *info, t_sphere *sp, t_vec ray, t_quad_coef f)
 {
 	double	k;
 	t_hit	hit;
@@ -42,7 +42,7 @@ uint32_t	reflect_ray(t_info *info, t_sphere *sp, t_vec ray, t_quad_coef f)
 	k = (- f.b - sqrt(f.delta)) / (2 * f.a);
 	// inside or on the object is painted to black for now
 	if (k <= 0)
-		return (0x000000FF);
+		return (vec3(0.0, 0.0, 0.0));
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
 	hit.incidence = normalize(subtract(info->light.pos, hit.pos));
@@ -51,10 +51,7 @@ uint32_t	reflect_ray(t_info *info, t_sphere *sp, t_vec ray, t_quad_coef f)
 	hit.ray = normalize(scale(ray, -1));
 	hit.intensity = add(scale(dot_elem(info->light.color, sp->color), KD * dot(hit.incidence, hit.normal)),
 			scale(vec3(1.0, 1.0, 1.0), KS * pow(dot(hit.specular, hit.ray), SHININESS)));
-	r = 255;
-	g = 255;
-	b = 255;
-	return (r << 24 | g << 16 | b << 8 | 255);
+	return (hit.intensity);
 }
 
 void	draw_pixel(t_info *info, int x, int y)
@@ -63,7 +60,7 @@ void	draw_pixel(t_info *info, int x, int y)
 	t_vec		viewport;
 	t_vec		ray;
 	t_quad_coef	f;
-	uint32_t	color;
+	t_vec		color;
 
 	sphere = (t_sphere *)info->obj;
 	viewport = vec3(x * info->px - info->viewport_width / 2.0,
@@ -74,10 +71,10 @@ void	draw_pixel(t_info *info, int x, int y)
 	f.b = 2 * dot(ray, sphere->oc);
 	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
-	color = scale_color(info->amb.color, info->amb.ratio);
+	color = scale(info->amb.color, info->amb.ratio);
 	if (f.delta >= 0)
-		color += reflect_ray(info, sphere, ray, f);
-	mlx_put_pixel(info->img, x, y, color);
+		color = add(color, reflection(info, sphere, ray, f)); //now ambient also inside object
+	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
 void	draw(void *param)
