@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 17:19:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 21:58:25 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,39 +70,25 @@ typedef struct s_cam
 
 }	t_cam;
 
-/* Spheric object information */
-typedef struct s_sphere
+/* Object information */
+typedef struct s_object
 {
+	// general attributes
 	t_type	type;
 	t_vec	pos;
-	t_vec	oc; // vector from object to camera
-	double	r; // converted to radius from diameter  ==parsing==
-	t_vec	color; // rgba
+	t_vec	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
 
-}	t_sphere;
+	// sphere and cylinder
+	t_vec	oc;  // vector from object to camera
+	double	r;  // converted to radius from diameter  ==parsing==
 
-/* Cylindrical object information */
-typedef struct s_cylinder
-{
-	t_type	type;
-	t_vec	pos;
-	t_vec	oc;
+	// plane and cylinder
 	t_vec	normal;
-	double	r;
+
+	// cylinder
 	double	h;
-	t_vec	color;
 
-}	t_cylinder;
-
-/* Plane object information */
-typedef struct s_plane
-{
-	t_type	type;
-	t_vec	pos;
-	t_vec	normal;
-	t_vec	color;
-
-}	t_plane;
+}	t_object;
 
 /* Coefficient a, b, c and discriminant delta for the quadratic equation */
 typedef struct s_quad_coef
@@ -140,15 +126,22 @@ typedef struct s_info
 	t_cam		cam;
 	t_ambient	amb;
 	t_light		light;
-	void		*obj;  // array of objects; saved as void pointer so that it can contain different structs
-	void		*obj_lst;  // list of objects; will be cleared up after parsing
+	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
+	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
+	int			obj_id;  // current object id
 
 }	t_info;
 
-void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
-void	rotate(t_vec *vec, double *theta);
-void	draw(void *param);
-void	move_camera(mlx_key_data_t keydata, t_info *info);
-void	rotate_camera(mlx_key_data_t keydata, t_info *info);
+int			clamp(int single_channel_color);
+uint32_t	vec_to_color(t_vec color);
+t_vec		color_to_vec(int r, int g, int b);
+
+void		get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
+void		rotate(t_vec *vec, double *theta);
+
+void		draw(void *param);
+
+void		move_camera(mlx_key_data_t keydata, t_info *info);
+void		rotate_camera(mlx_key_data_t keydata, t_info *info);
 
 #endif

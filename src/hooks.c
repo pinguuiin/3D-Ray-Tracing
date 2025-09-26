@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 17:17:19 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 21:46:59 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	move_camera(mlx_key_data_t keydata, t_info *info)
 		info->cam.pos.z += 1;
 	else if (keydata.key == MLX_KEY_Z)
 		info->cam.pos.z -= 1;
-	((t_sphere *)info->obj)->oc = subtract(info->cam.pos, ((t_sphere *)info->obj)->pos);
+	info->obj[info->obj_id].oc = subtract(info->cam.pos, info->obj[info->obj_id].pos);
 	draw(info);
 }
 
