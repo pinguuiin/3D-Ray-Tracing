@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 03:55:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 17:03:19 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,17 @@ int	free_exit(t_info *info, char *s)
 	return (1);
 }
 
-static void	escape_handler(mlx_key_data_t keydata, void *param)
+static void	key_handler(mlx_key_data_t keydata, void *param)
 {
-	mlx_t	*mlx;
+	t_info	*info;
 
-	mlx = NULL;
-	mlx = (mlx_t *)param;
+	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-		mlx_close_window(mlx);
+		mlx_close_window(info->mlx);
+	else if (keydata.key == MLX_KEY_LEFT || keydata.key == MLX_KEY_RIGHT
+		|| keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z)
+		move_camera(keydata, info);
 }
 
 void	initialize_mlx(t_info *info)
@@ -83,7 +86,7 @@ int	main(void)
 	info.px = info.viewport_width / (double)WIDTH;
 
 	initialize_mlx(&info);
-	mlx_key_hook(info.mlx, &escape_handler, info.mlx);
+	mlx_key_hook(info.mlx, &key_handler, &info);
 	mlx_loop_hook(info.mlx, draw, &info);
 	mlx_loop(info.mlx);
 	free_exit(&info, NULL);

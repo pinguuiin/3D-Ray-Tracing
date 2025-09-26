@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 03:52:23 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 16:43:45 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,5 +148,6 @@ typedef struct s_info
 void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
 void	rotate(t_vec *vec, double *theta);
 void	draw(void *param);
+void	move_camera(mlx_key_data_t keydata, t_info *info);
 
 #endif
