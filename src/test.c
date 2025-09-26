@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 02:47:05 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 03:27:34 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	main(void)
 
 	info.light.pos = vec3(1.0, 5.0, 1.0);
 	info.light.ratio = 0.8;
-	info.light.color = vec3(0.0, 1.0, 0.0);
+	info.light.color = vec3(1.0, 1.0, 0.5);
 
 	info.cam.fov = 120.0 / 180.0 * M_PI;
 	info.cam.pos = vec3(0.0, 0.0, 0.0);
@@ -74,7 +74,7 @@ int	main(void)
 	sphere.pos = vec3(0.0, 0.0, 10.0);
 	sphere.oc = subtract(info.cam.pos, sphere.pos);
 	sphere.r = 5.0;
-	sphere.color = vec3(0.0, 1.0, 1.0);
+	sphere.color = vec3(0.0, 1.0, 0.0);
 	info.obj = &sphere;
 
 	info.focal_length = 1.0;

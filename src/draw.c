@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 02:26:44 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 03:24:41 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ t_vec	reflection(t_info *info, t_sphere *sp, t_vec ray, t_quad_coef f)
 	hit.specular = subtract(scale(hit.normal, 2 * dot(hit.incidence, hit.normal)), hit.incidence);
 	hit.ray = normalize(scale(ray, -1));
 	hit.intensity = add(scale(dot_elem(info->light.color, sp->color), KD * dot(hit.incidence, hit.normal)),
-			scale(vec3(1.0, 1.0, 1.0), KS * pow(dot(hit.specular, hit.ray), SHININESS)));
+			scale(info->light.color, KS * pow(dot(hit.specular, hit.ray), SHININESS)));
 	return (hit.intensity);
 }
 
