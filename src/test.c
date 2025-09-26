@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/25 15:37:18 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 03:55:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,26 +57,31 @@ int	main(void)
 	t_info		info;
 	t_sphere	sphere;
 
+	info.amb.ratio = 0.2;
+	info.amb.color = vec3(1.0, 1.0, 1.0);
+
+	info.light.pos = vec3(1.0, 5.0, 1.0);
+	info.light.ratio = 0.8;
+	info.light.color = vec3(1.0, 1.0, 0.5);
+
 	info.cam.fov = 120.0 / 180.0 * M_PI;
-	info.cam.pos.x = 0.0;
-	info.cam.pos.y = 0.0;
-	info.cam.pos.z = 0.0;
-	info.cam.direction.x = 2.5;
-	info.cam.direction.y = 0.0;
-	info.cam.direction.z = 4.0;
+	info.cam.pos = vec3(0.0, 0.0, 0.0);
+	info.cam.direction = vec3(0.5, 0.0, 4.0);
 	info.cam.direction = normalize(info.cam.direction);
 	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
+
 	sphere.type = SPHERE;
-	sphere.r = 4.0;
-	sphere.pos.x = 0.0;
-	sphere.pos.y = 0.0;
-	sphere.pos.z = 10.0;
+	sphere.pos = vec3(0.0, 0.0, 10.0);
 	sphere.oc = subtract(info.cam.pos, sphere.pos);
+	sphere.r = 5.0;
+	sphere.color = vec3(0.0, 1.0, 0.0);
 	info.obj = &sphere;
+
 	info.focal_length = 1.0;
 	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
 	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
 	info.px = info.viewport_width / (double)WIDTH;
+
 	initialize_mlx(&info);
 	mlx_key_hook(info.mlx, &escape_handler, info.mlx);
 	mlx_loop_hook(info.mlx, draw, &info);

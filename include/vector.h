@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:46:28 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/23 23:59:59 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 00:56:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ t_vec	subtract(t_vec a, t_vec b);
 double	dot(t_vec a, t_vec b);
 t_vec	cross(t_vec a, t_vec b);
 t_vec	divide(t_vec a, t_vec b);
+t_vec	dot_elem(t_vec a, t_vec b);
 
 #endif
