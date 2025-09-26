@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 16:43:45 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 17:19:26 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 # define MINIRT_H
 
 # ifndef WIDTH
-#  define WIDTH 1024
+#  define WIDTH 1500
 # endif
 # ifndef HEIGHT
-#  define HEIGHT 768
+#  define HEIGHT 1000
 # endif
 # ifndef KS
 #  define KS 0.4
@@ -149,5 +149,6 @@ void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
 void	rotate(t_vec *vec, double *theta);
 void	draw(void *param);
 void	move_camera(mlx_key_data_t keydata, t_info *info);
+void	rotate_camera(mlx_key_data_t keydata, t_info *info);
 
 #endif

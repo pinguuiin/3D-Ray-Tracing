@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 17:03:19 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 17:07:56 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 		|| keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
 		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z)
 		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S
+		|| keydata.key == MLX_KEY_A || keydata.key == MLX_KEY_D)
+		rotate_camera(keydata, info);
 }
 
 void	initialize_mlx(t_info *info)
