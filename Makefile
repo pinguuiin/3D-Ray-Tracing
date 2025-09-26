@@ -28,7 +28,9 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 
 SRC_FILES = test.c \
+			color.c \
 			draw.c \
+			hooks.c \
 			rotation.c \
 			vector_operations.c
 

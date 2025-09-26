@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 03:55:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 21:46:25 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,20 @@ int	free_exit(t_info *info, char *s)
 	return (1);
 }
 
-static void	escape_handler(mlx_key_data_t keydata, void *param)
+static void	key_handler(mlx_key_data_t keydata, void *param)
 {
-	mlx_t	*mlx;
+	t_info	*info;
 
-	mlx = NULL;
-	mlx = (mlx_t *)param;
+	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-		mlx_close_window(mlx);
+		mlx_close_window(info->mlx);
+	else if (keydata.key == MLX_KEY_LEFT || keydata.key == MLX_KEY_RIGHT
+		|| keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z)
+		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S
+		|| keydata.key == MLX_KEY_A || keydata.key == MLX_KEY_D)
+		rotate_camera(keydata, info);
 }
 
 void	initialize_mlx(t_info *info)
@@ -55,7 +61,6 @@ void	initialize_mlx(t_info *info)
 int	main(void)
 {
 	t_info		info;
-	t_sphere	sphere;
 
 	info.amb.ratio = 0.2;
 	info.amb.color = vec3(1.0, 1.0, 1.0);
@@ -70,12 +75,13 @@ int	main(void)
 	info.cam.direction = normalize(info.cam.direction);
 	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
 
-	sphere.type = SPHERE;
-	sphere.pos = vec3(0.0, 0.0, 10.0);
-	sphere.oc = subtract(info.cam.pos, sphere.pos);
-	sphere.r = 5.0;
-	sphere.color = vec3(0.0, 1.0, 0.0);
-	info.obj = &sphere;
+	info.obj = malloc(1 * sizeof(t_object));
+	info.obj[0].type = SPHERE;
+	info.obj[0].pos = vec3(0.0, 0.0, 10.0);
+	info.obj[0].oc = subtract(info.cam.pos, info.obj[0].pos);
+	info.obj[0].r = 5.0;
+	info.obj[0].color = vec3(0.0, 1.0, 0.0);
+	info.obj_id = 0;
 
 	info.focal_length = 1.0;
 	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
@@ -83,7 +89,7 @@ int	main(void)
 	info.px = info.viewport_width / (double)WIDTH;
 
 	initialize_mlx(&info);
-	mlx_key_hook(info.mlx, &escape_handler, info.mlx);
+	mlx_key_hook(info.mlx, &key_handler, &info);
 	mlx_loop_hook(info.mlx, draw, &info);
 	mlx_loop(info.mlx);
 	free_exit(&info, NULL);
