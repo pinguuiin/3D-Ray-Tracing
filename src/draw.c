@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 21:38:44 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 23:56:01 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,13 @@ t_vec	reflection(t_info *info, t_object *sp, t_vec ray, t_quad_coef f)
 	return (hit.intensity);
 }
 
-void	draw_pixel(t_info *info, int x, int y)
+void	draw_sphere(t_info *info, t_vec ray, int x, int y)
 {
 	t_object	*sphere;
-	t_vec		viewport;
-	t_vec		ray;
 	t_quad_coef	f;
 	t_vec		color;
 
 	sphere = &info->obj[info->obj_id];
-	viewport = vec3(x * info->px - info->viewport_width / 2.0,
-		-(y * info->px - info->viewport_height / 2.0), 0);
-	rotate(&viewport, info->viewport_rot);
-	ray = add(info->cam.direction, viewport);
 	f.a = dot(ray, ray);
 	f.b = 2 * dot(ray, sphere->oc);
 	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
@@ -56,11 +50,24 @@ void	draw_pixel(t_info *info, int x, int y)
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
+void	draw_plane(t_info *info, t_vec ray, int x, int y)
+{}
+
+void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+{
+	if (info->obj[info->obj_id].type == SPHERE)
+		draw_sphere(info, ray, x, y);
+	else
+		draw_plane(info, ray, x, y);
+}
+
 void	draw(void *param)
 {
 	t_info		*info;
 	int			x;
 	int			y;
+	t_vec		ray;
+
 
 	info = (t_info *)param;
 	x = 0;
@@ -69,7 +76,11 @@ void	draw(void *param)
 		y = 0;
 		while (y < HEIGHT)
 		{
-			draw_pixel(info, x, y);
+			ray = vec3(x * info->px - info->viewport_width / 2.0,
+			-(y * info->px - info->viewport_height / 2.0), 0);
+			rotate(&ray, info->viewport_rot);
+			ray = add(info->cam.direction, ray);
+			draw_pixel(info, ray, x, y);
 			y++;
 		}
 		x++;

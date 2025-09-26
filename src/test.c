@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 21:46:25 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 23:44:28 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,17 @@ int	main(void)
 	info.cam.direction = normalize(info.cam.direction);
 	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
 
-	info.obj = malloc(1 * sizeof(t_object));
+	info.obj = malloc(2 * sizeof(t_object));
 	info.obj[0].type = SPHERE;
 	info.obj[0].pos = vec3(0.0, 0.0, 10.0);
 	info.obj[0].oc = subtract(info.cam.pos, info.obj[0].pos);
 	info.obj[0].r = 5.0;
 	info.obj[0].color = vec3(0.0, 1.0, 0.0);
+
+	info.obj[1].type = PLANE;
+	info.obj[1].pos = vec3(-6.0, 0.0, 0.0);
+	info.obj[1].normal = vec3(1.0, 0.3, 0.0);
+	info.obj[1].color = vec3(0.8, 0.8, 1.0);
 	info.obj_id = 0;
 
 	info.focal_length = 1.0;
