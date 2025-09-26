@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 03:23:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 03:52:23 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,11 +117,13 @@ typedef struct s_quad_coef
 typedef struct s_hit
 {
 	t_vec	pos;  // coordinates of the hit point
-	t_vec	incidence;  // normalized ray direction from hit point to light source
+	t_vec	incoming;  // normalized ray direction from hit point to light source
 	t_vec	normal;  // normal at the hit point
 	t_vec	ray;  // normalized ray direction from hit point to camera
-	t_vec	specular; // normalized specular reflected ray direction
-	t_vec	intensity;  // intensity of the ray reaching the camera
+	t_vec	outgoing; // normalized specular reflected ray direction
+	t_vec	diffuse;  // diffuse reflection intensity
+	t_vec	specular;  // specular reflection intensity
+	t_vec	intensity;  // intensity = diffuse + specular
 
 }	t_hit;
 

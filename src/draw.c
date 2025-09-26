@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 03:24:41 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/26 03:46:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,13 @@ t_vec	reflection(t_info *info, t_sphere *sp, t_vec ray, t_quad_coef f)
 		return (vec3(0.0, 0.0, 0.0));
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
-	hit.incidence = normalize(subtract(info->light.pos, hit.pos));
+	hit.incoming = normalize(subtract(info->light.pos, hit.pos));
 	hit.normal = normalize(subtract(hit.pos, sp->pos));
-	hit.specular = subtract(scale(hit.normal, 2 * dot(hit.incidence, hit.normal)), hit.incidence);
+	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
 	hit.ray = normalize(scale(ray, -1));
-	hit.intensity = add(scale(dot_elem(info->light.color, sp->color), KD * dot(hit.incidence, hit.normal)),
-			scale(info->light.color, KS * pow(dot(hit.specular, hit.ray), SHININESS)));
+	hit.diffuse = scale(dot_elem(info->light.color, sp->color), info->light.ratio * KD * dot(hit.incoming, hit.normal));
+	hit.specular = scale(info->light.color, info->light.ratio * KS * pow(dot(hit.outgoing, hit.ray), SHININESS));
+	hit.intensity = add(hit.diffuse, hit.specular);
 	return (hit.intensity);
 }
 
