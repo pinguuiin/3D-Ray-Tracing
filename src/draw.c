@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/27 03:52:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/27 23:34:19 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,38 @@
 t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 {
 	t_hit	hit;
+	double	dot1;
+	double	dot2;
 
 	if (k <= 0)
 		return (vec3(0.0, 0.0, 0.0));
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
+	hit.ray = normalize(scale(ray, -1));
 	hit.incoming = normalize(subtract(info->light.pos, hit.pos));
 	if (obj->type == SPHERE)
 		hit.normal = normalize(subtract(hit.pos, obj->pos));
 	else if (obj->type == PLANE)
 	{
-		if (dot(ray, obj->normal) < 0)
+		if (dot(hit.ray, obj->normal) >= 0)
 			hit.normal = obj->normal;
 		else
 			hit.normal = scale(obj->normal, -1);
 	}
-	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
-	hit.ray = normalize(scale(ray, -1));
-	hit.diffuse = scale(dot_elem(info->light.color, obj->color), info->light.ratio * KD * dot(hit.incoming, hit.normal));
-	hit.specular = scale(info->light.color, info->light.ratio * KS * pow(dot(hit.outgoing, hit.ray), SHININESS));
-	hit.intensity = add(hit.diffuse, hit.specular);
+	hit.outgoing = normalize(subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming));
+	hit.intensity = vec3(0.0, 0.0, 0.0);
+	dot1 = dot(hit.incoming, hit.normal);
+	if (dot1 > 1e-8)
+	{
+		hit.diffuse = scale(dot_elem(info->light.color, obj->color), info->light.ratio * KD * dot1);
+		hit.intensity = add(hit.intensity, hit.diffuse);
+		dot2 = dot(hit.outgoing, hit.ray);
+		if (dot2 > 1e-8)
+		{
+			hit.specular = scale(info->light.color, info->light.ratio * KS * pow(dot2, SHININESS));
+			hit.intensity = add(hit.intensity, hit.specular);
+		}
+	}
 	return (hit.intensity);
 }
 
@@ -60,13 +72,13 @@ void	draw_plane(t_info *info, t_vec ray, int x, int y)
 	t_object	*plane;
 	t_discrim	f;
 	t_vec		color;
-	
+
 	plane = &info->obj[info->obj_id];
 	f.a = dot(plane->oc, plane->normal);
 	f.b = dot(ray, plane->normal);
 	color = scale(info->amb.color, info->amb.ratio);
-	if (f.b != 0 && -(f.a / f.b) > 0)
-		color = add(color, reflection(info, plane, ray, -(f.a / f.b))); 
+	if ((f.b > 1e-8 || f.b < -1e-8) && -(f.a / f.b) > 0)
+		color = add(color, reflection(info, plane, ray, -(f.a / f.b)));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 
 }
