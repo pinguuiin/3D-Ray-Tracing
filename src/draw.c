@@ -6,28 +6,33 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 23:56:01 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/27 03:52:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-t_vec	reflection(t_info *info, t_object *sp, t_vec ray, t_quad_coef f)
+t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 {
-	double	k;
 	t_hit	hit;
 
-	k = (- f.b - sqrt(f.delta)) / (2 * f.a);
-	// inside or on the object is painted to black for now
 	if (k <= 0)
 		return (vec3(0.0, 0.0, 0.0));
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
 	hit.incoming = normalize(subtract(info->light.pos, hit.pos));
-	hit.normal = normalize(subtract(hit.pos, sp->pos));
+	if (obj->type == SPHERE)
+		hit.normal = normalize(subtract(hit.pos, obj->pos));
+	else if (obj->type == PLANE)
+	{
+		if (dot(ray, obj->normal) < 0)
+			hit.normal = obj->normal;
+		else
+			hit.normal = scale(obj->normal, -1);
+	}
 	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
 	hit.ray = normalize(scale(ray, -1));
-	hit.diffuse = scale(dot_elem(info->light.color, sp->color), info->light.ratio * KD * dot(hit.incoming, hit.normal));
+	hit.diffuse = scale(dot_elem(info->light.color, obj->color), info->light.ratio * KD * dot(hit.incoming, hit.normal));
 	hit.specular = scale(info->light.color, info->light.ratio * KS * pow(dot(hit.outgoing, hit.ray), SHININESS));
 	hit.intensity = add(hit.diffuse, hit.specular);
 	return (hit.intensity);
@@ -36,7 +41,7 @@ t_vec	reflection(t_info *info, t_object *sp, t_vec ray, t_quad_coef f)
 void	draw_sphere(t_info *info, t_vec ray, int x, int y)
 {
 	t_object	*sphere;
-	t_quad_coef	f;
+	t_discrim	f;
 	t_vec		color;
 
 	sphere = &info->obj[info->obj_id];
@@ -46,12 +51,25 @@ void	draw_sphere(t_info *info, t_vec ray, int x, int y)
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
 	color = scale(info->amb.color, info->amb.ratio);
 	if (f.delta >= 0)
-		color = add(color, reflection(info, sphere, ray, f)); //now ambient also inside object
+		color = add(color, reflection(info, sphere, ray, (- f.b - sqrt(f.delta)) / (2 * f.a))); //now ambient also inside object
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
 void	draw_plane(t_info *info, t_vec ray, int x, int y)
-{}
+{
+	t_object	*plane;
+	t_discrim	f;
+	t_vec		color;
+	
+	plane = &info->obj[info->obj_id];
+	f.a = dot(plane->oc, plane->normal);
+	f.b = dot(ray, plane->normal);
+	color = scale(info->amb.color, info->amb.ratio);
+	if (f.b != 0 && -(f.a / f.b) > 0)
+		color = add(color, reflection(info, plane, ray, -(f.a / f.b))); 
+	mlx_put_pixel(info->img, x, y, vec_to_color(color));
+
+}
 
 void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {

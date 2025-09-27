@@ -6,20 +6,20 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:02:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 21:12:38 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/27 04:17:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-int	clamp(int single_channel_color)
+uint8_t	clamp(double single_channel_color)
 {
 	if (single_channel_color > 255)
 		return (255);
 	else if (single_channel_color < 0)
 		return (0);
 	else
-		return (single_channel_color);
+		return ((uint8_t)single_channel_color);
 }
 
 uint32_t	vec_to_color(t_vec color)
