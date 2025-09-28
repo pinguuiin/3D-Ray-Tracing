@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 00:25:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/28 04:22:43 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ int	main(void)
 	info.amb.ratio = 0.2;
 	info.amb.color = vec3(1.0, 1.0, 1.0);
 
-	info.light.pos = vec3(0.0, 2.0, 20.0);
+	info.light.pos = vec3(3.0, 4.0, 0.0);
 	info.light.ratio = 0.8;
-	info.light.color = vec3(0.5, 0.5, 1.0);
+	info.light.color = vec3(1.0, 1.0, 1.0);
 
 	info.cam.fov = 120.0 / 180.0 * M_PI;
 	info.cam.pos = vec3(0.0, 0.0, 0.0);
@@ -79,13 +79,13 @@ int	main(void)
 	info.obj[0].type = SPHERE;
 	info.obj[0].pos = vec3(0.0, 0.0, 10.0);
 	info.obj[0].oc = subtract(info.cam.pos, info.obj[0].pos);
-	info.obj[0].r = 5.0;
+	info.obj[0].r = 3.0;
 	info.obj[0].color = vec3(0.0, 1.0, 0.0);
 
 	info.obj[1].type = PLANE;
 	info.obj[1].pos = vec3(0.0, -3.0, 30.0);
 	info.obj[1].oc = subtract(info.cam.pos, info.obj[1].pos);
-	info.obj[1].normal = vec3(0.0, 10.0, -1.0);
+	info.obj[1].normal = normalize(vec3(0.0, 10.0, 0.0));
 	info.obj[1].color = vec3(1.0, 1.0, 1.0);
 	info.obj_id = 1;
 

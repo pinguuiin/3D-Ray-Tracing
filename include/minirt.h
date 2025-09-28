@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 00:25:30 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/28 04:23:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #  define KS 0.4
 # endif
 # ifndef KD
-#  define KD 0.2
+#  define KD 0.4
 # endif
 # ifndef SHININESS
 #  define SHININESS 30

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 00:38:49 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/28 04:02:28 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 		else
 			hit.normal = scale(obj->normal, -1);
 	}
-	hit.outgoing = normalize(subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming));
+	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
 	hit.intensity = vec3(0.0, 0.0, 0.0);
 	dot1 = dot(hit.incoming, hit.normal);
 	if (dot1 > 1e-8)
