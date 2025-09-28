@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 21:46:59 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/28 03:45:37 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,24 @@ void	move_camera(mlx_key_data_t keydata, t_info *info)
 	else if (keydata.key == MLX_KEY_DOWN)
 		info->cam.pos.y -= 1;
 	else if (keydata.key == MLX_KEY_Q)
-		info->cam.pos.z += 1;
+		info->cam.pos.z += 5;
 	else if (keydata.key == MLX_KEY_Z)
-		info->cam.pos.z -= 1;
+		info->cam.pos.z -= 5;
 	info->obj[info->obj_id].oc = subtract(info->cam.pos, info->obj[info->obj_id].pos);
 	draw(info);
 }
 
 void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 {
+	// incorrect increment direction
 	if (keydata.key == MLX_KEY_W)
-		info->cam.direction.y += 0.05;
+		info->cam.direction.y += 0.1;
 	else if (keydata.key == MLX_KEY_S)
-		info->cam.direction.y -= 0.05;
+		info->cam.direction.y -= 0.1;
 	else if (keydata.key == MLX_KEY_D)
-		info->cam.direction.x += 0.05;
+		rotate_y(&info->cam.direction, 0.1);  // info->cam.direction.x += 0.1;
 	else if (keydata.key == MLX_KEY_A)
-		info->cam.direction.x -= 0.05;
+		rotate_y(&info->cam.direction, -0.1);  // info->cam.direction.x -= 0.1;
 	info->cam.direction = normalize(info->cam.direction);
 	get_viewport_rotation(info, vec3(0.0, 0.0, 1.0), info->cam.direction);
 }

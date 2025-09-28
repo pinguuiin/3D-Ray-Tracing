@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 21:58:25 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/28 04:23:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #  define KS 0.4
 # endif
 # ifndef KD
-#  define KD 0.2
+#  define KD 0.4
 # endif
 # ifndef SHININESS
 #  define SHININESS 30
@@ -77,9 +77,9 @@ typedef struct s_object
 	t_type	type;
 	t_vec	pos;
 	t_vec	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
+	t_vec	oc;  // vector from object to camera
 
 	// sphere and cylinder
-	t_vec	oc;  // vector from object to camera
 	double	r;  // converted to radius from diameter  ==parsing==
 
 	// plane and cylinder
@@ -91,14 +91,14 @@ typedef struct s_object
 }	t_object;
 
 /* Coefficient a, b, c and discriminant delta for the quadratic equation */
-typedef struct s_quad_coef
+typedef struct s_discrim
 {
 	double	a;
 	double	b;
 	double	c;
 	double	delta;
 
-}	t_quad_coef;
+}	t_discrim;
 
 typedef struct s_hit
 {
@@ -132,7 +132,7 @@ typedef struct s_info
 
 }	t_info;
 
-int			clamp(int single_channel_color);
+uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 t_vec		color_to_vec(int r, int g, int b);
 

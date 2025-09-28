@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/23 23:35:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/27 22:26:34 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ double	get_angle_between_vectors(double x1, double y1, double x2, double y2)
 
 	sq_len1 = x1 * x1 + y1 * y1;
 	sq_len2 = x2 * x2 + y2 * y2;
-	if (sq_len1 == 0 || sq_len2 == 0)
+	if (sq_len1 < 1e-8 || sq_len2 < 1e-8)
 		return (0.0);
 	return (acos((x1 * x2 + y1 * y2) / (sqrt(sq_len1) * sqrt(sq_len2))));
 }

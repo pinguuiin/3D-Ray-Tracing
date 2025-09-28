@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 22:15:24 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 00:53:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/27 22:22:28 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,12 @@ double	norm(t_vec a)
 
 t_vec	normalize(t_vec a)
 {
-	if (norm(a) == 0)
+	double	len;
+
+	len = norm(a);
+	if (len < 1e-8)
 		return (vec3(0.0, 0.0, 0.0));
-	return (scale(a, 1.0 / norm(a)));
+	return (scale(a, 1.0 / len));
 }
 
 t_vec	add(t_vec a, t_vec b)

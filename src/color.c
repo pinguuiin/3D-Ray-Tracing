@@ -6,20 +6,20 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:02:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/26 21:12:38 by piyu             ###   ########.fr       */
+/*   Updated: 2025/09/27 22:31:34 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-int	clamp(int single_channel_color)
+uint8_t	clamp(double single_channel_color)
 {
-	if (single_channel_color > 255)
+	if (single_channel_color > 255.0)
 		return (255);
-	else if (single_channel_color < 0)
+	else if (single_channel_color < 0.0)
 		return (0);
 	else
-		return (single_channel_color);
+		return ((uint8_t)single_channel_color);
 }
 
 uint32_t	vec_to_color(t_vec color)
@@ -28,9 +28,9 @@ uint32_t	vec_to_color(t_vec color)
 	uint8_t	g;
 	uint8_t	b;
 
-	r = clamp(round(color.x * 255));
-	g = clamp(round(color.y * 255));
-	b = clamp(round(color.z * 255));
+	r = clamp(color.x * 255);
+	g = clamp(color.y * 255);
+	b = clamp(color.z * 255);
 	return (r << 24 | g << 16 | b << 8 | 255);
 }
 
