@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 03:45:37 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/01 23:38:15 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 	else if (keydata.key == MLX_KEY_S)
 		info->cam.direction.y -= 0.1;
 	else if (keydata.key == MLX_KEY_D)
-		rotate_y(&info->cam.direction, 0.1);  // info->cam.direction.x += 0.1;
+		rotate_y(&info->cam.direction, M_PI / 6.0);  // info->cam.direction.x += 0.1;
 	else if (keydata.key == MLX_KEY_A)
-		rotate_y(&info->cam.direction, -0.1);  // info->cam.direction.x -= 0.1;
+		rotate_y(&info->cam.direction, -M_PI / 6.0);  // info->cam.direction.x -= 0.1;
 	info->cam.direction = normalize(info->cam.direction);
-	get_viewport_rotation(info, vec3(0.0, 0.0, 1.0), info->cam.direction);
+	get_rotation_matrix(info, info->cam.direction);
 }

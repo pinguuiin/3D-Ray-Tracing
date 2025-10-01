@@ -6,14 +6,24 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 04:22:43 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/01 23:37:58 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-int	free_exit(t_info *info, char *s)
+t_info	*get_info(void)
 {
+	static t_info	info;
+
+	return (&info);
+}
+
+int	free_exit(char *s)
+{
+	t_info	*info;
+
+	info = get_info();
 	if (info->img)
 		mlx_delete_image(info->mlx, info->img);
 	if (info->mlx)
@@ -49,55 +59,56 @@ void	initialize_mlx(t_info *info)
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
-		exit(free_exit(info, "Instance initialization failed"));
+		exit(free_exit("Instance initialization failed"));
 
 	info->img = mlx_new_image(info->mlx, WIDTH, HEIGHT);
 	if (!info->img)
-		exit(free_exit(info, "Image buffer creation failed"));
+		exit(free_exit("Image buffer creation failed"));
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
-		exit(free_exit(info, "Pushing image to window failed"));
+		exit(free_exit("Pushing image to window failed"));
 }
 
 int	main(void)
 {
-	t_info		info;
+	t_info		*info;
 
-	info.amb.ratio = 0.2;
-	info.amb.color = vec3(1.0, 1.0, 1.0);
+	info = get_info();
+	info->amb.ratio = 0.2;
+	info->amb.color = vec3(1.0, 1.0, 1.0);
 
-	info.light.pos = vec3(3.0, 4.0, 0.0);
-	info.light.ratio = 0.8;
-	info.light.color = vec3(1.0, 1.0, 1.0);
+	info->light.pos = vec3(1.0, 4.0, 0.0);
+	info->light.ratio = 0.8;
+	info->light.color = vec3(1.0, 1.0, 1.0);
 
-	info.cam.fov = 120.0 / 180.0 * M_PI;
-	info.cam.pos = vec3(0.0, 0.0, 0.0);
-	info.cam.direction = vec3(0.0, 0.0, 4.0);
-	info.cam.direction = normalize(info.cam.direction);
-	get_viewport_rotation(&info, vec3(0.0, 0.0, 1.0), info.cam.direction);
+	info->cam.fov = 120.0 / 180.0 * M_PI;
+	info->cam.pos = vec3(0.0, 0.0, 0.0);
+	info->cam.direction = vec3(0.0, 0.0, 4.0);
+	info->cam.direction = normalize(info->cam.direction);
+	get_rotation_matrix(info, info->cam.direction);
 
-	info.obj = malloc(2 * sizeof(t_object));
-	info.obj[0].type = SPHERE;
-	info.obj[0].pos = vec3(0.0, 0.0, 10.0);
-	info.obj[0].oc = subtract(info.cam.pos, info.obj[0].pos);
-	info.obj[0].r = 3.0;
-	info.obj[0].color = vec3(0.0, 1.0, 0.0);
+	info->obj = malloc(2 * sizeof(t_object));
+	info->obj[0].type = SPHERE;
+	info->obj[0].pos = vec3(0.0, 0.0, 10.0);
+	info->obj[0].oc = subtract(info->cam.pos, info->obj[0].pos);
+	info->obj[0].r = 3.0;
+	info->obj[0].color = vec3(0.0, 1.0, 0.0);
 
-	info.obj[1].type = PLANE;
-	info.obj[1].pos = vec3(0.0, -3.0, 30.0);
-	info.obj[1].oc = subtract(info.cam.pos, info.obj[1].pos);
-	info.obj[1].normal = normalize(vec3(0.0, 10.0, 0.0));
-	info.obj[1].color = vec3(1.0, 1.0, 1.0);
-	info.obj_id = 1;
+	info->obj[1].type = PLANE;
+	info->obj[1].pos = vec3(0.0, -2.0, 30.0);
+	info->obj[1].oc = subtract(info->cam.pos, info->obj[1].pos);
+	info->obj[1].normal = normalize(vec3(0.0, 10.0, 0.0));
+	info->obj[1].color = vec3(1.0, 1.0, 1.0);
+	info->obj_id = 1;
 
-	info.focal_length = 1.0;
-	info.viewport_width = tan(info.cam.fov / 2.0) * 2 * info.focal_length;
-	info.viewport_height = info.viewport_width * (double)HEIGHT / (double)WIDTH;
-	info.px = info.viewport_width / (double)WIDTH;
+	info->focal_length = 1.0;
+	info->viewport_width = tan(info->cam.fov / 2.0) * 2 * info->focal_length;
+	info->viewport_height = info->viewport_width * (double)HEIGHT / (double)WIDTH;
+	info->px = info->viewport_width / (double)WIDTH;
 
-	initialize_mlx(&info);
-	mlx_key_hook(info.mlx, &key_handler, &info);
-	mlx_loop_hook(info.mlx, draw, &info);
-	mlx_loop(info.mlx);
-	free_exit(&info, NULL);
+	initialize_mlx(info);
+	mlx_key_hook(info->mlx, &key_handler, info);
+	mlx_loop_hook(info->mlx, draw, info);
+	mlx_loop(info->mlx);
+	free_exit(NULL);
 	return (0);
 }

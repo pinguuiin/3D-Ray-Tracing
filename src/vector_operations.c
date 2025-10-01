@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 22:15:24 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/27 22:22:28 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/01 23:06:27 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ t_vec	normalize(t_vec a)
 	double	len;
 
 	len = norm(a);
-	if (len < 1e-8)
-		return (vec3(0.0, 0.0, 0.0));
+	if (len < EPSILON)
+		free_exit("Point couldn't be normalized");
 	return (scale(a, 1.0 / len));
 }
 
@@ -79,22 +79,22 @@ t_vec	cross(t_vec a, t_vec b)
 {
 	t_vec	v;
 
-	v.x = a.y * b.z - a.z * b.y;
-	v.y = a.z * b.x - a.x * b.z;
-	v.z = a.x * b.y - a.y * b.x;
+	v.x = -(a.y * b.z - a.z * b.y);
+	v.y = -(a.z * b.x - a.x * b.z);
+	v.z = -(a.x * b.y - a.y * b.x);
 	return (v);
 }
 
-t_vec	divide(t_vec a, t_vec b)
-{
-	t_vec	v;
+// t_vec	divide(t_vec a, t_vec b)
+// {
+// 	t_vec	v;
 
-	// need extra action when divided by 0
-	v.x = a.x / b.x;
-	v.y = a.y / b.y;
-	v.z = a.z / b.z;
-	return (v);
-}
+// 	// need extra action when divided by 0
+// 	v.x = a.x / b.x;
+// 	v.y = a.y / b.y;
+// 	v.z = a.z / b.z;
+// 	return (v);
+// }
 
 t_vec	dot_elem(t_vec a, t_vec b)
 {

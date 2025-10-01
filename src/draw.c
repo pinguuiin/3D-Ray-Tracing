@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 04:02:28 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/01 23:51:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,21 +27,16 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 	if (obj->type == SPHERE)
 		hit.normal = normalize(subtract(hit.pos, obj->pos));
 	else if (obj->type == PLANE)
-	{
-		if (dot(hit.ray, obj->normal) >= 0)
-			hit.normal = obj->normal;
-		else
-			hit.normal = scale(obj->normal, -1);
-	}
+		hit.normal = obj->normal;
 	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
 	hit.intensity = vec3(0.0, 0.0, 0.0);
 	dot1 = dot(hit.incoming, hit.normal);
-	if (dot1 > 1e-8)
+	if (dot1 > EPSILON)
 	{
 		hit.diffuse = scale(dot_elem(info->light.color, obj->color), info->light.ratio * KD * dot1);
 		hit.intensity = add(hit.intensity, hit.diffuse);
 		dot2 = dot(hit.outgoing, hit.ray);
-		if (dot2 > 1e-8)
+		if (dot2 > EPSILON)
 		{
 			hit.specular = scale(info->light.color, info->light.ratio * KS * pow(dot2, SHININESS));
 			hit.intensity = add(hit.intensity, hit.specular);
@@ -77,7 +72,7 @@ void	draw_plane(t_info *info, t_vec ray, int x, int y)
 	f.a = dot(plane->oc, plane->normal);
 	f.b = dot(ray, plane->normal);
 	color = scale(info->amb.color, info->amb.ratio);
-	if (f.b > 1e-8 || f.b < -1e-8)  // hit
+	if (fabs(f.b) > EPSILON)  // hit
 		color = add(color, reflection(info, plane, ray, -(f.a / f.b)));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 
@@ -108,7 +103,7 @@ void	draw(void *param)
 		{
 			ray = vec3(x * info->px - info->viewport_width / 2.0,
 			-(y * info->px - info->viewport_height / 2.0), 0);
-			rotate(&ray, info->viewport_rot);
+			rotate(info->rot, &ray);
 			ray = add(info->cam.direction, ray);
 			draw_pixel(info, ray, x, y);
 			y++;
