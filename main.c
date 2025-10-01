@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/01 16:04:54 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/01 16:11:14 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	main(void)
 {
 	t_info	info;
 
-	// TODO: initialize info struct!
+	// TODO: initialize info struct! At least the parsing elements.
 
 
 
