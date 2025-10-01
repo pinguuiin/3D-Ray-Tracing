@@ -73,7 +73,11 @@ static int	parse_line(t_info *info, char *line)
 	while (isspace_but_not_newline(*line))
 		line++;
 	if (*line == 'A')
-		parse_ambient_lighting(info, line);
+		parse_ambient_lighting(&info->amb, line);
+	else if (*line == 'C')
+		parse_camera(&info->cam, line);
+	else if (*line == 'L')
+		parser_light(&info->light, line);
 
 
 
