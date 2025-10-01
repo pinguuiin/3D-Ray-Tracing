@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/01 23:37:58 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 01:08:50 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	main(void)
 
 	info = get_info();
 	info->amb.ratio = 0.2;
-	info->amb.color = vec3(1.0, 1.0, 1.0);
+	info->amb.color = vec3(1.0, 0.9, 0.9);
 
 	info->light.pos = vec3(1.0, 4.0, 0.0);
 	info->light.ratio = 0.8;
@@ -96,7 +96,7 @@ int	main(void)
 	info->obj[1].type = PLANE;
 	info->obj[1].pos = vec3(0.0, -2.0, 30.0);
 	info->obj[1].oc = subtract(info->cam.pos, info->obj[1].pos);
-	info->obj[1].normal = normalize(vec3(0.0, 10.0, 0.0));
+	info->obj[1].normal = normalize(vec3(0.0, -10.0, 0.0));
 	info->obj[1].color = vec3(1.0, 1.0, 1.0);
 	info->obj_id = 1;
 

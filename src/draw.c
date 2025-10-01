@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/01 23:51:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 01:04:55 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 	double	dot1;
 	double	dot2;
 
-	if (k <= 0)  // hit point on the back of the camera
-		return (vec3(0.0, 0.0, 0.0));
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
 	hit.ray = normalize(scale(ray, -1));
@@ -56,9 +54,14 @@ void	draw_sphere(t_info *info, t_vec ray, int x, int y)
 	f.b = 2 * dot(ray, sphere->oc);
 	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
+	f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
+	if (f.delta < EPSILON || f.root < EPSILON) // not hit or hit point behind camera (now including inside)
+	{
+		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		return ;
+	}
 	color = scale(info->amb.color, info->amb.ratio);
-	if (f.delta >= 0) // hit
-		color = add(color, reflection(info, sphere, ray, (- f.b - sqrt(f.delta)) / (2 * f.a))); //now ambient also inside object
+	color = add(color, reflection(info, sphere, ray, f.root));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
@@ -71,9 +74,14 @@ void	draw_plane(t_info *info, t_vec ray, int x, int y)
 	plane = &info->obj[info->obj_id];
 	f.a = dot(plane->oc, plane->normal);
 	f.b = dot(ray, plane->normal);
+	f.root = -(f.a / f.b);
+	if (fabs(f.b) < EPSILON || f.root < EPSILON) // not hit or hit point behind camera (now including inside)
+	{
+		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		return ;
+	}
 	color = scale(info->amb.color, info->amb.ratio);
-	if (fabs(f.b) > EPSILON)  // hit
-		color = add(color, reflection(info, plane, ray, -(f.a / f.b)));
+	color = add(color, reflection(info, plane, ray, f.root));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 
 }
