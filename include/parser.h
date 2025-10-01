@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 19:12:54 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/09/22 19:13:40 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/09/30 18:26:45 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 
 # include <fcntl.h>		// open(), close()
 
-int	minirt_get_next_line(int fd, char **output);
+void	parse_ambient_lighting(t_info *info, char *line);
 
 #endif

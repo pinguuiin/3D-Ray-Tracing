@@ -41,6 +41,10 @@ int	process_buffer(char **line, char *buffer, size_t *i)
 	return (0);
 }
 
+// WARN: possible memory leak issue: if 'ending' malloc() fails, 'beginning'
+// is NOT being freed!
+// If it's indeed a problem, you should check your own submitted get_next_line()
+// and bonus as well!!!
 char	*update_line(char *line, char *buffer, size_t *i)
 {
 	char	*beginning;
@@ -58,7 +62,11 @@ char	*update_line(char *line, char *buffer, size_t *i)
 	}
 	ending = (char *)malloc(sizeof(char) * ((*i) + 1));
 	if (!ending)
-		return (NULL);
+	{
+		if (beginning)
+			free(beginning);
+		return (NULL); // TODO: check if free(beginning); is actually necessary, using Valgrind.
+	}
 	ft_memmove_mod(ending, buffer, *i);
 	ending[*i] = '\0';
 	line = ft_strjoin_mod(beginning, ending);

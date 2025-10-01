@@ -10,18 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// WARN: get_next_line() does not let you to differentiate between failures:
-// malloc() failure, read() failure, negative fd, if BUFFER_SIZE is defined to
-// 0 or is unreasonably large, or EOF has beeen reached ---> all those return
-// NULL from get_next_line().
-// I find that rather ridiculous. I'd like to pass another pointer to get_next_line(),
-// which would serve as a flag for the failures that should trigger a cleanup
-// and exit.... But then, get_next_line() would not fit the prototype that was
-// required by the original subject - is that okay?
-// TODO: make a set_exit_code() function like in minishell?
+#include "minirt.h"
 
-static void	handle_gnl_error(t_info *info, int gnl_flag);
+static void	handle_gnl_error_and_exit(t_info *info, int gnl_flag);
 static int	parse_line(t_info *info, char *line);
+static int	isspace_but_not_newline(int c);
 
 void	parse_scene(t_info *info, char *file_name)
 {
@@ -34,18 +27,13 @@ void	parse_scene(t_info *info, char *file_name)
 	line_num = 1;
 	gnl_flag = 0;
 
-// FIXME: should we accept an input argument which contains the filename but
-// also whitespace / extra characters further down the line?
-
-// FIXME: SET STRINGS MANUALLY, FINALLY, don't use strerror()!!!
-// and control the exit values using gnl_flag.
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
-		free_exit(info, "File opening failed");
+		free_exit(info, "Failed to open input file. Aborting program");
 	while (!gnl_flag)
 	{
-		gnl_flag = minirt_get_next_line(fd, &line);
-		if (line)
+		gnl_flag = get_next_line_minirt(fd, &line);
+		if (!gnl_flag && line)
 		{
 			parse_line(info, line);
 			free(line);
@@ -54,8 +42,7 @@ void	parse_scene(t_info *info, char *file_name)
 		}
 	}
 	if (gnl_flag)
-		handle_gnl_error(info, gnl_flag);
-		// free_exit(info, strerror(errno)); // deprecated
+		handle_gnl_error_and_exit(info, gnl_flag);
 
 
 	// TODO: consider allowing comments in the .rt scene text file:
@@ -70,31 +57,34 @@ void	parse_scene(t_info *info, char *file_name)
 }
 
 
-static void	handle_gnl_error(t_info *info, int gnl_flag)
+static void	handle_gnl_error_and_exit(t_info *info, int gnl_flag)
 {
-	if (gnl_flag == 1)
-		// free_exit(info, "something "); // TODO: 
-	if (gnl_flag == 2)
-		// free_exit(info, "something "); // TODO: 
-	if (gnl_flag == 3)
-		// free_exit(info, "something "); // TODO: 
-	if (gnl_flag == 4)
-		// free_exit(info, "something "); // TODO: 
-	if (gnl_flag == 5)
-		// free_exit(info, "something "); // TODO: 
-
+	if (gnl_flag == -1)
+		free_exit(info, "Dynamic memory allocation request has failed.");
+	if (gnl_flag == -2)
+		free_exit(info, "System call failed; Unable to read input file data");
+	if (gnl_flag == -3)
+		free_exit(info, "Failed to process input file; buffer size is empty");
 }
 
 // NOTE: free the line from here when an invalid input is found!
-// NOTE: Do I need a double pointer? probably not, as I free only if there is an
-// invalid input and then we exit the program anyways.
 static int	parse_line(t_info *info, char *line)
 {
+	while (isspace_but_not_newline(*line))
+		line++;
+	if (*line == 'A')
+		parse_ambient_lighting(info, line);
 
 
 
 
 
 
+}
 
+static int	isspace_but_not_newline(int c)
+{
+	if (c == ' ' || c == '\t' || (c >= '\v' && c <= '\r'))
+		return (1);
+	return (0);
 }

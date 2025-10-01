@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_minirt.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 21:19:02 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/01/15 13:40:53 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/09/30 18:28:49 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 		read_and_manage_output().
 */
 
-// TODO: observe output - line
-//
-// WARN: remember to free(line) in minirt_get_next_line() and its helper
-// functions whenever there is a failure and you return an error!!!
-// TODO: return different values!
-int	minirt_get_next_line(int fd, char **output)
+// Return values:
+//  0: success; next line is ready
+// -1: malloc() failure
+// -2: read() failure
+// -3: BUFFER_SIZE is 0 (defaults to 1024 in get_next_line's header)
+int	get_next_line_minirt(int fd, char **output)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	int			line_status;
@@ -39,29 +39,33 @@ int	minirt_get_next_line(int fd, char **output)
 	char		*line;
 
 	line = NULL;
-	if (!BUFFER_SIZE) // here there is no need to free the line, it should always be NULL at the beginning of this function
-		return (1);
+	if (!BUFFER_SIZE)
+		return (-3);
 	line_status = 0;
 	i = 0;
 	if (buffer[i])
 	{
 		line_status = process_buffer(&line, buffer, &i);
-		if (line_status == -1) // malloc has failed. no need to free the line.
-			return (1);
+		if (line_status == -1) // no worries here: line is always NULL before the line above this one, no need to free it.
+			return (-1);
+		if (line_status == 1) // next line is ready: OK to return
+		{
+			*output = line;
+			return (0);
 		}
-		if (line_status == 1 || line_status == -1)
-			return (line);
 		line = review_line_and_clean_buffer(line, buffer, &i);
 		if (!line)
-			return (NULL);
+			return (2);
 	}
-	if (read_and_manage_output(fd, buffer, &line) < 0)
+	line_status = read_and_manage_output(fd, buffer, &line)
+	if (line_status < 0)
 	{
 		free(line);
 		line = NULL;
+		return (line_status);
 	}
 	*output = line;
-	return (line); // WARN: return int instead
+	return (0);
 }
 
 static char	*review_line_and_clean_buffer(char *line, char *buffer, size_t *i)

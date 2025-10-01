@@ -34,6 +34,8 @@
 
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"
+# include "parser.h"
+# include "get_next_line_minirt.h"
 # include "vector.h"
 # include "hit.h"
 # include <stdlib.h>

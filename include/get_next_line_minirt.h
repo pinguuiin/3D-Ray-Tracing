@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_minirt.h                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 11:32:35 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/01/15 16:00:00 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/09/30 18:28:48 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_MINIRT_H
+# define GET_NEXT_LINE_MINIRT_H
 
 /*
 * NOTE: We define buffer size if it hasn't been defined when compiling.
@@ -48,7 +48,7 @@
 * if they want to avoid memory leaks.
 */
 
-char	*get_next_line(int fd);
+int		get_next_line_minirt(int fd, char **output);
 int		process_buffer(char **line, char *buffer, size_t *i);
 char	*update_line(char *line, char *buffer, size_t *i);
 void	*ft_memmove_mod(void *dest, const void *src, size_t n);
