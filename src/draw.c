@@ -6,12 +6,19 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 01:04:55 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 05:28:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
+/* Implement Phong reflection model:
+Diffuse = Kd (incoming light · object normal)
+=> Diffuse term is counted when its dot product is greater than 0
+Specular = Ks (Reflected ray · ray to camera) ^ Shininess
+=> Specular term is counted when both terms' dot products greater than 0;
+Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
+*/
 t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 {
 	t_hit	hit;

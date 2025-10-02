@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 00:08:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 05:33:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ double	get_angle_between_vectors(double x1, double y1, double x2, double y2)
 // 	printf("cross: %f\n\n", cross(vec3(v1.x, 0, v1.z), vec3(v2.x, 0, v2.z)).y);
 // }
 
-/* For left-handed coordinate system (forward is +Z), Rot = [s u f]
+/* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
 new up (u) is the unit vector of r x f */
 void	get_rotation_matrix(t_info *info, t_vec v)
@@ -78,14 +78,9 @@ void	get_rotation_matrix(t_info *info, t_vec v)
 	t_vec	r;
 	t_vec	u;
 
-	// #include <stdio.h>
-	// printf("before rotate: %f\n", norm(v));
-	// printf("ray dir: %f %f %f\n", vec->x, vec->y, vec->z);
-
-
 	up = vec3(0, 1, 0);
 	f = normalize(v);
-	// Avoid zero vector when f and up are on the same or opposite direction
+	// Avoid zero vector when f and up are on the same or opposite directions
 	if (fabs(dot(f, up)) > 1 - EPSILON)
 		up = vec3(0, 0, -1);
 	r = normalize(cross(f, up));
@@ -104,9 +99,6 @@ void	get_rotation_matrix(t_info *info, t_vec v)
 	info->rot[0][2] = f.x;
 	info->rot[1][2] = f.y;
 	info->rot[2][2] = f.z;
-
-	// rotate(info->rot, &v);
-	// printf("after rotate: %f\n\n", norm(v));
 }
 
 void	rotate(double rot[3][3], t_vec *v1)

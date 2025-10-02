@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:46:28 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/01 22:16:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 05:05:41 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ t_vec	cross(t_vec a, t_vec b);
 // t_vec	divide(t_vec a, t_vec b);
 t_vec	dot_elem(t_vec a, t_vec b);
 
-void	rotate_x(t_vec *vec, double theta);
+// void	rotate_x(t_vec *vec, double theta);
 void	rotate_y(t_vec *vec, double theta);
-void	rotate_z(t_vec *vec, double theta);
+// void	rotate_z(t_vec *vec, double theta);
 
 #endif
