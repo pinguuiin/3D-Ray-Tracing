@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 00:57:14 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 04:32:54 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ typedef struct s_object
 
 }	t_object;
 
-/* Coefficient a, b, c and discriminant delta for the quadratic equation */
+/* Coefficient a, b and c, discriminant (delta) and root of the function for hit detection */
 typedef struct s_discrim
 {
 	double	a;
