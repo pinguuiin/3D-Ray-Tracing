@@ -6,20 +6,25 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 04:02:28 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 05:28:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
+/* Implement Phong reflection model:
+Diffuse = Kd (incoming light · object normal)
+=> Diffuse term is counted when its dot product is greater than 0
+Specular = Ks (Reflected ray · ray to camera) ^ Shininess
+=> Specular term is counted when both terms' dot products greater than 0;
+Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
+*/
 t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 {
 	t_hit	hit;
 	double	dot1;
 	double	dot2;
 
-	if (k <= 0)  // hit point on the back of the camera
-		return (vec3(0.0, 0.0, 0.0));
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
 	hit.ray = normalize(scale(ray, -1));
@@ -27,21 +32,16 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 	if (obj->type == SPHERE)
 		hit.normal = normalize(subtract(hit.pos, obj->pos));
 	else if (obj->type == PLANE)
-	{
-		if (dot(hit.ray, obj->normal) >= 0)
-			hit.normal = obj->normal;
-		else
-			hit.normal = scale(obj->normal, -1);
-	}
+		hit.normal = obj->normal;
 	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
 	hit.intensity = vec3(0.0, 0.0, 0.0);
 	dot1 = dot(hit.incoming, hit.normal);
-	if (dot1 > 1e-8)
+	if (dot1 > EPSILON)
 	{
 		hit.diffuse = scale(dot_elem(info->light.color, obj->color), info->light.ratio * KD * dot1);
 		hit.intensity = add(hit.intensity, hit.diffuse);
 		dot2 = dot(hit.outgoing, hit.ray);
-		if (dot2 > 1e-8)
+		if (dot2 > EPSILON)
 		{
 			hit.specular = scale(info->light.color, info->light.ratio * KS * pow(dot2, SHININESS));
 			hit.intensity = add(hit.intensity, hit.specular);
@@ -61,9 +61,14 @@ void	draw_sphere(t_info *info, t_vec ray, int x, int y)
 	f.b = 2 * dot(ray, sphere->oc);
 	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
+	f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
+	if (f.delta < EPSILON || f.root < EPSILON) // not hit or hit point behind camera (now including inside)
+	{
+		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		return ;
+	}
 	color = scale(info->amb.color, info->amb.ratio);
-	if (f.delta >= 0) // hit
-		color = add(color, reflection(info, sphere, ray, (- f.b - sqrt(f.delta)) / (2 * f.a))); //now ambient also inside object
+	color = add(color, reflection(info, sphere, ray, f.root));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
@@ -76,9 +81,14 @@ void	draw_plane(t_info *info, t_vec ray, int x, int y)
 	plane = &info->obj[info->obj_id];
 	f.a = dot(plane->oc, plane->normal);
 	f.b = dot(ray, plane->normal);
+	f.root = -(f.a / f.b);
+	if (fabs(f.b) < EPSILON || f.root < EPSILON) // not hit or hit point behind camera (now including inside)
+	{
+		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		return ;
+	}
 	color = scale(info->amb.color, info->amb.ratio);
-	if (f.b > 1e-8 || f.b < -1e-8)  // hit
-		color = add(color, reflection(info, plane, ray, -(f.a / f.b)));
+	color = add(color, reflection(info, plane, ray, f.root));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 
 }
@@ -108,7 +118,7 @@ void	draw(void *param)
 		{
 			ray = vec3(x * info->px - info->viewport_width / 2.0,
 			-(y * info->px - info->viewport_height / 2.0), 0);
-			rotate(&ray, info->viewport_rot);
+			rotate(info->rot, &ray);
 			ray = add(info->cam.direction, ray);
 			draw_pixel(info, ray, x, y);
 			y++;

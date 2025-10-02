@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/09/28 04:23:16 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/02 04:32:54 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,14 @@
 # ifndef HEIGHT
 #  define HEIGHT 1000
 # endif
+# ifndef EPSILON
+#  define EPSILON 1e-8
+# endif
 # ifndef KS
-#  define KS 0.4
+#  define KS 0.5
 # endif
 # ifndef KD
-#  define KD 0.4
+#  define KD 0.5
 # endif
 # ifndef SHININESS
 #  define SHININESS 30
@@ -90,13 +93,14 @@ typedef struct s_object
 
 }	t_object;
 
-/* Coefficient a, b, c and discriminant delta for the quadratic equation */
+/* Coefficient a, b and c, discriminant (delta) and root of the function for hit detection */
 typedef struct s_discrim
 {
 	double	a;
 	double	b;
 	double	c;
 	double	delta;
+	double	root;
 
 }	t_discrim;
 
@@ -121,7 +125,7 @@ typedef struct s_info
 	double		focal_length;
 	double		viewport_width;
 	double		viewport_height;
-	double		viewport_rot[3];
+	double		rot[3][3];
 	double		px;
 	t_cam		cam;
 	t_ambient	amb;
@@ -132,12 +136,15 @@ typedef struct s_info
 
 }	t_info;
 
+t_info		*get_info(void);
+int			free_exit(char *s);
+
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 t_vec		color_to_vec(int r, int g, int b);
 
-void		get_viewport_rotation(t_info *info, t_vec v1, t_vec v2);
-void		rotate(t_vec *vec, double *theta);
+void		get_rotation_matrix(t_info *info, t_vec v);
+void		rotate(double rot[3][3], t_vec *v1);
 
 void		draw(void *param);
 
