@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/03 22:51:55 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/04 00:30:51 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ typedef struct s_discrim
 	double	b;
 	double	c;
 	double	delta;
-	// double	root;
+	double	root;
 
 }	t_discrim;
 

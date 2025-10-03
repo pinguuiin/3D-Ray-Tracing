@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/03 23:52:57 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/04 01:51:20 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,21 @@ double	ray_hit_sphere(t_info *info, t_vec ray)
 	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
 	if (f.delta >= EPSILON) // delta = 0, ray is tangent to the sphere, hit; root = 0, camera on the sphere, ray hit
-		return ((- f.b - sqrt(f.delta)) / (2 * f.a));
+	{
+		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
+		if (f.root >= EPSILON)
+			return (f.root);
+		// else inside the sphere or sphere behind camera
+	}
 	return (-1.0);
 }
 
+/*
+root = -(f.a / f.b)
+f.a = 0, camera on the plane, ray hit, k=0;
+f.a != 0, f.b = 0, ray parallel to the plane, not hit
+f.a != 0, f.b != 0, root > 0, ray hit
+*/
 double	ray_hit_plane(t_info *info, t_vec ray)
 {
 	t_object	*plane;
@@ -73,9 +84,14 @@ double	ray_hit_plane(t_info *info, t_vec ray)
 	plane = &info->obj[info->obj_id];
 	f.a = dot(plane->oc, plane->normal);
 	f.b = dot(ray, plane->normal);
-	f.delta = fabs(f.b);
-	if (f.delta > EPSILON) // delta = 0, ray parallel to the plane, not hit; root = 0, camera on the plane, ray hit
-		return (-(f.a / f.b));
+	if (fabs(f.a) < EPSILON)
+		return (0.0);
+	if (fabs(f.b) > EPSILON)
+	{
+		f.root = -(f.a / f.b);
+		if (f.root > EPSILON)
+			return (f.root);
+	}
 	return (-1.0);
 }
 
@@ -85,19 +101,19 @@ double	nearest_ray_hit(t_info *info, t_vec ray)
 	double	k_min;
 	int		nearest_id;
 
-	k = -1;
-	k_min = -1;
+	k = -1.0;
+	k_min = -1.0;
 	nearest_id = 0;
 	info->obj_id = 0;
 	while (info->obj_id < info->num)
 	{
-		if (info->obj[info->obj_id].type == PLANE)
-		// 	k = ray_hit_sphere(info, ray);
-		// else
+		if (info->obj[info->obj_id].type == SPHERE)
+			k = ray_hit_sphere(info, ray);
+		else
 			k = ray_hit_plane(info, ray);
-		if (k > 0.0)
+		if (k >= 0.0)
 		{
-			if (info->obj_id == 1 || k < k_min)
+			if (k_min < -EPSILON || k < k_min)
 			{
 				k_min = k;
 				nearest_id = info->obj_id;
