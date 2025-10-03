@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 22:15:24 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/01 23:06:27 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/03 22:30:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_vec	normalize(t_vec a)
 
 	len = norm(a);
 	if (len < EPSILON)
-		free_exit("Point couldn't be normalized");
+		return (vec3(0.0, 0.0, 0.0)); //free_exit("Point couldn't be normalized");
 	return (scale(a, 1.0 / len));
 }
 

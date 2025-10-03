@@ -29,7 +29,7 @@ OBJ_DIR = ./obj
 
 SRC_FILES = test.c \
 			color.c \
-			draw.c \
+			renderer.c \
 			hooks.c \
 			rotation.c \
 			vector_operations.c

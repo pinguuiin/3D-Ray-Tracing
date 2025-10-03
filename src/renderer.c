@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw.c                                             :+:      :+:    :+:   */
+/*   renderer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 05:28:16 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/03 23:52:57 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,58 +50,82 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 	return (hit.intensity);
 }
 
-void	draw_sphere(t_info *info, t_vec ray, int x, int y)
+double	ray_hit_sphere(t_info *info, t_vec ray)
 {
 	t_object	*sphere;
 	t_discrim	f;
-	t_vec		color;
 
 	sphere = &info->obj[info->obj_id];
 	f.a = dot(ray, ray);
 	f.b = 2 * dot(ray, sphere->oc);
 	f.c = dot(sphere->oc, sphere->oc) - sphere->r * sphere->r;
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
-	f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
-	if (f.delta < EPSILON || f.root < EPSILON) // not hit or hit point behind camera (now including inside)
-	{
-		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
-		return ;
-	}
-	color = scale(info->amb.color, info->amb.ratio);
-	color = add(color, reflection(info, sphere, ray, f.root));
-	mlx_put_pixel(info->img, x, y, vec_to_color(color));
+	if (f.delta >= EPSILON) // delta = 0, ray is tangent to the sphere, hit; root = 0, camera on the sphere, ray hit
+		return ((- f.b - sqrt(f.delta)) / (2 * f.a));
+	return (-1.0);
 }
 
-void	draw_plane(t_info *info, t_vec ray, int x, int y)
+double	ray_hit_plane(t_info *info, t_vec ray)
 {
 	t_object	*plane;
 	t_discrim	f;
-	t_vec		color;
 
 	plane = &info->obj[info->obj_id];
 	f.a = dot(plane->oc, plane->normal);
 	f.b = dot(ray, plane->normal);
-	f.root = -(f.a / f.b);
-	if (fabs(f.b) < EPSILON || f.root < EPSILON) // not hit or hit point behind camera (now including inside)
+	f.delta = fabs(f.b);
+	if (f.delta > EPSILON) // delta = 0, ray parallel to the plane, not hit; root = 0, camera on the plane, ray hit
+		return (-(f.a / f.b));
+	return (-1.0);
+}
+
+double	nearest_ray_hit(t_info *info, t_vec ray)
+{
+	double	k;
+	double	k_min;
+	int		nearest_id;
+
+	k = -1;
+	k_min = -1;
+	nearest_id = 0;
+	info->obj_id = 0;
+	while (info->obj_id < info->num)
+	{
+		if (info->obj[info->obj_id].type == PLANE)
+		// 	k = ray_hit_sphere(info, ray);
+		// else
+			k = ray_hit_plane(info, ray);
+		if (k > 0.0)
+		{
+			if (info->obj_id == 1 || k < k_min)
+			{
+				k_min = k;
+				nearest_id = info->obj_id;
+			}
+		}
+		info->obj_id++;
+	}
+	info->obj_id = nearest_id;
+	return (k_min);
+}
+
+void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+{
+	double	k;
+	t_vec	color;
+
+	k = nearest_ray_hit(info, ray);
+	if (k == -1)
 	{
 		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
 		return ;
 	}
 	color = scale(info->amb.color, info->amb.ratio);
-	color = add(color, reflection(info, plane, ray, f.root));
+	color = add(color, reflection(info, &info->obj[info->obj_id], ray, k));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
-
 }
 
-void	draw_pixel(t_info *info, t_vec ray, int x, int y)
-{
-	if (info->obj[info->obj_id].type == SPHERE)
-		draw_sphere(info, ray, x, y);
-	else
-		draw_plane(info, ray, x, y);
-}
-
-void	draw(void *param)
+void	renderer(void *param)
 {
 	t_info		*info;
 	int			x;

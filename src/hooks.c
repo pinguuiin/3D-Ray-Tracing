@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 05:41:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/03 23:45:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ void	move_camera(mlx_key_data_t keydata, t_info *info)
 	else if (keydata.key == MLX_KEY_DOWN)
 		info->cam.pos.y -= 1;
 	else if (keydata.key == MLX_KEY_Q)
-		info->cam.pos.z += 5;
+		info->cam.pos.z += 1;
 	else if (keydata.key == MLX_KEY_Z)
-		info->cam.pos.z -= 5;
+		info->cam.pos.z -= 1;
 	info->obj[info->obj_id].oc = subtract(info->cam.pos, info->obj[info->obj_id].pos);
 	if (info->obj[info->obj_id].type == PLANE &&
 		dot(info->obj[info->obj_id].normal, info->obj[info->obj_id].oc) < 0)
-		info->obj[1].normal = scale(info->obj[1].normal, -1);
+		info->obj[info->obj_id].normal = scale(info->obj[info->obj_id].normal, -1);
 
 }
 
