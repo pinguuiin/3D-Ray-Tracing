@@ -40,15 +40,12 @@ void	clean_up_parsing_memory(t_info *info)
 		mlx_terminate(info->mlx);
 }
 
-// WARN: checkt that this is good!
+// WARN: check that this is working!
 void	display_parsing_error(const char *msg, uint32_t line_num)
 {
-	ft_putendl_fd("Error", 2);
-	ft_putstr_fd(msg, 2);
-	// FIXME: replace with put_pos_nbr_endl_fd
+	write(2, "Error\n", 6);
+	ft_putstr_fd(msg, 2);% 
 	put_space_positive_nbr_endl_fd(line_num, 2);
-	ft_putnbr_fd(line_num, 2); // check how to handle putnbr error!!
-	write(2, "\n", 1);
 }
 
 /*
@@ -57,12 +54,12 @@ void	display_parsing_error(const char *msg, uint32_t line_num)
 * - one newline character as suffix.
 * That number should only be a non-negative value!
 */
-// FIXME: write this function!
 static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
 {
 	uint64_t	x;
 	int			len;
 	int			temp_len;
+	char		str[11];	// max length for UINT_MAX is 10 digits.
 
 	// only non-negative numbers shall be passed to this function,
 	// so there is no need to check for overflow of the negative value
@@ -70,22 +67,26 @@ static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
 	// NOTE: this is just a draft, not yet sure about this right now.
 	x = 10;
 	len = 1;
+
+	// calculate number of digits ('len')
 	while (x <= n)
 	{
 		len++;
 		x =* 10;
 	}
-
 	temp_len = len;
+
+	// store the digits conversion into the string 'str',
+	// from the last digit to the first.
 	while (temp_len)
 	{
-
+		str[temp_len - 1] = n % 10 + '0';
+		n =/ 10;
 		temp_len--;
 	}
 
- 
-	write(fd, " .....\n", len + 1); // TODO: replace ..... with number in string format.
-	// TODO: does write allow to combine the prefix ' ' and the suffix '\n' around
-	// the number string, in the same call?? probably not..
-
+	// put: a space -> the converted string -> a newline charactaer
+	write(fd, " ", 1);
+	write(fd, str, len);
+	write(fd, "\n", 1);
 }

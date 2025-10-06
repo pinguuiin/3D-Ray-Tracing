@@ -39,7 +39,8 @@ void	parse_scene(t_info *info, char *file_name)
 				parse_line(info, line, line_num);
 				free(line);
 				line = NULL;
-				if (line_num < UINT_MAX) // just to avoid potential segfault...
+				// WARN: is UINT_MAX compatible with uint32_t (line_num)?
+				if (line_num < UINT_MAX) // just to avoid a 'potential' segfault
 					line_num++;
 			}
 			else	// file has been fully read.
