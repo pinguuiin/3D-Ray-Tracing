@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd);
+static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 
 void	handle_gnl_error_and_exit(t_info *info, int gnl_flag)
 {
@@ -40,12 +40,12 @@ void	clean_up_parsing_memory(t_info *info)
 		mlx_terminate(info->mlx);
 }
 
-// WARN: check that this is working!
 void	display_parsing_error(const char *msg, uint32_t line_num)
 {
 	write(2, "Error\n", 6);
-	ft_putstr_fd(msg, 2);% 
-	put_space_positive_nbr_endl_fd(line_num, 2);
+	ft_putstr_fd(msg, 2);
+	write(fd, " ", 1);
+	put_pos_nbr_endl_fd(line_num, 2);
 }
 
 /*
@@ -54,7 +54,7 @@ void	display_parsing_error(const char *msg, uint32_t line_num)
 * - one newline character as suffix.
 * That number should only be a non-negative value!
 */
-static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
+static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 {
 	uint64_t	x;
 	int			len;
@@ -64,7 +64,6 @@ static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
 	// only non-negative numbers shall be passed to this function,
 	// so there is no need to check for overflow of the negative value
 
-	// NOTE: this is just a draft, not yet sure about this right now.
 	x = 10;
 	len = 1;
 
@@ -85,8 +84,7 @@ static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
 		temp_len--;
 	}
 
-	// put: a space -> the converted string -> a newline charactaer
-	write(fd, " ", 1);
+	// put: the converted string -> a newline charactaer
 	write(fd, str, len);
 	write(fd, "\n", 1);
 }
