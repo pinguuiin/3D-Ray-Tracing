@@ -6,22 +6,20 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 21:47:12 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/09/21 21:47:53 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/06 19:56:10 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static void	handle_gnl_error_and_exit(t_info *info, int gnl_flag);
-static int	parse_line(t_info *info, char *line);
-static int	isspace_but_not_newline(int c);
+static void	parse_line(t_info *info, char *line, uint32_t line_num);
 
 void	parse_scene(t_info *info, char *file_name)
 {
-	int		fd;
-	char	*line;
-	int		line_num;
-	int		gnl_flag;
+	int			fd;
+	char		*line;
+	uint_32t	line_num; // always positive!
+	int			gnl_flag;
 
 	line = NULL;
 	line_num = 1;
@@ -33,22 +31,44 @@ void	parse_scene(t_info *info, char *file_name)
 	while (!gnl_flag)
 	{
 		gnl_flag = get_next_line_minirt(fd, &line);
+
+		if (!gnl_flag)
+		{
+			if (line)
+			{
+				parse_line(info, line, line_num);
+				free(line);
+				line = NULL;
+				if (line_num < UINT_MAX) // just to avoid potential segfault...
+					line_num++;
+			}
+			else	// file has been fully read.
+			{
+				// TODO: check here (or right after the call to this function):
+				// Do we have all the elements needed to render a scene, even though
+				// parsing might have seemed successful? Do we have a light? Do
+				// we have ambient lighting? Do we have a camera? Do we have sufficient
+				// objects (what is the minimum required - should we accept a
+				// scene with 0 objects?)
+				return ;
+			}
+		}
+
+		/*
+		// alternate version of the above:
 		if (!gnl_flag && line)
 		{
-			parse_line(info, line);
+			parse_line(info, line, line_num);
 			free(line);
 			line = NULL;
 			line_num++;
 		}
+		else if (!gnl_flag && !line) // if this check is not done ---> infinite loop once we finished reading!
+			return ;
+		*/
 	}
 	if (gnl_flag)
 		handle_gnl_error_and_exit(info, gnl_flag);
-
-
-	// TODO: consider allowing comments in the .rt scene text file:
-	// All commented lines could, for example, start with a '#' sign - and
-	// those lines would be ignored. Otherwise, the .rt file is so complicated
-	// to make sense of, but comments there would be of great help! :-)
 
 	// FIXME:
 	// once you transfer the objects list/s into into the array of all of the
@@ -56,39 +76,55 @@ void	parse_scene(t_info *info, char *file_name)
 	// allow us to optimize.
 }
 
-
-static void	handle_gnl_error_and_exit(t_info *info, int gnl_flag)
+// Alternate version:
+// if an invalid input is found: exit status is 2
+static void	parse_line(t_info *info, char *line, uint32_t line_num)
 {
-	if (gnl_flag == -1)
-		free_exit(info, "Dynamic memory allocation request has failed.");
-	if (gnl_flag == -2)
-		free_exit(info, "System call failed; Unable to read input file data");
-	if (gnl_flag == -3)
-		free_exit(info, "Failed to process input file; buffer size is empty");
-}
+	int		is_invalid;
+	char	*str;	// used to be able to free line
 
-// NOTE: free the line from here when an invalid input is found!
-static int	parse_line(t_info *info, char *line)
-{
-	while (isspace_but_not_newline(*line))
-		line++;
-	if (*line == 'A')
-		parse_ambient_lighting(&info->amb, line);
-	else if (*line == 'C')
-		parse_camera(&info->cam, line);
-	else if (*line == 'L')
-		parser_light(&info->light, line);
+	str = line;
+	is_invalid = 0;
+	while (isspace_but_not_newline(*str))
+		str++;
+	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
+		return ;
+	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))
+		is_invalid = parse_ambient_lighting(&info->amb, str + 2, line_num);
+	else if (*str == 'C' && isspace_but_not_newline(*(str + 1)))
+		is_invalid = parse_camera(&info->cam, str + 2, line_num);
+	else if (*str == 'L' && isspace_but_not_newline(*(str + 1)))
+		is_invalid = parser_light(&info->light, str + 2, line_num);
+	else if (*str == 's' && *(str + 1) == 'p'
+		&& isspace_but_not_newline(*(str + 2)))
+		is_invalid = parse_sphere(str + 3, line_num);
+	else if (*str == 'p' && *(str + 1) == 'l'
+		&& isspace_but_not_newline(*(str + 2)))
+		is_invalid = parse_plane(str + 3, line_num);
+	else if (*str == 'c' && *(str + 1) == 'y'
+		&& isspace_but_not_newline(*(str + 2)))
+		is_invalid = parse_cylinder(str + 3, line_num);
+	else
+	{
+	// The next boolean check is important, because if it returns false, we have
+	// an empty whitespace line ending with the EOF, which might simply be the
+	// input file's very last line. That should not be considered as a parsing
+	// error, and the program should proceed.
+		if (*str)
+		{
+			is_invalid = 1;
+			display_parsing_error("Unexpected input provided at the start of "
+				"line number:", line_num);
+		}
+	}
 
+	// TODO: write the error message in each and every parsing function,
+	// return true, and then everything gets freed here, with exit status 2.
+	if (is_invalid)
+	{
+		free(line);
+		clean_up_parsing_memory(info);
+		exit (2);
+	}
 
-
-
-
-
-}
-
-static int	isspace_but_not_newline(int c)
-{
-	if (c == ' ' || c == '\t' || (c >= '\v' && c <= '\r'))
-		return (1);
-	return (0);
 }

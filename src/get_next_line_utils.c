@@ -71,9 +71,9 @@ char	*update_line(char *line, char *buffer, size_t *i)
 	ending[*i] = '\0';
 	line = ft_strjoin_mod(beginning, ending);
 	free(beginning);
-	beginning = NULL;
+	beginning = NULL; // WARN: feel free to delete this line
 	free(ending);
-	ending = NULL;
+	ending = NULL; // WARN: feel free to delete this line
 	return (line);
 }
 

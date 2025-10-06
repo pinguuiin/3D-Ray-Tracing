@@ -30,8 +30,7 @@ HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 
-SRC_FILES = test.c \
-			hooks/camera_hooks.c \
+SRC_FILES = hooks/camera_hooks.c \
 			raytracer/reflection.c \
 			raytracer/renderer.c \
 			shapes/cylinder.c \
@@ -40,10 +39,14 @@ SRC_FILES = test.c \
 			utils/color.c \
 			vector/operations.c \
 			vector/rotation.c \
+			main.c \
 			parser.c \
-			parser_utils.c \
+			parsing_utils.c \
+			parse_setting.c \
+			parse_objects.c \
 			get_next_line_minirt.c \
 			get_next_line_utils.c
+#			test.c
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
