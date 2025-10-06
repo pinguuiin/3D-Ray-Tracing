@@ -72,7 +72,7 @@ static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
 	while (x <= n)
 	{
 		len++;
-		x =* 10;
+		x *= 10;
 	}
 	temp_len = len;
 
@@ -81,7 +81,7 @@ static inline void	put_space_positive_nbr_endl_fd(uint32_t n, int fd)
 	while (temp_len)
 	{
 		str[temp_len - 1] = n % 10 + '0';
-		n =/ 10;
+		n /= 10;
 		temp_len--;
 	}
 
