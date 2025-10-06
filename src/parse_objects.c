@@ -13,7 +13,7 @@
 #include "minirt.h"
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
-// The pointer 'str' is always pointing one byte past the scene's element
+// The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it!
 void	parse_sphere(char *str, uint32_t line_num)

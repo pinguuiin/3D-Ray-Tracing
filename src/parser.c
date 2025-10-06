@@ -127,5 +127,4 @@ static void	parse_line(t_info *info, char *line, uint32_t line_num)
 		clean_up_parsing_memory(info);
 		exit (2);
 	}
-
 }

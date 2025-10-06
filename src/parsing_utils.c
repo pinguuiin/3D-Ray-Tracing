@@ -49,10 +49,9 @@ void	display_parsing_error(const char *msg, uint32_t line_num)
 }
 
 /*
-* Writes to the file descriptor 'fd' the number 'n', surrounded by:
-* - one single space as prefix, and
-* - one newline character as suffix.
-* That number should only be a non-negative value!
+* Writes to the file descriptor 'fd' the number 'n', followed by a period and
+* a newline character.
+* 'n' should only be a non-negative value.
 */
 static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 {
@@ -84,7 +83,7 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 		temp_len--;
 	}
 
-	// put: the converted string -> a newline charactaer
+	// put: the converted string -> a dot and a newline charactaer
 	write(fd, str, len);
-	write(fd, "\n", 1);
+	write(fd, ".\n", 2);
 }
