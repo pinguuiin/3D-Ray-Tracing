@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 05:33:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/04 01:15:57 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,17 +90,18 @@ int	main(void)
 	info->obj[0].type = SPHERE;
 	info->obj[0].pos = vec3(0.0, 0.0, 10.0);
 	info->obj[0].oc = subtract(info->cam.pos, info->obj[0].pos);
-	info->obj[0].r = 3.0;
+	info->obj[0].r = 4.0;
 	info->obj[0].color = vec3(0.0, 1.0, 0.0);
 
 	info->obj[1].type = PLANE;
-	info->obj[1].pos = vec3(0.0, -2.0, 30.0);
+	info->obj[1].pos = vec3(0.0, -2.0, 30.0);  // what if o and c overlap
 	info->obj[1].oc = subtract(info->cam.pos, info->obj[1].pos);
 	info->obj[1].normal = normalize(vec3(0.0, -10.0, 0.0));
 	if (dot(info->obj[1].normal, info->obj[1].oc) < 0)
 		info->obj[1].normal = scale(info->obj[1].normal, -1);
 	info->obj[1].color = vec3(1.0, 1.0, 1.0);
-	info->obj_id = 1;
+	// info->obj_id = 0;
+	info->num = 2;
 
 	info->focal_length = 1.0;
 	info->viewport_width = tan(info->cam.fov / 2.0) * 2 * info->focal_length;
@@ -109,7 +110,7 @@ int	main(void)
 
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, info);
-	mlx_loop_hook(info->mlx, draw, info);
+	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);
 	free_exit(NULL);
 	return (0);

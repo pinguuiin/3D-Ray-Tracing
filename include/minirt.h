@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 04:32:54 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/04 00:30:51 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ typedef struct s_info
 	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
 	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
 	int			obj_id;  // current object id
+	int			num;  // number of objects
 
 }	t_info;
 
@@ -146,7 +147,7 @@ t_vec		color_to_vec(int r, int g, int b);
 void		get_rotation_matrix(t_info *info, t_vec v);
 void		rotate(double rot[3][3], t_vec *v1);
 
-void		draw(void *param);
+void		renderer(void *param);
 
 void		move_camera(mlx_key_data_t keydata, t_info *info);
 void		rotate_camera(mlx_key_data_t keydata, t_info *info);
