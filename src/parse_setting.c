@@ -16,7 +16,7 @@
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it!
-void	parse_ambient_lighting(t_amb *amb, char *str, uint32_t line_num)
+int	parse_ambient_lighting(t_amb *amb, char *str, uint32_t line_num)
 {
 	// check if we already have ambient lighting: Only 1 is accepted
 	if (amb)
@@ -32,7 +32,7 @@ void	parse_ambient_lighting(t_amb *amb, char *str, uint32_t line_num)
 
 }
 
-void	parse_camera(t_cam *cam, char *str, uint32_t line_num)
+int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 {
 	// check if we already have a camera: Only 1 is accepted
 	if (cam)
@@ -47,7 +47,7 @@ void	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 
 }
 
-void	parse_light(t_light *light, char *str, uint32_t line_num)
+int	parse_light(t_light *light, char *str, uint32_t line_num)
 {
 	// check if we already have a light source: Only 1 is accepted
 	if (light)

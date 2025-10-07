@@ -87,3 +87,15 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	write(fd, str, len);
 	write(fd, ".\n", 2);
 }
+
+// TODO:
+int	ft_str_to_float(char **s)
+{
+
+}
+
+// TODO:
+int	str_to_rgb(char **s)
+{
+
+}

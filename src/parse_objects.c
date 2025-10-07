@@ -16,7 +16,7 @@
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it!
-void	parse_sphere(char *str, uint32_t line_num)
+int	parse_sphere(char *str, uint32_t line_num)
 {
 	while (isspace_but_not_newline(*str))
 		str++;
@@ -24,14 +24,14 @@ void	parse_sphere(char *str, uint32_t line_num)
 
 }
 
-void	parse_plane(char *str, uint32_t line_num)
+int	parse_plane(char *str, uint32_t line_num)
 {
 	while (isspace_but_not_newline(*str))
 		str++;
 
 }
 
-void	parse_cylinder(char *str, uint32_t line_num)
+int	parse_cylinder(char *str, uint32_t line_num)
 {
 	while (isspace_but_not_newline(*str))
 		str++;
