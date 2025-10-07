@@ -16,20 +16,50 @@
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it!
-int	parse_ambient_lighting(t_amb *amb, char *str, uint32_t line_num)
+int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 {
 	// check if we already have ambient lighting: Only 1 is accepted
-	if (amb)
+	// FIXME: but is 'ambient' even set to NULL when declared? Or, isn't
+	// an ambient struct with only zeroes a potentially valid element??
+	// This idea is wrong.
+	if (ambient)
 	{
 		display_parsing_error("Too many ambient lighting sources provided; "
-			"Invalid input at line number", line_num);
+			"Invalid input on line number", line_num);
 		return (1);
-
 	}
 	while (isspace_but_not_newline(*str))
 		str++;
 
+	// TODO: parse one single ambient lighting ratio in range [0.0,1.0]
+	// careful not to segfault here, if input is invalid and we are already on
+	// the '\n' or '\0'?
+	if (ft_str_to_double(&str, &amb->ratio) == -1)
+	{
+		display_parsing_error("", line_num); // TODO:
+		return (1);
+	}
 
+
+	while (isspace_but_not_newline(*str))
+		str++;
+
+	// TODO: parse R,G,B colors in range [0,255] (normalize them between 0.0 and 1.0)
+	// careful not to segfault here, if input is invalid and we are already on
+	// the '\n' or '\0'?
+
+
+
+
+	while (ft_isspace(*str)) // advance the pointer until one byte after the '\n'.
+		str++;
+	if (*str)	// there is still data in the line, before its newline: error.
+	{
+		display_parsing_error("Unknown data encountered on line number",
+			line_num);
+		return (1);
+	}
+	return (0);
 }
 
 int	parse_camera(t_cam *cam, char *str, uint32_t line_num)

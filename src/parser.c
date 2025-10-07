@@ -51,33 +51,21 @@ void	parse_scene(t_info *info, char *file_name)
 				// we have ambient lighting? Do we have a camera? Do we have sufficient
 				// objects (what is the minimum required - should we accept a
 				// scene with 0 objects?)
+
+				// FIXME:
+				// once you transfer the objects list/s into into the array of all of the
+				// objects' structs, organize them in order ----> the count for each will
+				// allow us to optimize.
+
 				return ;
 			}
 		}
-
-		/*
-		// alternate version of the above:
-		if (!gnl_flag && line)
-		{
-			parse_line(info, line, line_num);
-			free(line);
-			line = NULL;
-			line_num++;
-		}
-		else if (!gnl_flag && !line) // if this check is not done ---> infinite loop once we finished reading!
-			return ;
-		*/
 	}
 	if (gnl_flag)
 		handle_gnl_error_and_exit(info, gnl_flag);
 
-	// FIXME:
-	// once you transfer the objects list/s into into the array of all of the
-	// objects' structs, organize them in order ----> the count for each will
-	// allow us to optimize.
 }
 
-// Alternate version:
 // if an invalid input is found: exit status is 2
 static void	parse_line(t_info *info, char *line, uint32_t line_num)
 {
@@ -115,7 +103,7 @@ static void	parse_line(t_info *info, char *line, uint32_t line_num)
 		{
 			is_invalid = 1;
 			display_parsing_error("Unexpected input provided at the start of "
-				"line number:", line_num);
+				"line number", line_num);
 		}
 	}
 

@@ -24,11 +24,23 @@ void	handle_gnl_error_and_exit(t_info *info, int gnl_flag)
 		free_exit(info, "Failed to process input file; buffer size is empty");
 }
 
+// returns true if the character is one of the following: space, form-feed
+// ('\f'), horizontal tab ('\t'), vertical tab ('\v') or carriage return ('\r')
 int	isspace_but_not_newline(int c)
 {
 	if (c == ' ' || c == '\t' || (c >= '\v' && c <= '\r'))
 		return (1);
 	return (0);
+}
+
+// returns true if the character is: space, newline ('\n'), form-feed ('\f'),
+// horizontal tab ('\t'), vertical tab ('\v')  or carriage return ('\r')
+int	ft_isspace(int c)
+{
+	if (c == ' ' || (c >= '\t' && c <= '\r'))
+		return (1);
+	return (0);
+
 }
 
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
@@ -88,14 +100,8 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	write(fd, ".\n", 2);
 }
 
-// TODO:
-int	ft_str_to_float(char **s)
-{
-
-}
-
-// TODO:
-int	str_to_rgb(char **s)
+// TODO: try to regroup the 3 vector values in one function.
+inline int	str_to_normalized_rgb(char **s, double *result)
 {
 
 }

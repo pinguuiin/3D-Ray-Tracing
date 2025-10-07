@@ -27,9 +27,10 @@ int		parse_plane(char *str, uint32_t line_num);
 int		parse_cylinder(char *str, uint32_t line_num);
 
 // parsing utilities
-int		isspace_but_not_newline(int c);
-int		ft_str_to_float(char **s);
-int		str_to_rgb(char **s);
+int			isspace_but_not_newline(int c);
+int			ft_isspace(int c);
+inline int	ft_strtod(char **s, double *result);
+inline int	str_to_normalized_rgb(char **s, double *result);
 
 // error handling and memory management
 void	handle_gnl_error_and_exit(t_info *info, int gnl_flag);
