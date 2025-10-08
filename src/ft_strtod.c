@@ -13,30 +13,48 @@
 #include "minirt.h"
 #include <math.h>
 
-static inline int	extract_whole_nbr(char **s, double *whole_nbr);
-static inline int	extract_fractional_part(char **s, double *fraction);
+static inline int	extract_whole_nbr_positive(char **ptr, double *whole_nbr);
+static inline int	extract_fractional_part(char **ptr, double *fraction);
 
 // TODO:
 // WARN: consider error handling
-inline int	ft_strtod(char **s, double *result)
+inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
 	int		is_neg;
 
-	ptr = *s;
+	ptr = *str;
 	is_neg = 0;
 	// NOTE: is 'result' already set to zero when this function is called?
-	// Should I set it to zero here, if not?
-	if (extract_whole_nbr() == -1)
+	// Should I set it to zero here, if not? It better be set to zero beforehand.
+
+	if (*ptr == '-')
 	{
-		// TODO: handle the error
-		// return
+		is_neg = 1;
+		ptr++;
+	}
+	else if (*ptr == '+')
+		ptr++;
+	if (*ptr >= '0' && *ptr <= '9')
+	{
+		if (extract_whole_nbr(ptr, result) == -1)
+		{
+			// TODO: handle the error
+			// return
+		}
 	}
 
 
-	// TODO: parse the floating point '.'
 
-	if (extract_fractional_part(s, result) == -1)
+
+
+	// TODO: parse the floating point '.'
+	if (*ptr == '.')
+	{
+
+		if (extract_fractional_part(ptr, result) == -1)
+
+	}
 
 
 	// WARN: use math.h's 'isinf()' function, and perhaps also 'isnan()', to
@@ -49,10 +67,10 @@ inline int	ft_strtod(char **s, double *result)
 
 	}
 
-	*s = ptr;	// increments the pointer at the caller.
+	*str = ptr;	// increments the pointer at the caller.
 }
 
-static inline int	extract_whole_nbr(char **s, double *whole_nbr)
+static inline int	extract_whole_nbr_positive(char **ptr, double *whole_nbr)
 {
 
 
@@ -60,7 +78,7 @@ static inline int	extract_whole_nbr(char **s, double *whole_nbr)
 
 }
 
-static inline int	extract_fractional_part(char **s, double *fraction)
+static inline int	extract_fractional_part(char **ptr, double *fraction)
 {
 
 

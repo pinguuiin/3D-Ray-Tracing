@@ -101,7 +101,7 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 }
 
 // TODO: try to regroup the 3 vector values in one function.
-inline int	str_to_normalized_rgb(char **s, double *result)
+inline int	str_to_normalized_rgb(char **str, double *result)
 {
 
 }

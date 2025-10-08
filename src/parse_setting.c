@@ -21,7 +21,8 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	// check if we already have ambient lighting: Only 1 is accepted
 	// FIXME: but is 'ambient' even set to NULL when declared? Or, isn't
 	// an ambient struct with only zeroes a potentially valid element??
-	// This idea is wrong.
+	// This idea is wrong. Find more precise solution! For all element parsing
+	// functions.
 	if (ambient)
 	{
 		display_parsing_error("Too many ambient lighting sources provided; "
@@ -33,7 +34,16 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 
 	// TODO: parse one single ambient lighting ratio in range [0.0,1.0]
 	// careful not to segfault here, if input is invalid and we are already on
-	// the '\n' or '\0'?
+	// the '\n' or '\0'? You still need to do error handling as 'str' might be
+	// pointing at a '\n', a random undesired character, or '\0'.
+	
+	if (*str != '-' || *str != '+' || *str != '.' || *str < '0' || *str > '9')
+	{
+		display_parsing_error("", line_num); //TODO:
+		return (1);
+	}
+
+
 	if (ft_str_to_double(&str, &amb->ratio) == -1)
 	{
 		display_parsing_error("", line_num); // TODO:
@@ -47,7 +57,7 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	// TODO: parse R,G,B colors in range [0,255] (normalize them between 0.0 and 1.0)
 	// careful not to segfault here, if input is invalid and we are already on
 	// the '\n' or '\0'?
-
+	// str_to_normalized_rgb(&str, ???);
 
 
 
