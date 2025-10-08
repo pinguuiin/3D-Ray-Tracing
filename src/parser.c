@@ -70,7 +70,7 @@ void	parse_scene(t_info *info, char *file_name)
 static void	parse_line(t_info *info, char *line, uint32_t line_num)
 {
 	int		is_invalid;
-	char	*str;	// used to be able to free line
+	char	*str;	// used to be able to free 'line'
 
 	str = line;
 	is_invalid = 0;

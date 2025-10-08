@@ -37,19 +37,24 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	// the '\n' or '\0'? You still need to do error handling as 'str' might be
 	// pointing at a '\n', a random undesired character, or '\0'.
 	
-	if (*str != '-' || *str != '+' || *str != '.' || *str < '0' || *str > '9')
+
+
+	if (ft_strtod(&str, &amb->ratio) == -1)
 	{
-		display_parsing_error("", line_num); //TODO:
+		display_parsing_error("Invalid input around real number, on line:", line_num);
+		//  TODO: Should this rather be done within ft_strtod()?
+		// That would however imply passing line_num into there...
 		return (1);
 	}
 
-
-	if (ft_str_to_double(&str, &amb->ratio) == -1)
+	// important check, since ft_strtod() only checks if the number's tail
+	// is strange - but accepts null terminator or newline as valid endings.
+	if (!*str || *str == '\n')
 	{
-		display_parsing_error("", line_num); // TODO:
+		display_parsing_error("Missing data: ambient lighting provided has no "
+		"color value. See line number:", line_num);
 		return (1);
 	}
-
 
 	while (isspace_but_not_newline(*str))
 		str++;
