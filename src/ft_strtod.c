@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/09 17:01:42 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/09 17:32:40 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,12 @@ inline int	ft_strtod(char **str, double *result)
 * be interpreted as "-0.34" and "0.5", respectively. But examples such as "-",
 * "+ ", "-.", "+.  " and "+.y23" are all treated as invalid by this function.
 */
+// FIXME: this function should already get rid of inputs such as :
+// ".  ", ".", ".s" or ".\n". Consider renaming it if you add this cleanup.
+// Or, make a new helper that will check for that error, and use it in the currently
+// available if statement following '-' or '+'.
+// Do NOT use it however in the radix point check which is in ft_strtod() after
+// extract_integer_part() -> since I'd like to accept inputs such as "12."
 static int	parse_plus_or_minus_sign(char **ptr)
 {
 	int		is_neg;
@@ -137,8 +143,8 @@ static int	parse_plus_or_minus_sign(char **ptr)
 		}
 		else
 			is_neg = -1;
+		(*ptr)++;
 	}
-	(*ptr)++;
 	return (is_neg);
 }
 

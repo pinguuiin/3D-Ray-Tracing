@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft_ft_strtod_with_exponents.c                   :+:      :+:    :+:   */
+/*   temporary_draft_2_ft_strtod.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/09 17:46:12 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/09 18:02:31 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 #include <math.h>
 
-static int				parse_plus_or_minus_sign(char **str);
+static int				is_start_of_string_valid(char *s);
 static inline double	extract_positive_integer_part(char **ptr);
 static inline int		extract_fractional_part(char **ptr);
 
@@ -25,22 +25,27 @@ static inline int		extract_fractional_part(char **ptr);
 inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
-	int		is_neg;
 	int		is_exponent;
+	int		is_neg;
 
 	ptr = *str;
 	// WARN: is 'result' already set to zero when this function is called?
 	// Should I set it to zero here, if not? It better be set to zero beforehand!
 
 	is_exponent = 0;
-	if (!is_valid_radix_point(*ptr)) // this is necessary for some edge case where the string starts with a '.'
+	is_neg = 0;
+	if (*ptr == '+' || *ptr == '-')
 	{
-		display_parsing_error("Invalid real number input on line", line_num);
+		if (*ptr == '-')
+			is_neg = 1;
+		ptr++;
+	}
+	if (!is_start_of_string_valid(ptr))
+	{
+		display_parsing_error("????", line_num); // TODO: write message?
 		return (-1);
 	}
-	is_neg = parse_plus_or_minus_sign(&ptr);
-	if (is_neg == -1)
-		return (-1);
+
 
 	if (*ptr >= '0' && *ptr <= '9')
 	{
@@ -207,6 +212,7 @@ static int	parse_plus_or_minus_sign(char **ptr)
 	return (is_neg);
 }
 
+/*
 static int	parse_start_of_string_and_evaluate_if_pos_or_neg(char **ptr)
 {
 	int		is_neg;
@@ -233,8 +239,20 @@ static int	parse_start_of_string_and_evaluate_if_pos_or_neg(char **ptr)
 	(*ptr)++;
 	return (is_neg);
 }
+*/
 
-
+// WARN: review this function!
+static int	is_start_of_string_valid(char *s)
+{
+	if (*s == '.')
+	{
+		if (ft_isdigit(*(s + 1)))
+			return (1);
+	}
+	else if (ft_isdigit(*s))
+		return (1);
+	return (0);
+}
 
 static void	is_valid_radix_point(char *p_str)
 {
