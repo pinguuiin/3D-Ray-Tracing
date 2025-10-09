@@ -13,11 +13,16 @@
 #include "minirt.h"
 #include <math.h>
 
+static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(char *s);
 static inline double	extract_positive_integer_part(char **ptr);
 static inline int		extract_fractional_part(char **ptr);
 
 // TODO: still incomplete. Consider making a true copy of stdlib's strtod()!
+// TODO: Implement acceptance of "E" or "e" in the string, in cases where there
+// is valid scientific notation. That character should be preceded by either:
+// - at least one digit
+// - a radix point "." -> if that radix point was preceded by at least 1 digit.
 // TEST: I handled each and every of the following cases, but it needs testing:
 // "-", "- ", "+", "+ ", ".", ". ", "+.", "+. ", "-.", "-. ", "+.k334", "-.%43"
 // FIXME: How many digits should I accept on the right of the decimal point?
@@ -25,7 +30,7 @@ static inline int		extract_fractional_part(char **ptr);
 inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
-	int		is_exponent;
+	int		is_exponent; // NOTE: maybe unnecessary?
 	int		is_neg;
 
 	ptr = *str;
@@ -33,31 +38,26 @@ inline int	ft_strtod(char **str, double *result)
 	// Should I set it to zero here, if not? It better be set to zero beforehand!
 
 	is_exponent = 0;
-	is_neg = 0;
-	if (*ptr == '+' || *ptr == '-')
-	{
-		if (*ptr == '-')
-			is_neg = 1;
-		ptr++;
-	}
+	is_neg = parse_plus_or_minus_sign(&ptr);
 	if (!is_start_of_string_valid(ptr))
 	{
-		display_parsing_error("????", line_num); // TODO: write message?
+		display_parsing_error("Unknown input when expecting floating point "
+			"number, on line:", line_num); // TODO: write message?
 		return (-1);
 	}
 
-
-	if (*ptr >= '0' && *ptr <= '9')
+	if (ft_isdigit(*ptr))
 	{
 		*result = extract_positive_integer_part(&ptr);
 		if (isinf(*result))
 		{
 			// TODO: handle error
-			// display_parsing_error("Overflow of floating point number has "
-			// "occured. Please provide a different value, on line", line_num);
+			display_parsing_error("Overflow of floating point number has "
+			"occured. Please provide a different value, on line", line_num);
 			return (-1);
 		}
-	 // after 'e' or 'E', ONLY parse the exponent (handing invalid input) and return.
+		// TODO:
+		 // after 'e' or 'E', ONLY parse the exponent (handing invalid input) and return.
 		// before these characters, you HAVE to have had at least a digit!
 		if (*ptr == 'e' || *ptr == 'E')
 		{
@@ -66,11 +66,6 @@ inline int	ft_strtod(char **str, double *result)
 
 		}
 	}
-	else if (*ptr == 'e' || *ptr == 'E')
-	{
-		display_parsing_error(); // TODO:
-		return (-1);
-	}
 
 	// WARN: handle case where you would arrive here and *ptr is still pointing
 	// at the very first character - then, this exponent should not be taken care of,
@@ -78,6 +73,8 @@ inline int	ft_strtod(char **str, double *result)
 	if (*ptr == 'e' || *ptr == 'E')
 	{
 		is_exponent = 1;
+
+
 
 
 	// check for the radix point
@@ -134,6 +131,9 @@ inline int	ft_strtod(char **str, double *result)
 }
 
 /*
+* FIXME: This comment was used in a previous version of the function.
+* Reframe it to fit the new, simplified version parse_pos_or_neg_sign(), OR
+* just take it out entirely since now the code is easier to read.
 * a '-' or '+' sign which is NOT followed by either:
 * 1. a digit
 * 2. a decimal point which is in turn followed by a digit
@@ -150,116 +150,31 @@ inline int	ft_strtod(char **str, double *result)
 *
 * For example: "-.34" and "+.5" are considered valid values and would ultimately
 * be interpreted as "-0.34" and "0.5", respectively. But examples such as "-",
-* "+ ", "-.", "+.  " and "+.y23" are all treated as invalid by this function.
+* "+ ", "-.", "+.  " and "+.y23", ".", ". ", ".\n" are all treated as invalid
+* by this function.
 */
-// FIXME: this function should already get rid of inputs such as :
-// ".  ", ".", ".s" or ".\n". Consider renaming it if you add this cleanup.
-// Or, make a new helper that will check for that error, and use it in the currently
-// available if statement following '-' or '+'.
-// Do NOT use it however in the radix point check which is in ft_strtod() after
-// extract_integer_part() -> since I'd like to accept inputs such as "12."
-// NOTE: previous version without exponents
-// static int	parse_plus_or_minus_sign(char **ptr)
-{
-	int		is_neg;
-	char	*s;
-
-	is_neg = 0;
-	s = *ptr;
-	if (*s == '-' || *s == '+')
-	{
-		s++;
-		if ((*s >= '0' && *s <= '9')
-			|| (*s == '.' && *(s + 1) >= '0' && *(s + 1) <= '9'))
-		{
-			if (*(s - 1) == '-')
-				is_neg = 1;
-		}
-		else
-			is_neg = -1;
-		(*ptr)++;
-	}
-	return (is_neg);
-}
-
-
-// FIXME: this function should already get rid of inputs such as :
-// ".  ", ".", ".s" or ".\n". Consider renaming it if you add this cleanup.
-// Or, make a new helper that will check for that error, and use it in the currently
-// available if statement following '-' or '+'.
-// Do NOT use it however in the radix point check which is in ft_strtod() after
-// extract_integer_part() -> since I'd like to accept inputs such as "12."
-// NOTE: draft with exponents
 static int	parse_plus_or_minus_sign(char **ptr)
 {
-	int		is_neg;
-	char	*s;
+	int	is_neg;
 
 	is_neg = 0;
-	s = *ptr;
-	if (*s == '-' || *s == '+')
+	if (**ptr == '+')
+		(*ptr)++;
+	else if (**ptr == '-')
 	{
-		s++;
-		if (ft_isdigit(*s) || (*s == '.' && ft_isdigit(*(s + 1))))
-		{
-			if (*(s - 1) == '-')
-				is_neg = 1;
-		}
-		else
-			is_neg = -1;
+		is_neg = 1;
 		(*ptr)++;
 	}
 	return (is_neg);
 }
 
-/*
-static int	parse_start_of_string_and_evaluate_if_pos_or_neg(char **ptr)
-{
-	int		is_neg;
-	char	*s;
-
-	is_neg = 0;
-	s = *ptr;
-	if (*s == '.')
-	{
-		if (!ft_isdigit(*(s + 1)))
-			return (-1); // have to return because 
-	}
-	else if (*s == '-' || *s == '+')
-	{
-		s++;
-		if (ft_isdigit(*s) || (*s == '.' && ft_isdigit(*(s + 1))))
-		{
-			if (*(s - 1) == '-')
-				is_neg = 1;
-		}
-		else
-			is_neg = -1;
-	}
-	(*ptr)++;
-	return (is_neg);
-}
-*/
-
-// WARN: review this function!
 static int	is_start_of_string_valid(char *s)
 {
-	if (*s == '.')
+	if (ft_isdigit(*s))
+		return (1);
+	else if (*s == '.')
 	{
 		if (ft_isdigit(*(s + 1)))
-			return (1);
-	}
-	else if (ft_isdigit(*s))
-		return (1);
-	return (0);
-}
-
-static void	is_valid_radix_point(char *p_str)
-{
-	if (*p_str == '.')
-	{
-		p_str++;
-		if (*p_str >= '0' && *p_str <= '9')
 			return (1);
 	}
 	return (0);
@@ -274,7 +189,7 @@ static inline double	extract_positive_integer_part(char **ptr)
 
 	result = 0.0;
 	s = *ptr;
-	while (*s >= '0' && *s <= '9')
+	while (ft_isdigit(*s))
 	{
 		result = result * 10.0 + (*s - '0');
 		s++;
@@ -295,7 +210,7 @@ static inline int	extract_fractional_part(char **ptr)
 	fraction = 0.0;
 	s = *ptr;
 	i = 0;
-	while (*s >= '0' && *s <= '9')
+	while (ft_isdigit(*s))
 	{
 		fraction = fraction * 10.0 + (*s - '0');
 		i++;
