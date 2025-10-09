@@ -14,11 +14,10 @@
 #include <math.h>
 
 static int			parse_plus_or_minus_sign(char **str);
-static inline int	extract_whole_positive_nbr(char **ptr, double *result);
+static inline int	extract_positive_integer_part(char **ptr, double *result);
 static inline int	extract_fractional_part(char **ptr, double *result);
 
-// TODO:
-// WARN: consider error handling
+// TODO: still incomplete.
 // TEST: I handled each and every of the following cases, but it needs testing:
 // "-", "- ", "+", "+ ", ".", ". ", "+.", "+. ", "-.", "-. ", "+.k334", "-.%43"
 // FIXME: How many digits should I accept on the right of the decimal point?
@@ -36,12 +35,13 @@ inline int	ft_strtod(char **str, double *result)
 	if (is_neg == -1)
 		return (-1);
 
-
 	if (*ptr >= '0' && *ptr <= '9')
 	{
-		if (extract_whole_positive_nbr(&ptr, result) == -1)
+		if (extract_positive_integer_part(&ptr, result) == -1)
 		{
 			// TODO: handle error
+			// display_parsing_error("Overflow of floating point number has "
+			// "occured. Please provide a different value, on line", line_num);
 			// return (-1);
 		}
 	}
@@ -53,6 +53,7 @@ inline int	ft_strtod(char **str, double *result)
 		if (extract_fractional_part(ptr, result) == -1)
 		{
 			// TODO: handle error
+			// display_parsing_error("??????", line_num);
 			// return (-1);
 		}
 	}
@@ -60,7 +61,7 @@ inline int	ft_strtod(char **str, double *result)
 	// check that the number has no strange tail
 	// accept whitespace (including '\n' & nul terminator)
 	// Also, if we get here and the number has not been valid, for example:
-	// "a13.4", we will 
+	// "a13.4", we will
 	if (*str && !ft_isspace(*str))
 	{
 		// TODO: handle error - first character after the very last digit of the
@@ -74,20 +75,17 @@ inline int	ft_strtod(char **str, double *result)
 		return (-1);
 	}
 
-	// convert result to negative, if it is prefixed by a negative sign
+	// convert result to negative if necessary
 	if (is_neg)
-		*result *= -1;
+		*result *= -1;	// no worries, overflow of double cannot happen here,
+						//unless the value already overflowed.
 
-
-	// WARN: use math.h's 'isinf()' function, and perhaps also 'isnan()', to
-	// check for the overflow of your double, before returning.
-	// How should you handle the error, however, if it did overflow?
 
 	// check that the acquired 'result' is not an overflow.
-	if (isnan(*result) || isinf(*result))
+	if (isnan(*result) || isinf(*result)) // WARN: isnan() might be overkill...
 	{
-		// TODO: handle the error
-		// return (-1);
+		display_parsing_error("????", line_num); // TODO: error message?
+		return (-1);
 
 	}
 
@@ -138,25 +136,24 @@ static int	parse_plus_or_minus_sign(char **ptr)
 	return (is_neg);
 }
 
-static inline int	extract_whole_positive_nbr(char **ptr, double *result)
+static inline int	extract_positive_integer_part(char **ptr, double *result)
 {
 	char	*s;
 
 	s = *ptr;
 	while (*s >= '0' && *s <= '9')
 	{
-		
-
-
-
+		*double = *double * 10.0 + (*s - '0');
+		s++;
 	}
-
-
-
-
+	*ptr = s;
+	if (isinf(*result))
+		return (-1);
 	return (0);
 }
 
+// TODO: but think about how many digits you accept - on both hands of the
+// decimal point? while ensuring maximal precision of the provided number.
 static inline int	extract_fractional_part(char **ptr, double *result)
 {
 

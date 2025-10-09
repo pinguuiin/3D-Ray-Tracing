@@ -49,10 +49,12 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 
 	// important check, since ft_strtod() only checks if the number's tail
 	// is strange - but accepts null terminator or newline as valid endings.
+	// We might even have a situation where the program arrives to this check
+	// when the string is: "A \n", and this error should be handled.
 	if (!*str || *str == '\n')
 	{
-		display_parsing_error("Missing data: ambient lighting provided has no "
-		"color value. See line number:", line_num);
+		display_parsing_error("Missing data for ambient lighting provided. "
+		"See line number:", line_num);
 		return (1);
 	}
 
