@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtod.c                                        :+:      :+:    :+:   */
+/*   draft_ft_strtod_with_exponents.c                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/09 17:01:42 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/09 17:02:50 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,13 @@ inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
 	int		is_neg;
+	int		is_exponent;
 
 	ptr = *str;
 	// WARN: is 'result' already set to zero when this function is called?
 	// Should I set it to zero here, if not? It better be set to zero beforehand!
 
+	is_exponent = 0;
 	is_neg = parse_plus_or_minus_sign(&ptr);
 	if (is_neg == -1)
 		return (-1);
@@ -45,7 +47,28 @@ inline int	ft_strtod(char **str, double *result)
 			// "occured. Please provide a different value, on line", line_num);
 			return (-1);
 		}
+	 // after 'e' or 'E', ONLY parse the exponent (handing invalid input) and return.
+		// before these characters, you HAVE to have had at least a digit!
+		if (*ptr == 'e' || *ptr == 'E')
+		{
+			is_exponent = 1;
+			ptr++;
+
+		}
 	}
+	else if (*ptr == 'e' || *ptr == 'E')
+	{
+		display_parsing_error(); // TODO:
+		return (-1);
+	}
+
+	// WARN: handle case where you would arrive here and *ptr is still pointing
+	// at the very first character - then, this exponent should not be taken care of,
+	// it is invalid input. Consider checking for it at the caller?
+	if (*ptr == 'e' || *ptr == 'E')
+	{
+		is_exponent = 1;
+
 
 	// check for the radix point
 	if (*ptr == '.')
@@ -119,6 +142,32 @@ inline int	ft_strtod(char **str, double *result)
 * be interpreted as "-0.34" and "0.5", respectively. But examples such as "-",
 * "+ ", "-.", "+.  " and "+.y23" are all treated as invalid by this function.
 */
+// NOTE: previous version without exponents
+// static int	parse_plus_or_minus_sign(char **ptr)
+// {
+// 	int		is_neg;
+// 	char	*s;
+//
+// 	is_neg = 0;
+// 	s = *ptr;
+// 	if (*s == '-' || *s == '+')
+// 	{
+// 		s++;
+// 		if ((*s >= '0' && *s <= '9')
+// 			|| (*s == '.' && *(s + 1) >= '0' && *(s + 1) <= '9'))
+// 		{
+// 			if (*(s - 1) == '-')
+// 				is_neg = 1;
+// 		}
+// 		else
+// 			is_neg = -1;
+// 	}
+// 	(*ptr)++;
+// 	return (is_neg);
+// }
+
+
+// draft with exponents
 static int	parse_plus_or_minus_sign(char **ptr)
 {
 	int		is_neg;

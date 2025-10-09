@@ -37,6 +37,17 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	// the '\n' or '\0'? You still need to do error handling as 'str' might be
 	// pointing at a '\n', a random undesired character, or '\0'.
 	
+	/*
+	  NOTE: Should I use this check? Or do it within parse_plus_or_minus_sign
+	  This might be useful... If you use it, you can cleanup details in ft_strtod(), which takes care of this.
+	if (*str != '-' || *str != '+' ||
+		(*str == '.' && *(str + 1) < '0' && *(str + 1) > '9') ||
+		*str < '0' || *str > '9')
+	{
+		display_parsing_error("", line_num);
+		return (1);
+	}
+	*/
 
 
 	if (ft_strtod(&str, &amb->ratio) == -1)
@@ -53,7 +64,7 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	// when the string is: "A \n", and this error should be handled.
 	if (!*str || *str == '\n')
 	{
-		display_parsing_error("Missing data for ambient lighting provided. "
+		display_parsing_error("Missing data for ambient lighting element. "
 		"See line number:", line_num);
 		return (1);
 	}
