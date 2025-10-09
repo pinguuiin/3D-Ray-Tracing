@@ -32,12 +32,9 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
-	// TODO: parse one single ambient lighting ratio in range [0.0,1.0]
-	// careful not to segfault here, if input is invalid and we are already on
-	// the '\n' or '\0'? You still need to do error handling as 'str' might be
-	// pointing at a '\n', a random undesired character, or '\0'.
-	
 	/*
+	 * WARN: Update, this is very probably unnecessary, as it is now being done
+	 * within the new functions of draft_ft_strtod_sci_notation.c
 	  NOTE: Should I use this check? Or do it within parse_plus_or_minus_sign
 	  This might be useful... If you use it, you can cleanup details in ft_strtod(), which takes care of this.
 	if (*str != '-' || *str != '+' ||
@@ -59,9 +56,9 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	}
 
 	// important check, since ft_strtod() only checks if the number's tail
-	// is strange - but accepts null terminator or newline as valid endings.
-	// We might even have a situation where the program arrives to this check
-	// when the string is: "A \n", and this error should be handled.
+	// is strange - but accepts null terminator or newline as valid endings,
+	// which, in the context of parse_ambient_lighting() is invalid; We still
+	// need the RGB data of the ambient lighting.
 	if (!*str || *str == '\n')
 	{
 		display_parsing_error("Missing data for ambient lighting element. "
@@ -78,8 +75,10 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	// str_to_normalized_rgb(&str, ???);
 
 
-
-	while (ft_isspace(*str)) // advance the pointer until one byte after the '\n'.
+	// advance the pointer until one byte after the '\n', since miniRT employs
+	// get_next_line() - or, if there is still some unwanted input in the
+	// string, the pointer will point to it
+	while (ft_isspace(*str))
 		str++;
 	if (*str)	// there is still data in the line, before its newline: error.
 	{
