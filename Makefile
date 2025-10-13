@@ -42,7 +42,7 @@ SRC_FILES = hooks/camera_hooks.c \
 			main.c \
 			parser.c \
 			parsing_utils.c \
-			ft_str_to_double.c \
+			ft_strtod.c \
 			parse_setting.c \
 			parse_objects.c \
 			get_next_line_minirt.c \

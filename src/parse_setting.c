@@ -32,24 +32,9 @@ int	parse_ambient_lighting(t_amb *ambient, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
-	/*
-	 * WARN: Update, this is very probably unnecessary, as it is now being done
-	 * within the new functions of draft_ft_strtod_sci_notation.c
-	  NOTE: Should I use this check? Or do it within parse_plus_or_minus_sign
-	  This might be useful... If you use it, you can cleanup details in ft_strtod(), which takes care of this.
-	if (*str != '-' || *str != '+' ||
-		(*str == '.' && *(str + 1) < '0' && *(str + 1) > '9') ||
-		*str < '0' || *str > '9')
-	{
-		display_parsing_error("", line_num);
-		return (1);
-	}
-	*/
-
-
 	if (ft_strtod(&str, &amb->ratio) == -1)
 	{
-		display_parsing_error("Invalid input around real number, on line:", line_num);
+		// display_parsing_error("Invalid input around real number, on line:", line_num);
 		//  TODO: Should this rather be done within ft_strtod()?
 		// That would however imply passing line_num into there...
 		return (1);
