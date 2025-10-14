@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/14 18:36:56 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/14 18:46:20 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(const char *s);
-static inline size_t	extract_positive_integer_part(char **ptr, double *result);
+static inline double	extract_positive_integer_part(char **ptr);
 static inline int		extract_fractional_part(char **ptr);
 static inline int		extract_exponent_and_update_result(char **ptr, double *result);
 
@@ -32,7 +32,6 @@ inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
 	int		sign;
-	size_t	n_digits;
 
 	ptr = *str;
 	// WARN: is 'result' already set to zero when this function is called?
@@ -48,14 +47,7 @@ inline int	ft_strtod(char **str, double *result)
 
 	if (ft_isdigit(*ptr))
 	{
-		n_digits = extract_positive_integer_part(&ptr, result);
-		if (n_digits == -1)
-		{
-			display_parsing_error("Floating point number provided is too large."
-				"See input file's line number", line_num);
-			return (-1);
-		}
-
+		*result = extract_positive_integer_part(&ptr);
 		if (isinf(*result))
 		{
 			// TODO: handle error
@@ -166,144 +158,21 @@ static int	is_start_of_string_valid(const char *s)
 
 // TODO: think about how many digits you accept - on both hands of the
 // decimal point? while ensuring maximal precision of the provided number.
-static inline size_t	extract_positive_integer_part(char **ptr, double *result)
-{
-	char	*s;
-	size_t	n_digits;
-
-	s = *ptr;
-	n_digits = 1;
-	while (ft_isdigit(*s))
-	{
-		*result = *result * 10.0 + (*s - '0');
-		s++;
-		n_digits++;
-	}
-	// TODO: BUT FIRST, you have to check what is going on with the mantissa!
-	if (n_digits > 10) // cap integer part so we can have at LEAST 5 digits to the right of the radix point
-	{
-		if (search_for_exponent_and_check_validity(s, result, n_digits) == -1)
-			return (-1);
-	}
-	*ptr = s;
-	return (n_digits);
-}
-
-// TODO:
-static inline int	check_validity_of_large_number(const char *s,
-						double *result, size_t n_digits)
-{
-	size_t	n_fractional_digits;
-	int		exponent;
-
-	n_fractional_digits = 0;
-	exponenet = 0;
-	if (*s == '.')
-	{
-		s++;
-		if (ft_isdigit(*s))
-		{
-			while (ft_isdigit(*s))
-			{
-				n_fractional_digits++;
-				s++;
-			}
-		}
-		if (*s == 'e' || *s == 'E')
-		{
-			s++;
-			while (ft_isdigit(*s))
-			{
-				exponent = exponent * 10 + *s - '0';
-				s++;
-
-			
-			}
-
-
-		}
-		else if (n_digits + n_fractional_digits > 15)
-			return (-1);
-
-	}
-	else if (*s == 'e' || *s == 'E')
-	{
-		s++;
-		if (!ft_isdigit(*s))
-			return (-1);
-		while (ft_isdigit(*s))
-		{
-
-			// check that the exponent is valid, against the number of digits we have?
-			s++;
-		}
-		if (*s && !ft_isspace(*s))
-			return (-1);
-		{
-			if (*s == '\n')
-				return (-2);
-			else
-				return (-1);
-
-
-
-
-
-
-
-
-	if (*s == '.')
-	{
-		s++;
-		if (!ft_isdigit(*s) && (*s != 'e' || *s != 'E') && *ft_isspace)
-		{
-			if (n_digits > 15)
-				return (-1);
-			else
-				return (0);
-		}
-		else
-		{
-			while (ft_isdigit(*s))
-				s++;
-			if ((*s != 'e' || *s != 'E')) &&
-
-
-
-		if (*s == 'e' || *s == 'E')
-	
-	}
-	else if (*s == 'e' || *s == 'E')
-
-
-
-
-}
-
-/*
 static inline double	extract_positive_integer_part(char **ptr)
 {
-	uint64_t	whole_nbr;
-	char		*s;
+	double	result;
+	char	*s;
 
-	whole_nbr = 0;
+	result = 0.0;
 	s = *ptr;
 	while (ft_isdigit(*s))
 	{
-		whole_nbr = whole_nbr * 10 + (*s - '0');
+		result = result * 10.0 + (*s - '0');
 		s++;
-		if (whole_nbr > INT64_MAX)
-		{
-			// TODO:
-			// 
-
-		}
 	}
 	*ptr = s;
 	return (result);
 }
-*/
-
 
 // TODO: think about how many digits you accept - on both hands of the
 // decimal point? while ensuring maximal precision of the provided number.
