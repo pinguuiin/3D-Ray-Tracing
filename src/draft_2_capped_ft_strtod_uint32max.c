@@ -15,8 +15,8 @@
 
 static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(const char *s);
-static inline size_t	extract_positive_integer_part(char **ptr, double *result);
-static inline int		extract_fractional_part(char **ptr);
+static inline int64_t	extract_unsigned_integer(char **ptr);
+static inline double	extract_fraction(char **ptr, size_t n_digits);
 static inline int		extract_exponent_and_update_result(char **ptr, double *result);
 
 // TODO: still incomplete. Consider making a true copy of stdlib's strtod()!
@@ -32,9 +32,11 @@ inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
 	int		sign;
+	int64_t	whole;
 	size_t	n_digits;
 
 	ptr = *str;
+	n_digits = 0;
 	// WARN: is 'result' already set to zero when this function is called?
 	// Should I set it to zero here, if not? It better be set to zero beforehand!
 
@@ -48,32 +50,39 @@ inline int	ft_strtod(char **str, double *result)
 
 	if (ft_isdigit(*ptr))
 	{
-		n_digits = extract_positive_integer_part(&ptr, result);
-		if (n_digits == -1)
+		whole = extract_unsigned_integer(&ptr, &n_digits);
+		if (whole == -1)
 		{
-			display_parsing_error("Floating point number provided is too large."
-				"See input file's line number", line_num);
+			display_parsing_error("Floating point number provided is too "
+				"large. See input file's line number", line_num);
 			return (-1);
 		}
+		*result = (double) whole;
+		
+		// if (n_digits == -1)
+		// {
+		// 	display_parsing_error("Floating point number provided is too "
+		// 		"large. See input file's line number", line_num);
+		// 	return (-1);
+		// }
 
-		if (isinf(*result))
-		{
-			// TODO: handle error
-			display_parsing_error("Overflow of floating point number has "
-			"occured. Please provide a different value, on line", line_num);
-			return (-1);
-		}
+		// if (isinf(*result))
+		// {
+		// 	// TODO: handle error
+		// 	display_parsing_error("Overflow of floating point number has "
+		// 	"occured. Please provide a different value, on line", line_num);
+		// 	return (-1);
+		// }
 	}
 
 	// check for the radix point
 	if (*ptr == '.')
 	{
 		ptr++;
-		// WARN: extract_fractional_part() still unsafe.
-		*result += extract_fractional_part(&ptr);
+		*result += extract_fraction(&ptr, n_digits);
 
 		/*
-		if (extract_fractional_part(&ptr, result) == -1)
+		if (extract_fraction(&ptr, result) == -1)
 		{
 			// TODO: handle error
 			// display_parsing_error("??????", line_num);
@@ -187,11 +196,12 @@ static inline size_t	extract_positive_integer_part(char **ptr, double *result)
 }
 */
 
-// version which caps whole number to UINT32_MAX
-static inline size_t	extract_positive_integer_part(char **ptr)
+// version which caps whole number to UINT32_MAX without counting n of digits
+/*
+static inline int64_t	extract_unsigned_integer(char **ptr)
 {
-	char		*s;
-	uint64_t	temp;
+	char	*s;
+	int64_t	temp;
 
 	s = *ptr;
 	temp = 0;
@@ -202,8 +212,27 @@ static inline size_t	extract_positive_integer_part(char **ptr)
 			return (-1);
 		s++;
 	}
-	// if (check_validity_of_number(s, result, n_digits) == -1)
-	// 	return (-1);
+	*ptr = s;
+	return (temp);
+}
+*/
+
+// version which caps whole number to UINT32_MAX, counting n of digits
+static inline int64_t	extract_unsigned_integer(char **ptr, size_t *n_digits)
+{
+	char	*s;
+	int64_t	temp;
+
+	s = *ptr;
+	temp = 0;
+	while (ft_isdigit(*s))
+	{
+		temp = temp * 10.0 + (*s - '0');
+		if (temp > UINT32_MAX)
+			return (-1);
+		(*n_digits)++;
+		s++;
+	}
 	*ptr = s;
 	return (temp);
 }
@@ -313,30 +342,6 @@ static inline int	check_validity_of_number(const char *s,
 }
 
 /*
-static inline double	extract_positive_integer_part(char **ptr)
-{
-	uint64_t	whole_nbr;
-	char		*s;
-
-	whole_nbr = 0;
-	s = *ptr;
-	while (ft_isdigit(*s))
-	{
-		whole_nbr = whole_nbr * 10 + (*s - '0');
-		s++;
-		if (whole_nbr > INT64_MAX)
-		{
-			// TODO:
-			// 
-
-		}
-	}
-	*ptr = s;
-	return (result);
-}
-*/
-
-
 // TODO: think about how many digits you accept - on both hands of the
 // decimal point? while ensuring maximal precision of the provided number.
 // TODO: should I accept exponents "e" / "E", scientific notation?
@@ -360,6 +365,74 @@ static inline int	extract_fractional_part(char **ptr)
 	*ptr = s;
 	return (fraction);
 }
+*/
+
+/*
+static inline double	extract_fraction(char **ptr)
+{
+	double	fraction;
+	char	*s;
+	size_t	i;
+
+	fraction = 0.0;
+	s = *ptr;
+	i = 0;
+	while (ft_isdigit(*s))
+	{
+		fraction = fraction * 10.0 + (*s - '0');
+		i++;
+		s++;
+		if (i > 15)
+		{
+			if (*s >= '5' && *s <= '9')
+				(*(s - 1))++;
+			while (ft_isdigit(*s))
+				s++;
+		}
+	}
+	while (i)
+	{
+		fraction *= 0.1;
+		i--;
+	}
+	*ptr = s;
+	return (fraction);
+}
+*/
+
+// version which takes into account n_digits of the integer part, to round up
+// the last digit that would fit into 15 total digits for the eventual double.
+static inline double	extract_fraction(char **ptr, size_t n_digits)
+{
+	double	fraction;
+	char	*s;
+	size_t	i;
+
+	fraction = 0.0;
+	s = *ptr;
+	i = 0;
+	while (ft_isdigit(*s))
+	{
+		fraction = fraction * 10.0 + (*s - '0');
+		i++;
+		s++;
+		if (i >= 15 || n_digits + i >= 15)
+		{
+			if (*s >= '5' && *s <= '9')
+				(*(s - 1))++;
+			while (ft_isdigit(*s))
+				s++;
+		}
+	}
+	while (i)
+	{
+		fraction *= 0.1;
+		i--;
+	}
+	*ptr = s;
+	return (fraction);
+}
+
 
 static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 {
