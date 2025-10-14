@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/14 18:36:31 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:11 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,7 @@ static int	is_start_of_string_valid(const char *s)
 	return (0);
 }
 
+/*
 // TODO: think about how many digits you accept - on both hands of the
 // decimal point? while ensuring maximal precision of the provided number.
 static inline size_t	extract_positive_integer_part(char **ptr, double *result)
@@ -179,25 +180,46 @@ static inline size_t	extract_positive_integer_part(char **ptr, double *result)
 		s++;
 		n_digits++;
 	}
-	// TODO: BUT FIRST, you have to check what is going on with the mantissa!
-	if (n_digits > 10) // cap integer part so we can have at LEAST 5 digits to the right of the radix point
-	{
-		if (search_for_exponent_and_check_validity(s, result, n_digits) == -1)
-			return (-1);
-	}
+	if (check_validity_of_number(s, result, n_digits) == -1)
+		return (-1);
 	*ptr = s;
 	return (n_digits);
 }
+*/
+
+// version which caps whole number to UINT32_MAX
+static inline size_t	extract_positive_integer_part(char **ptr)
+{
+	char		*s;
+	uint64_t	temp;
+
+	s = *ptr;
+	temp = 0;
+	while (ft_isdigit(*s))
+	{
+		temp = temp * 10.0 + (*s - '0');
+		if (temp > UINT32_MAX)
+			return (-1);
+		s++;
+	}
+	// if (check_validity_of_number(s, result, n_digits) == -1)
+	// 	return (-1);
+	*ptr = s;
+	return (temp);
+}
+
 
 // TODO:
-static inline int	check_validity_of_large_number(const char *s,
+static inline int	check_validity_of_number(const char *s,
 						double *result, size_t n_digits)
 {
 	size_t	n_fractional_digits;
 	int		exponent;
+	int		sign;
 
 	n_fractional_digits = 0;
 	exponenet = 0;
+	sign = 1;
 	if (*s == '.')
 	{
 		s++;
@@ -212,14 +234,24 @@ static inline int	check_validity_of_large_number(const char *s,
 		if (*s == 'e' || *s == 'E')
 		{
 			s++;
+			if (*s == '-')
+			{
+				sign = -1;
+				s++;
+			}
+			else if (*s == '+')
+				s++;
 			while (ft_isdigit(*s))
 			{
-				exponent = exponent * 10 + *s - '0';
+				exponent = (exponent * 10 + *s - '0');
+				if (exponent * sign < INT
 				s++;
-
-			
 			}
 
+		// WARN: this should somehow go at the very end of the function.
+			if (n_digits + exponent > 15
+				|| n_digits + n_fractional_digits + exponent < -10)
+				return (-1);
 
 		}
 		else if (n_digits + n_fractional_digits > 15)
@@ -332,19 +364,18 @@ static inline int	extract_fractional_part(char **ptr)
 static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 {
 	char	*s;
-	int		is_neg;
+	int		sign;
 	int64_t	exponent;
 	double	temp;
-	
 
 	s = *ptr;
 	exponent = 0;
-	is_neg= 0;
+	sign = 1;
 	if (s == '+')
 		s++;
 	else if (s == '-')
 	{
-		is_neg = 1;
+		sign = -1;
 		s++;
 	}
 
@@ -352,15 +383,13 @@ static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 	{
 		exponent = exponent * 10 + (*s - '0');
 		s++;
-		if (is_neg)
-			exponent *= -1;
-		if (exponent > INT_MAX || exponent < INT_MIN)
+		if (exponent * sign > INT_MAX || exponent * sign < INT_MIN)
 			return (-1);
 	}
 	*ptr = s;
 
 	temp = 1.0;
-	if (is_neg)
+	if (sign == -1)
 	{
 		while (exponent)
 		{

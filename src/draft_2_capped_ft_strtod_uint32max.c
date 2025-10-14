@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft_2_capped_ft_strtod.c                         :+:      :+:    :+:   */
+/*   draft_2_capped_ft_strtod_uint32max.c               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/14 18:46:20 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:48 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(const char *s);
-static inline double	extract_positive_integer_part(char **ptr);
+static inline size_t	extract_positive_integer_part(char **ptr, double *result);
 static inline int		extract_fractional_part(char **ptr);
 static inline int		extract_exponent_and_update_result(char **ptr, double *result);
 
@@ -32,6 +32,7 @@ inline int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
 	int		sign;
+	size_t	n_digits;
 
 	ptr = *str;
 	// WARN: is 'result' already set to zero when this function is called?
@@ -47,7 +48,14 @@ inline int	ft_strtod(char **str, double *result)
 
 	if (ft_isdigit(*ptr))
 	{
-		*result = extract_positive_integer_part(&ptr);
+		n_digits = extract_positive_integer_part(&ptr, result);
+		if (n_digits == -1)
+		{
+			display_parsing_error("Floating point number provided is too large."
+				"See input file's line number", line_num);
+			return (-1);
+		}
+
 		if (isinf(*result))
 		{
 			// TODO: handle error
@@ -156,23 +164,178 @@ static int	is_start_of_string_valid(const char *s)
 	return (0);
 }
 
+/*
 // TODO: think about how many digits you accept - on both hands of the
 // decimal point? while ensuring maximal precision of the provided number.
+static inline size_t	extract_positive_integer_part(char **ptr, double *result)
+{
+	char	*s;
+	size_t	n_digits;
+
+	s = *ptr;
+	n_digits = 1;
+	while (ft_isdigit(*s))
+	{
+		*result = *result * 10.0 + (*s - '0');
+		s++;
+		n_digits++;
+	}
+	if (check_validity_of_number(s, result, n_digits) == -1)
+		return (-1);
+	*ptr = s;
+	return (n_digits);
+}
+*/
+
+// version which caps whole number to UINT32_MAX
+static inline size_t	extract_positive_integer_part(char **ptr)
+{
+	char		*s;
+	uint64_t	temp;
+
+	s = *ptr;
+	temp = 0;
+	while (ft_isdigit(*s))
+	{
+		temp = temp * 10.0 + (*s - '0');
+		if (temp > UINT32_MAX)
+			return (-1);
+		s++;
+	}
+	// if (check_validity_of_number(s, result, n_digits) == -1)
+	// 	return (-1);
+	*ptr = s;
+	return (temp);
+}
+
+
+// TODO:
+static inline int	check_validity_of_number(const char *s,
+						double *result, size_t n_digits)
+{
+	size_t	n_fractional_digits;
+	int		exponent;
+	int		sign;
+
+	n_fractional_digits = 0;
+	exponenet = 0;
+	sign = 1;
+	if (*s == '.')
+	{
+		s++;
+		if (ft_isdigit(*s))
+		{
+			while (ft_isdigit(*s))
+			{
+				n_fractional_digits++;
+				s++;
+			}
+		}
+		if (*s == 'e' || *s == 'E')
+		{
+			s++;
+			if (*s == '-')
+			{
+				sign = -1;
+				s++;
+			}
+			else if (*s == '+')
+				s++;
+			while (ft_isdigit(*s))
+			{
+				exponent = (exponent * 10 + *s - '0');
+				if (exponent * sign < INT
+				s++;
+			}
+
+		// WARN: this should somehow go at the very end of the function.
+			if (n_digits + exponent > 15
+				|| n_digits + n_fractional_digits + exponent < -10)
+				return (-1);
+
+		}
+		else if (n_digits + n_fractional_digits > 15)
+			return (-1);
+
+	}
+	else if (*s == 'e' || *s == 'E')
+	{
+		s++;
+		if (!ft_isdigit(*s))
+			return (-1);
+		while (ft_isdigit(*s))
+		{
+
+			// check that the exponent is valid, against the number of digits we have?
+			s++;
+		}
+		if (*s && !ft_isspace(*s))
+			return (-1);
+		{
+			if (*s == '\n')
+				return (-2);
+			else
+				return (-1);
+
+
+
+
+
+
+
+
+	if (*s == '.')
+	{
+		s++;
+		if (!ft_isdigit(*s) && (*s != 'e' || *s != 'E') && *ft_isspace)
+		{
+			if (n_digits > 15)
+				return (-1);
+			else
+				return (0);
+		}
+		else
+		{
+			while (ft_isdigit(*s))
+				s++;
+			if ((*s != 'e' || *s != 'E')) &&
+
+
+
+		if (*s == 'e' || *s == 'E')
+	
+	}
+	else if (*s == 'e' || *s == 'E')
+
+
+
+
+}
+
+/*
 static inline double	extract_positive_integer_part(char **ptr)
 {
-	double	result;
-	char	*s;
+	uint64_t	whole_nbr;
+	char		*s;
 
-	result = 0.0;
+	whole_nbr = 0;
 	s = *ptr;
 	while (ft_isdigit(*s))
 	{
-		result = result * 10.0 + (*s - '0');
+		whole_nbr = whole_nbr * 10 + (*s - '0');
 		s++;
+		if (whole_nbr > INT64_MAX)
+		{
+			// TODO:
+			// 
+
+		}
 	}
 	*ptr = s;
 	return (result);
 }
+*/
+
 
 // TODO: think about how many digits you accept - on both hands of the
 // decimal point? while ensuring maximal precision of the provided number.
@@ -201,19 +364,18 @@ static inline int	extract_fractional_part(char **ptr)
 static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 {
 	char	*s;
-	int		is_neg;
+	int		sign;
 	int64_t	exponent;
 	double	temp;
-	
 
 	s = *ptr;
 	exponent = 0;
-	is_neg= 0;
+	sign = 1;
 	if (s == '+')
 		s++;
 	else if (s == '-')
 	{
-		is_neg = 1;
+		sign = -1;
 		s++;
 	}
 
@@ -221,15 +383,13 @@ static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 	{
 		exponent = exponent * 10 + (*s - '0');
 		s++;
-		if (is_neg)
-			exponent *= -1;
-		if (exponent > INT_MAX || exponent < INT_MIN)
+		if (exponent * sign > INT_MAX || exponent * sign < INT_MIN)
 			return (-1);
 	}
 	*ptr = s;
 
 	temp = 1.0;
-	if (is_neg)
+	if (sign == -1)
 	{
 		while (exponent)
 		{
