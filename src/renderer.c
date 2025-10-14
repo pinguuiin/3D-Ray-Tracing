@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/04 01:51:20 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/14 23:42:41 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, double k)
 	hit.incoming = normalize(subtract(info->light.pos, hit.pos));
 	if (obj->type == SPHERE)
 		hit.normal = normalize(subtract(hit.pos, obj->pos));
+	else if (obj->type == CYLINDER)
+	{
+		t_vec	op = subtract(hit.pos, obj->pos);
+		hit.normal = normalize(subtract(op, scale(obj->normal, dot(op, obj->normal))));
+	}
 	else if (obj->type == PLANE)
 		hit.normal = obj->normal;
 	hit.outgoing = subtract(scale(hit.normal, 2 * dot(hit.incoming, hit.normal)), hit.incoming);
@@ -95,6 +100,32 @@ double	ray_hit_plane(t_info *info, t_vec ray)
 	return (-1.0);
 }
 
+double	ray_hit_cylinder(t_info *info, t_vec ray)
+{
+	t_object	*cy;
+	t_discrim	f;
+	double		dot_oc_n;
+	double		dot_ray_n;
+
+	cy = &info->obj[info->obj_id];
+	dot_oc_n = dot(cy->oc, cy->normal);
+	dot_ray_n = dot(ray, cy->normal);
+	f.a = dot(ray, ray) - dot_ray_n * dot_ray_n;
+	f.b = 2 * (dot(cy->oc, ray) - dot_oc_n * dot_ray_n);
+	f.c = dot(cy->oc, cy->oc) - dot_oc_n * dot_oc_n - cy->r  * cy->r;
+	if (fabs(f.a) < EPSILON)  // camera on the axis of the cylinder, ray hit
+		return (0.0);
+	f.delta = f.b * f.b - 4.0 * f.a * f.c;
+	if (f.delta >= EPSILON) // delta = 0, ray is tangent to the cylinder, hit; root = 0, camera on the cylinder, ray hit
+	{
+		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
+		if (f.root >= EPSILON)
+			return (f.root);
+		// else inside the cylinder or cylinder behind camera
+	}
+	return (-1.0);
+}
+
 double	nearest_ray_hit(t_info *info, t_vec ray)
 {
 	double	k;
@@ -109,8 +140,10 @@ double	nearest_ray_hit(t_info *info, t_vec ray)
 	{
 		if (info->obj[info->obj_id].type == SPHERE)
 			k = ray_hit_sphere(info, ray);
-		else
+		else if (info->obj[info->obj_id].type == PLANE)
 			k = ray_hit_plane(info, ray);
+		else
+			k = ray_hit_cylinder(info, ray);
 		if (k >= 0.0)
 		{
 			if (k_min < -EPSILON || k < k_min)
@@ -131,13 +164,13 @@ void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	t_vec	color;
 
 	k = nearest_ray_hit(info, ray);
-	if (k == -1)
+	if (k == -1) // not hit
 	{
 		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
 		return ;
 	}
 	color = scale(info->amb.color, info->amb.ratio);
-	color = add(color, reflection(info, &info->obj[info->obj_id], ray, k));
+	color = add(color, reflection(info, &info->obj[info->obj_id], ray, k));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
