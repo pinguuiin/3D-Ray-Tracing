@@ -17,7 +17,8 @@ static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(const char *s);
 static inline int64_t	extract_unsigned_integer(char **ptr);
 static inline double	extract_fraction(char **ptr, size_t n_digits);
-static inline int		extract_exponent_and_update_result(char **ptr, double *result);
+static inline int		extract_exponent_and_update_result(char **ptr,
+						size_t n_digits, double *result);
 
 // TODO: still incomplete. Consider making a true copy of stdlib's strtod()!
 // TODO: Implement acceptance of "E" or "e" in the string, in cases where there
@@ -101,7 +102,7 @@ inline int	ft_strtod(char **str, double *result)
 			return (-1);
 		}
 		// TODO:
-		if (extract_exponent_and_update_result(&ptr, result) == -1)
+		if (extract_exponent_and_update_result(&ptr, n_digits, result) == -1)
 		{
 			display_parsing_error("Unknown input when expecting floating point "
 				"number, on line:", line_num);
@@ -127,14 +128,17 @@ inline int	ft_strtod(char **str, double *result)
 	// convert result to negative, if necessary
 	*result *= sign;
 
+	/*
 	// check that the acquired 'result' is not an overflow.
+	// NOTE: no need for these checks if you already limit your double to
+	// 15 digits during the prior conversion.
 	if (isnan(*result) || isinf(*result)) // WARN: isnan() might be overkill...
 	{
 		display_parsing_error("Overflow of floating point number has occured. "
 		"Please provide a different value, on line", line_num);
 		return (-1);
-
 	}
+	*/
 
 	// set the caller's string pointer at the same place
 	*str = ptr;	// increments the pointer at the caller.
@@ -433,7 +437,7 @@ static inline double	extract_fraction(char **ptr, size_t n_digits)
 	return (fraction);
 }
 
-
+/*
 static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 {
 	char	*s;
@@ -480,9 +484,64 @@ static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 		}
 	}
 	*result *= temp;
-	/*
-	if (isinf(*result) || isnan(*result))
-		return (-1);
-	*/
+	// if (isinf(*result) || isnan(*result))
+		// return (-1);
+	return (0);
+}
+*/
+
+// TODO: Make this function allow to stay in the framework of 15 digits for the whole double.
+static inline int	extract_exponent_and_update_result(char **ptr,
+						size_t n_digits, double *result)
+{
+	char	*s;
+	int		sign;
+	int64_t	exponent;
+	double	factor;
+
+	s = *ptr;
+	sign = 1;
+	exponent = 0;
+	if (s == '+')
+		s++;
+	else if (s == '-')
+	{
+		sign = -1;
+		s++;
+	}
+
+	while (ft_isdigit(*s))
+	{
+		exponent = exponent * 10 + (*s - '0');
+		s++;
+
+
+		if (exponent * sign < -15 || exponent * sign > 15 - n_digits)
+			return (-1);
+
+		// if (exponent * sign > INT_MAX || exponent * sign < INT_MIN)
+		// 	return (-1);
+	}
+	*ptr = s;
+
+	factor = 1.0;
+	if (sign == -1)
+	{
+		while (exponent)
+		{
+			factor *= 0.1;
+			exponent++;
+		}
+		factor = -factor;
+	}
+	else
+	{
+		while (exponent)
+		{
+			factor *= 10.0;
+			exponent--;
+		}
+	}
+	*result *= factor;
 	return (0);
 }
