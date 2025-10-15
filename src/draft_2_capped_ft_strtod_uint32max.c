@@ -28,7 +28,7 @@ static inline int		extract_exponent_and_update_result(char **ptr,
 // "-", "- ", "+", "+ ", ".", ". ", "+.", "+. ", "-.", "-. ", "+.k334", "-.%43"
 // FIXME: How many digits should I accept on the right of the decimal point?
 // And if it is very long: should I trim the number, or should I return an error?
-inline int	ft_strtod(char **str, double *result)
+int	ft_strtod(char **str, double *result)
 {
 	char	*ptr;	// for readability.
 	int		sign;
@@ -514,7 +514,7 @@ static inline int	extract_exponent_and_update_result(char **ptr,
 		s++;
 
 
-		if (exponent * sign < -15 || exponent * sign > 15 - n_digits)
+		if (exponent * sign < -15 || exponent * sign > 15 - (int64_t) n_digits)
 			return (-1);
 
 		// if (exponent * sign > INT_MAX || exponent * sign < INT_MIN)

@@ -29,7 +29,7 @@ int		parse_cylinder(char *str, uint32_t line_num);
 // parsing utilities
 int			isspace_but_not_newline(int c);
 int			ft_isspace(int c);
-inline int	ft_strtod(char **str, double *result);
+int			ft_strtod(char **str, double *result);
 inline int	str_to_normalized_rgb(char **str, double *result);
 
 // error handling and memory management
