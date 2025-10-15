@@ -111,7 +111,7 @@ inline int	ft_strtod(char **str, double *result)
 
 	// check that the number has no strange tail
 	// accept whitespace (including '\n' & nul terminator)
-	if (*str && !ft_isspace(*str))
+	if (*ptr && !ft_isspace(*ptr))
 	{
 		// NOTE: Add check for the '\n' again, as well as for '\0' in the
 		// caller, after this function returns -> because I think strtod()
@@ -500,9 +500,9 @@ static inline int	extract_exponent_and_update_result(char **ptr,
 	s = *ptr;
 	sign = 1;
 	exponent = 0;
-	if (s == '+')
+	if (*s == '+')
 		s++;
-	else if (s == '-')
+	else if (*s == '-')
 	{
 		sign = -1;
 		s++;

@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/15 18:00:55 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/15 19:23:16 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ inline int	ft_strtod(char **str, double *result)
 
 	// check that the number has no strange tail
 	// accept whitespace (including '\n' & nul terminator)
-	if (*str && !ft_isspace(*str))
+	if (*ptr && !ft_isspace(*ptr))
 	{
 		// NOTE: Add check for the '\n' again, as well as for '\0' in the
 		// caller, after this function returns -> because I think strtod()
@@ -208,9 +208,9 @@ static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 	s = *ptr;
 	exponent = 0;
 	is_neg= 0;
-	if (s == '+')
+	if (*s == '+')
 		s++;
-	else if (s == '-')
+	else if (*s == '-')
 	{
 		is_neg = 1;
 		s++;
