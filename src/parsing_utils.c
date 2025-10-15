@@ -40,7 +40,6 @@ int	ft_isspace(int c)
 	if (c == ' ' || (c >= '\t' && c <= '\r'))
 		return (1);
 	return (0);
-
 }
 
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!

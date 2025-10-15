@@ -11,11 +11,10 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include <math.h>
 
 static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(const char *s);
-static inline int64_t	extract_unsigned_integer(char **ptr);
+static inline int64_t	extract_unsigned_integer(char **ptr, size_t *n_digits);
 static inline double	extract_fraction(char **ptr, size_t n_digits);
 static inline int		extract_exponent_and_update_result(char **ptr,
 						size_t n_digits, double *result);
@@ -140,7 +139,6 @@ inline int	ft_strtod(char **str, double *result)
 	}
 	*/
 
-	// set the caller's string pointer at the same place
 	*str = ptr;	// increments the pointer at the caller.
 	return (0);
 }

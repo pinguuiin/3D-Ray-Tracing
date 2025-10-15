@@ -6,12 +6,11 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/14 18:45:18 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/15 18:00:55 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include <math.h>
 
 static int				parse_plus_or_minus_sign(char **ptr);
 static int				is_start_of_string_valid(const char *s);
