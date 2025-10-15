@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/15 16:33:15 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/16 00:11:17 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,25 @@ t_vec	reflection(t_info *info, t_vec ray, t_hit *hit, double k)
 	t_object	*obj;
 	double		dot1;
 	double		dot2;
+	double		hit_h;
 
 	obj = &info->obj[hit->obj_id];
 	ray = scale(ray, k);
 	hit->pos = add(info->cam.pos, ray);
 	hit->ray = normalize(scale(ray, -1));
+	hit->op = subtract(hit->pos, obj->pos);
 	hit->incoming = normalize(subtract(info->light.pos, hit->pos));
 	if (obj->type == SPHERE)
-		hit->normal = normalize(subtract(hit->pos, obj->pos));
+		hit->normal = normalize(hit->op);
 	else if (obj->type == CYLINDER)
 	{
-		t_vec	op = subtract(hit->pos, obj->pos);
-		hit->normal = normalize(subtract(op, scale(obj->normal, dot(op, obj->normal))));
+		hit_h = dot(hit->op, obj->normal);
+		if (hit_h - obj->h > -EPSILON)
+			hit->normal = obj->normal;
+		else if (hit_h + obj->h < EPSILON)
+			hit->normal = scale(obj->normal, -1);
+		else
+			hit->normal = normalize(subtract(hit->op, scale(obj->normal, hit_h)));
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->normal;
@@ -101,12 +108,38 @@ double	ray_hit_plane(t_info *info, t_vec ray, int id)
 	return (-1.0);
 }
 
+double	ray_hit_cap(t_info *info, t_vec ray, int id, double h)
+{
+	t_object	*cy;
+	t_object	cap;
+	t_discrim	f;
+
+	cy = &info->obj[id];
+	if (h > 0)
+		cap.pos = add(cy->pos, scale(cy->normal, cy->h));
+	else
+		cap.pos = subtract(cy->pos, scale(cy->normal, cy->h));
+	cap.oc = subtract(info->cam.pos, cap.pos);
+	f.a = dot(cap.oc, cy->normal);
+	f.b = dot(ray, cy->normal);
+	if (fabs(f.a) < EPSILON)
+		return (0.0);
+	if (fabs(f.b) > EPSILON)
+	{
+		f.root = -(f.a / f.b);
+		if (f.root > EPSILON)
+			return (f.root);
+	}
+	return (-1.0);
+}
+
 double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 {
 	t_object	*cy;
 	t_discrim	f;
 	double		dot_oc_n;
 	double		dot_ray_n;
+	double		hit_h[2];
 
 	cy = &info->obj[id];
 	dot_oc_n = dot(cy->oc, cy->normal);
@@ -120,11 +153,19 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 	if (f.delta >= EPSILON) // delta = 0, ray is tangent to the cylinder, hit; root = 0, camera on the cylinder, ray hit
 	{
 		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
-		// 	hit->pos = add(info->cam.pos, ray);
-		// t_vec	op = subtract(hit->pos, obj->pos);
-		// hit->normal = normalize(subtract(op, scale(obj->normal, dot(op, obj->normal))));
 		if (f.root >= EPSILON)
+		{
+			hit_h[0] = dot(add(cy->oc, scale(ray, f.root)), cy->normal);
+			if (fabs(hit_h[0]) - cy->h > EPSILON)  // closer intersection point P is out of boundary
+			{
+				f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
+				hit_h[1] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
+				if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // out of boundaries
+					return (-1.0);
+				return (ray_hit_cap(info, ray, id, hit_h[0]));
+			}
 			return (f.root);
+		}
 		// else inside the cylinder or cylinder behind camera
 	}
 	return (-1.0);

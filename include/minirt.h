@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/15 15:52:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/15 23:40:04 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ typedef struct s_object
 	t_vec	normal;
 
 	// cylinder
-	double	h;
+	double	h;  // Half height of the cylinder
 
 }	t_object;
 
@@ -101,6 +101,7 @@ typedef struct s_discrim
 	double	c;
 	double	delta;
 	double	root;
+	double	root2;
 
 }	t_discrim;
 
@@ -108,6 +109,7 @@ typedef struct s_hit
 {
 	int		obj_id;  // hit object id
 	t_vec	pos;  // coordinates of the hit point
+	t_vec	op;  // vector from object center to intersection point
 	t_vec	incoming;  // normalized ray direction from hit point to light source
 	t_vec	normal;  // normal at the hit point
 	t_vec	ray;  // normalized ray direction from hit point to camera
