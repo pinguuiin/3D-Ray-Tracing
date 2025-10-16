@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/16 00:11:17 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/16 22:52:39 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,29 +108,32 @@ double	ray_hit_plane(t_info *info, t_vec ray, int id)
 	return (-1.0);
 }
 
-double	ray_hit_cap(t_info *info, t_vec ray, int id, double h)
+double	hit_side_or_cap(t_info *info, t_vec ray, int id, t_discrim f)
 {
 	t_object	*cy;
-	t_object	cap;
-	t_discrim	f;
+	t_vec		cap_pos;
+	t_vec		cap_oc;
+	double		hit_h[2];
 
 	cy = &info->obj[id];
-	if (h > 0)
-		cap.pos = add(cy->pos, scale(cy->normal, cy->h));
-	else
-		cap.pos = subtract(cy->pos, scale(cy->normal, cy->h));
-	cap.oc = subtract(info->cam.pos, cap.pos);
-	f.a = dot(cap.oc, cy->normal);
-	f.b = dot(ray, cy->normal);
-	if (fabs(f.a) < EPSILON)
-		return (0.0);
-	if (fabs(f.b) > EPSILON)
+	hit_h[0] = dot(add(cy->oc, scale(ray, f.root)), cy->normal);
+	if (fabs(hit_h[0]) - cy->h > EPSILON)  // closer intersection point P is out of boundary
 	{
+		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
+		hit_h[1] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
+		if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // both intersection points are out of boundaries
+			return (-1.0);
+		if (hit_h[0] > 0)
+			cap_pos = add(cy->pos, scale(cy->normal, cy->h));
+		else
+			cap_pos = subtract(cy->pos, scale(cy->normal, cy->h));
+		cap_oc = subtract(info->cam.pos, cap_pos);
+		f.a = dot(cap_oc, cy->normal);
+		f.b = dot(ray, cy->normal);
 		f.root = -(f.a / f.b);
-		if (f.root > EPSILON)
-			return (f.root);
+		return (f.root);
 	}
-	return (-1.0);
+	return (f.root);
 }
 
 double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
@@ -139,33 +142,21 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 	t_discrim	f;
 	double		dot_oc_n;
 	double		dot_ray_n;
-	double		hit_h[2];
 
 	cy = &info->obj[id];
 	dot_oc_n = dot(cy->oc, cy->normal);
 	dot_ray_n = dot(ray, cy->normal);
 	f.a = dot(ray, ray) - dot_ray_n * dot_ray_n;
 	f.b = 2 * (dot(cy->oc, ray) - dot_oc_n * dot_ray_n);
-	f.c = dot(cy->oc, cy->oc) - dot_oc_n * dot_oc_n - cy->r  * cy->r;
-	if (fabs(f.a) < EPSILON)  // camera on the axis of the cylinder, ray hit
+	f.c = dot(cy->oc, cy->oc) - dot_oc_n * dot_oc_n - cy->r * cy->r;
+	if (fabs(f.a) < EPSILON)  // ray on the axis of the cylinder, ray hit
 		return (0.0);
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
 	if (f.delta >= EPSILON) // delta = 0, ray is tangent to the cylinder, hit; root = 0, camera on the cylinder, ray hit
 	{
 		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
 		if (f.root >= EPSILON)
-		{
-			hit_h[0] = dot(add(cy->oc, scale(ray, f.root)), cy->normal);
-			if (fabs(hit_h[0]) - cy->h > EPSILON)  // closer intersection point P is out of boundary
-			{
-				f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
-				hit_h[1] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
-				if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // out of boundaries
-					return (-1.0);
-				return (ray_hit_cap(info, ray, id, hit_h[0]));
-			}
-			return (f.root);
-		}
+			return (hit_side_or_cap(info, ray, id, f));
 		// else inside the cylinder or cylinder behind camera
 	}
 	return (-1.0);
