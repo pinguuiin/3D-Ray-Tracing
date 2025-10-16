@@ -93,20 +93,23 @@ int	ft_strtod(char **str, double *result)
 	if (*ptr == 'e' || *ptr == 'E')
 	{
 		ptr++;
-		if (!ft_isdigit(*ptr)
-			|| ((*ptr == '+' || *ptr == '-') && !ft_isdigit(*(ptr + 1))))
+		if (ft_isdigit(*ptr)
+			|| ((*ptr == '+' || *ptr == '-') && ft_isdigit(*(ptr + 1))))
 		{
-			display_parsing_error("Unknown input when expecting floating point "
-				"number, on line:", line_num);
+			if (extract_exponent_and_update_result(&ptr, n_digits, result) == -1)
+			{
+				display_parsing_error("Unknown input when expecting floating "
+					"point number, on line:", line_num);
+				return (-1);
+			}
+		}
+		else
+		{
+			display_parsing_error("Unknown input when expecting floating "
+				"point number, on line:", line_num);
 			return (-1);
 		}
-		// TODO:
-		if (extract_exponent_and_update_result(&ptr, n_digits, result) == -1)
-		{
-			display_parsing_error("Unknown input when expecting floating point "
-				"number, on line:", line_num);
-			return (-1);
-		}
+
 	}
 
 	// check that the number has no strange tail
@@ -469,7 +472,7 @@ static inline int	extract_exponent_and_update_result(char **ptr, double *result)
 		while (exponent)
 		{
 			temp *= 0.1;
-			exponent++;
+			exponent--;
 		}
 		temp = -temp;
 	}
@@ -517,6 +520,8 @@ static inline int	extract_exponent_and_update_result(char **ptr,
 		if (exponent * sign < -15 || exponent * sign > 15 - (int64_t) n_digits)
 			return (-1);
 
+		// not necesarry anymore! since capping at 15 digits, meaning exponent
+		// cannot be very large.
 		// if (exponent * sign > INT_MAX || exponent * sign < INT_MIN)
 		// 	return (-1);
 	}
@@ -528,9 +533,8 @@ static inline int	extract_exponent_and_update_result(char **ptr,
 		while (exponent)
 		{
 			factor *= 0.1;
-			exponent++;
+			exponent--;
 		}
-		factor = -factor;
 	}
 	else
 	{
