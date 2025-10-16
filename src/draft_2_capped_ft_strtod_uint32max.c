@@ -98,8 +98,10 @@ int	ft_strtod(char **str, double *result)
 		{
 			if (extract_exponent_and_update_result(&ptr, n_digits, result) == -1)
 			{
-				display_parsing_error("Unknown input when expecting floating "
-					"point number, on line:", line_num);
+				display_parsing_error("Floating point number provided is "
+					"either too large or too small;\nPlease provide a value "
+					"within orders of magnitude -15 and +15. See line:",
+					line_num);
 				return (-1);
 			}
 		}
