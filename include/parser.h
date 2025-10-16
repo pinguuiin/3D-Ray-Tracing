@@ -30,6 +30,8 @@ int		parse_cylinder(char *str, uint32_t line_num);
 int			isspace_but_not_newline(int c);
 int			ft_isspace(int c);
 int			ft_strtod(char **str, double *result);
+// WARN: inline here wouldn't work, only if it is a static function that
+// belongs to the file
 inline int	str_to_normalized_rgb(char **str, double *result);
 
 // error handling and memory management
