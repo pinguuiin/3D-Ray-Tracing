@@ -43,8 +43,9 @@ int	ft_isspace(int c)
 }
 
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
-void	clean_up_parsing_memory(t_info *info)
+void	clean_up_parsing_memory(t_info *info, char *line)
 {
+	free(line);
 	if (info->img)
 		mlx_delete_image(info->mlx, info->img);
 	if (info->mlx)
@@ -97,16 +98,4 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	// put: the converted string -> a dot and a newline charactaer
 	write(fd, str, len);
 	write(fd, ".\n", 2);
-}
-
-// TODO: try to regroup the 3 vector values in one function.
-int	str_to_normalized_rgb(char **str, t_vec *color)
-{
-
-
-
-
-
-	*color = normalize(*color);
-	return (0);
 }

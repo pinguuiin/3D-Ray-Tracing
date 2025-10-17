@@ -111,8 +111,7 @@ static void	parse_line(t_info *info, char *line, uint32_t line_num)
 	// return true, and then everything gets freed here, with exit status 2.
 	if (is_invalid)
 	{
-		free(line);
-		clean_up_parsing_memory(info);
+		clean_up_parsing_memory(info, line);
 		exit (2);
 	}
 }
