@@ -18,7 +18,7 @@ void	parse_scene(t_info *info, char *file_name)
 {
 	int			fd;
 	char		*line;
-	uint_32t	line_num; // always positive!
+	uint32_t	line_num; // always positive!
 	int			gnl_flag;
 
 	line = NULL;
@@ -39,8 +39,7 @@ void	parse_scene(t_info *info, char *file_name)
 				parse_line(info, line, line_num);
 				free(line);
 				line = NULL;
-				// WARN: is UINT_MAX compatible with uint32_t (line_num)?
-				if (line_num < UINT_MAX) // just to avoid a 'potential' segfault
+				if (line_num < UINT32_MAX) // just to avoid a 'potential' segfault
 					line_num++;
 			}
 			else	// file has been fully read.
@@ -102,8 +101,8 @@ static void	parse_line(t_info *info, char *line, uint32_t line_num)
 		if (*str)
 		{
 			is_invalid = 1;
-			display_parsing_error("Unexpected input provided at the start of "
-				"line number", line_num);
+			display_parsing_error("Unexpected input provided on line number",
+				line_num);
 		}
 	}
 

@@ -15,11 +15,10 @@
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
-// (non-newline) character that follows it!
+// (non-newline) character that follows it! So you still need to parse
+// through potential isspace_but_not_newline().
 int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 {
-	// FIXME: make sure that 'ambient' is bzeroed() at the start of the program!
-
 	// check if we already have ambient lighting: Only 1 is accepted
 	if (amb->is_provided)
 	{

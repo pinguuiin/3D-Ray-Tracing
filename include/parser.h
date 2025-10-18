@@ -16,7 +16,7 @@
 // WARN: only add these libraries here if they are not on minirt.h - or perhaps
 // leave them still here as they are relevant to the parsing?
 // # include <fcntl.h>		// open(), close()
-// # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
+# include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
 /*
 * 3d vector which can be used interchangeably for:

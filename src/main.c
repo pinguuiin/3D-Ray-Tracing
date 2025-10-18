@@ -12,13 +12,22 @@
 
 #include "minirt.h"
 
-int	main(void)
+static void	handle_unexpected_arg_count(int argc);
+
+int	main(int argc, char *argv[])
 {
-	t_info	info;
+	t_info	*info;
 
-	// TODO: initialize info struct! At least the parsing elements.
+	// info is a static variable within get_info(), so its values are zeroed.
+	info = get_info();
 
-
+	if (argc == 2)
+		parse_scene(info, argv[1]);
+	else
+	{
+		handle_inappropriate_argc(argc);
+		return (1);
+	}
 
 	// graphic rendering
 	initialize_mlx(&info);
@@ -27,7 +36,24 @@ int	main(void)
 	mlx_loop(info.mlx);
 
 	// free memory, and return (0)
-	// WARN: change this to only free the memory before returning 0.
-	free_exit(&info, NULL);
+	// WARN: change this to only free all the memory before returning 0
+	// (free_exit() exits with 1!)
+	free_exit(NULL);
 	return (0);
+}
+
+static void	handle_unexpected_arg_count(int argc)
+{
+	if (argc == 1)
+		write(2, "No input scene file provided.\nPlease provide valid "
+			".rt file for the miniRT program to render - for example:\n"
+			"./miniRT beautiful_scene.rt\n",
+			sizeof ("No input scene file provided.\nPlease provide valid "
+			".rt file for the miniRT program to render - for example:\n"
+			"./miniRT beautiful_scene.rt\n") - 1);
+	else
+		write(2, "Too many arguments provided. Please provide only one "
+			"valid .rt scene\n",
+			sizeof ("Too many arguments provided. Please provide only one "
+			"valid .rt scene\n") - 1);
 }
