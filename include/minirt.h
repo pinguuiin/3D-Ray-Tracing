@@ -62,9 +62,10 @@ typedef struct s_light
 /* Camera specs */
 typedef struct s_cam
 {
-	double	fov; // converted to rad from degree  ==parsing==
+	double	fov; // converted to rad from degree  ==parsing== (multiply the provided angle by π / 180)
 	t_vec	pos;
 	t_vec	direction;
+	int		is_provided;
 
 }	t_cam;
 

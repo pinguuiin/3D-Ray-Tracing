@@ -12,8 +12,8 @@
 
 #include "minirt.h"
 
-static int			str_to_linear_color(char **s, double *result);
-static int			is_valid_separator(char	**s);
+static int	str_to_linear_color(char **str, double *result);
+static int	is_valid_separator(char	**str);
 
 /*
 * This function expects three color values in range 0 to 255, separated by
@@ -40,37 +40,36 @@ int	parse_color(char **str, t_color *color)
 	return (0);
 }
 
-static int	str_to_linear_color(char **s, double *result)
+static int	str_to_linear_color(char **str, double *result)
 {
-	char		*ptr;
+	char		*s;
 	uint16_t	conversion;
 
 	conversion = 0;
-	ptr = *s;
-
-	if (*ptr == '+')
-		ptr++;
-	if (!ft_isdigit(*ptr))
+	s = *str;
+	if (*s == '+')
+		s++;
+	if (!ft_isdigit(*s))
 		return (-1);
-	while (ft_isdigit(*ptr))
+	while (ft_isdigit(*s))
 	{
-		conversion = conversion * 10 + *ptr - '0';
+		conversion = conversion * 10 + *s - '0';
 		if (conversion > 255)
 			return (-1);
-		ptr++;
+		s++;
 	}
 	*result = (double) conversion / 255.0;
-	*s = ptr;
+	*str = s;
 	return (0);
 }
 
-static int	is_valid_separator(char	**s)
+static int	is_valid_separator(char	**str)
 {
-	if (**s == ',')
-		(*s)++;
+	if (**str == ',')
+		(*str)++;
 	else
 		return (0);
-	if (**s == ' ')
-		(*s)++;
+	if (**str == ' ')
+		(*str)++;
 	return (1);
 }
