@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/17 00:39:02 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/19 00:32:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,60 +108,43 @@ double	ray_hit_plane(t_info *info, t_vec ray, int id)
 	return (-1.0);
 }
 
-double	hit_side_or_cap(t_info *info, t_vec ray, int id, t_discrim f)
+double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f)
 {
-	t_object	*cy;
-	t_vec		cap_pos;
-	t_vec		cap_oc;
 	double		hit_h[2];
 
-	cy = &info->obj[id];
 	hit_h[0] = dot(add(cy->oc, scale(ray, f.root)), cy->normal);
 	if (fabs(hit_h[0]) - cy->h > EPSILON)  // closer intersection point P is out of boundary
 	{
 		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
 		hit_h[1] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
-		if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // both intersection points are out of boundaries
+		if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // ray is out of boundaries
 			return (-1.0);
 		if (hit_h[0] > 0)
-			cap_pos = add(cy->pos, scale(cy->normal, cy->h));
+			f.oc_n -= cy->h;
 		else
-			cap_pos = subtract(cy->pos, scale(cy->normal, cy->h));
-		cap_oc = subtract(info->cam.pos, cap_pos);
-		f.a = dot(cap_oc, cy->normal);
-		f.b = dot(ray, cy->normal);
-		f.root = -(f.a / f.b);
+			f.oc_n += cy->h;
+		f.root = -(f.oc_n / f.ray_n);
 		return (f.root);
 	}
 	return (f.root);
 }
 
-double	hit_cap_or_inside(t_info *info, t_vec ray, int id, t_discrim f)
+double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f)
 {
-	t_object	*cy;
-	t_vec		cap_pos;
-	t_vec		cap_oc;
-	double		hit_h[2];
+	double		hit_h;
 
-	cy = &info->obj[id];
-	hit_h[0] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
-	if (fabs(hit_h[0]) - cy->h > EPSILON)  // intersection point P is out of boundary
+	hit_h = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
+	if (fabs(hit_h) - cy->h > EPSILON && hit_h * f.oc_n >= -EPSILON)// intersection point P is out of boundary
 		return (-1.0);
-	// {
-	// 	f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
-	// 	hit_h[1] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
-	// 	if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // both intersection points are out of boundaries
-	// 		return (-1.0);
-		if (hit_h[0] > 0)
-			cap_pos = add(cy->pos, scale(cy->normal, cy->h));
-		else
-			cap_pos = subtract(cy->pos, scale(cy->normal, cy->h));
-		cap_oc = subtract(info->cam.pos, cap_pos);
-		f.a = dot(cap_oc, cy->normal);
-		f.b = dot(ray, cy->normal);
-		f.root = -(f.a / f.b);
-		return (f.root);
-	}
+	if (fabs(f.oc_n) - cy->h < -EPSILON)  // inside
+		return (-1.0);
+	if (fabs(f.oc_n) - cy->h <= EPSILON)  // camera on the object
+		return (0.0);
+	if (f.oc_n > 0)
+		f.oc_n -= cy->h;
+	else
+		f.oc_n += cy->h;
+	f.root = -(f.oc_n / f.ray_n);
 	return (f.root);
 }
 
@@ -169,19 +152,17 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 {
 	t_object	*cy;
 	t_discrim	f;
-	double		dot_oc_n;
-	double		dot_ray_n;
 
 	cy = &info->obj[id];
-	dot_oc_n = dot(cy->oc, cy->normal);
-	dot_ray_n = dot(ray, cy->normal);
-	f.a = dot(ray, ray) - dot_ray_n * dot_ray_n;
-	f.b = 2 * (dot(cy->oc, ray) - dot_oc_n * dot_ray_n);
-	f.c = dot(cy->oc, cy->oc) - dot_oc_n * dot_oc_n - cy->r * cy->r;
-	if (fabs(f.a) < EPSILON)  // ray on the axis of the cylinder, ray hit
+	f.oc_n = dot(cy->oc, cy->normal);
+	f.ray_n = dot(ray, cy->normal);
+	f.a = dot(ray, ray) - f.ray_n * f.ray_n;
+	f.b = 2 * (dot(cy->oc, ray) - f.oc_n * f.ray_n);
+	f.c = dot(cy->oc, cy->oc) - f.oc_n * f.oc_n - cy->r * cy->r;
+	if (fabs(f.a) < EPSILON)  // ray on the axis of the cylinder, ray hit   CAN I IGNORE IT??
 	{
-		if (dot(ray, cy->oc) < -EPSILON)  //object center in front of cam; inside cylinder is partially here!
-			return (norm(cy->oc) - cy->h);
+		if (dot(ray, cy->oc) <= -EPSILON)  //object center in front of cam; inside cylinder is partially here!
+			return ((norm(cy->oc) - cy->h) / norm(ray));
 		else  //object center behind cam; inside cylinder is also partially here!
 			return (-1.0);
 	}
@@ -189,11 +170,11 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 	if (f.delta >= EPSILON)  // delta = 0, ray is tangent to the cylinder, hit; root = 0, camera on the cylinder, ray hit
 	{
 		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
-		if (f.root >= EPSILON)  // ray from outside the infinitely long cylinder
-			return (hit_side_or_cap(info, ray, id, f));
+		if (f.root >= EPSILON)  // ray hit from outside the infinitely long cylinder
+			return (hit_from_outside(cy, ray, f));
 		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
 		if (f.root2 >= EPSILON)  // ray from inside the infinitely long cylinder
-			return (hit_cap_or_inside(info, ray, id, f));
+			return (hit_from_inside(cy, ray, f));
 		// else inside the cylinder or cylinder behind camera
 	}
 	return (-1.0);
