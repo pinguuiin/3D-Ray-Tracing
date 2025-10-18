@@ -65,6 +65,7 @@ int		ft_isspace(int c);
 int		ft_strtod(char **str, double *result, uint32_t line_num);
 int		parse_color(char **str, t_color *color);
 int		parse_coordinates(char **str, t_vec *position, uint32_t line_num);
+int		parse_direction_vector(char **str, t_vec *direction, uint32_t line_num);
 int		is_valid_separator(char	**str);
 
 // error handling and memory management
