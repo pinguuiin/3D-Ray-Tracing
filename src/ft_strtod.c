@@ -28,9 +28,6 @@ int	ft_strtod(char **str, double *result, uint32_t line_num)
 
 	ptr = *str;
 	n_digits = 0;
-	// WARN: is 'result' already set to zero when this function is called?
-	// Should I set it to zero here, if not? It better be set to zero beforehand!
-
 	sign = parse_plus_or_minus_sign(&ptr);
 	if (!is_start_of_string_valid(ptr))
 	{
@@ -97,6 +94,12 @@ int	ft_strtod(char **str, double *result, uint32_t line_num)
 	}
 
 	*result *= sign;	// convert result to negative, if necessary
+	if (isinf(*result))
+	{
+		display_parsing_error("Overflow of provided real number on line",
+			line_num);
+		return (-1);
+	}
 	*str = ptr;	// increments the pointer at the caller.
 	return (0);
 }
