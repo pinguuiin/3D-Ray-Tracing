@@ -65,7 +65,11 @@ void	parse_scene(t_info *info, char *file_name)
 
 }
 
-// if an invalid input is found: exit status is 2
+// FIXME: consider doing the isspace_but_not_newline() checks from the specific
+// parsing functions, to make this look more clean -> and to go with the general
+// "atoi()" type logic....
+
+// If an invalid input is found: exit status is 2
 static void	parse_line(t_info *info, char *line, uint32_t line_num)
 {
 	int		is_invalid;

@@ -29,17 +29,19 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
-	if (ft_strtod(&str, &amb->ratio) == -1)
+	if (ft_strtod(&str, &amb->ratio, line_num) == -1)
 		return (1);
 
-	// important check, since ft_strtod() only checks if the number's tail
-	// is strange - but accepts null terminator or newline as valid endings,
-	// which, in the context of parse_ambient_lighting() is invalid; We still
-	// need the RGB data of the ambient lighting.
-	if (!*str || *str == '\n')
+	if (!*str || *str == '\n') // if true, .rt file is lacking RGB data for amb!
 	{
 		display_parsing_error("Missing data for ambient lighting element. "
 		"See line number:", line_num);
+		return (1);
+	}
+	else if (!isspace_but_not_newline(*str)) // if true, the floating point ratio has a strange tail. ft_strtod() does not check for this.
+	{
+		display_parsing_error("Unknown input when expecting floating point "
+			"number, on line:", line_num);
 		return (1);
 	}
 
@@ -59,7 +61,7 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 	// string, the pointer will point to it
 	while (ft_isspace(*str))
 		str++;
-	if (*str)	// there is still data in the line, before its newline: error.
+	if (*str)	// there is still data in the line, before its newline - or the color values have a strange tail: error.
 	{
 		display_parsing_error("Unexpected data encountered on line number",
 			line_num);
@@ -70,9 +72,8 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 }
 
 // TODO:
-// FIXME: is it invalid to have camera attributes which are all 0?
-// Or more precisely, which attributes should not be 0, and are there any
-// that should not be negative?? Use the following template:
+
+// TODO: Use the following template for invalid camera attributes:
 /*
 	{
 		display_parsing_error("Invalid camera attributes provided, on line"
@@ -92,7 +93,6 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
-	// TODO: parse "t_vec pos": view point coordinates
 	if (parse_coordinates(&str, &cam->pos, line_num) == -1)
 		return (1);
 

@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 21:13:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/18 19:23:19 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/18 19:49:09 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static inline int		extract_exponent_and_update_result(char **ptr,
 
 int	ft_strtod(char **str, double *result, uint32_t line_num)
 {
-	char	*ptr;	// for readability.
+	char	*ptr;
 	int		sign;
 	int64_t	whole;
 	size_t	n_digits;
@@ -78,25 +78,10 @@ int	ft_strtod(char **str, double *result, uint32_t line_num)
 
 	}
 
-	// check that the number has no strange tail
-	// accept whitespace (including '\n' & nul terminator)
-	if (*ptr && !ft_isspace(*ptr))
-	{
-		// NOTE: Add check for the '\n' again, as well as for '\0' in the
-		// caller, after this function returns -> because I think strtod()
-		// should accept those as valid tails for the floating point value,
-		// as a general rule, but in the context of miniRT, depending on the
-		// element we are parsing in the caller: this could be an error.
-
-		display_parsing_error("Unknown input when expecting floating point "
-			"number, on line:", line_num);
-		return (-1);
-	}
-
 	*result *= sign;	// convert result to negative, if necessary
 	if (isinf(*result))
 	{
-		display_parsing_error("Overflow of provided real number on line",
+		display_parsing_error("Overflow of real number provided on line",
 			line_num);
 		return (-1);
 	}
@@ -214,9 +199,9 @@ static inline int	extract_exponent_and_update_result(char **ptr,
 	while (ft_isdigit(*s))
 	{
 		exponent = exponent * 10 + (*s - '0');
-		s++;
 		if (exponent * sign < -15 || exponent * sign > 15 - (int64_t) n_digits)
 			return (-1);
+		s++;
 	}
 	*ptr = s;
 

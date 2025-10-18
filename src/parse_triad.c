@@ -28,11 +28,11 @@ int	parse_color(char **str, t_color *color)
 {
 	if (str_to_linear_color(str, &color->r) == -1)
 		return (-1);
-	if (!is_valid_separator(str);
+	if (!is_valid_separator(str))
 		return (-1);
 	if (str_to_linear_color(str, &color->g) == -1)
 		return (-1);
-	if (!is_valid_separator(str);
+	if (!is_valid_separator(str))
 		return (-1);
 	if (str_to_linear_color(str, &color->b) == -1)
 		return (-1);
@@ -64,15 +64,15 @@ static int	str_to_linear_color(char **str, double *result)
 
 // FIXME: ft_strtod would always return -1 when bumping into the ','.
 // Adapt it, and adapt all of its callers (parse_ambient_lighting()).
-int	parse_coordinates(char **str, t_vec *position, size_t line_num)
+int	parse_coordinates(char **str, t_vec *position, uint32_t line_num)
 {
 	if (ft_strtod(str, &position->x, line_num) == -1)
 		return (-1);
-	if (!is_valid_separator(str);
+	if (!is_valid_separator(str))
 		return (-1);
 	if (ft_strtod(str, &position->y, line_num) == -1)
 		return (-1);
-	if (!is_valid_separator(str);
+	if (!is_valid_separator(str))
 		return (-1);
 	if (ft_strtod(str, &position->z, line_num) == -1)
 		return (-1);
