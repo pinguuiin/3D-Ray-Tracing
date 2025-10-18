@@ -98,10 +98,17 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
-	// TODO: parse "t_vec direction" normalized orientation vector, in range [-1,1] for each x,y,z axis:
+	// TODO: Parse "t_vec direction" normalized orientation vector, in range [-1,1] for each x,y,z axis:
 	// if 0.0,0.0,0.0 is provided, set it to the default direction: 0.0,0.0,1.0
-	// WARN: how about a negative "z" direction? The camera is facing backwards?
+	// WARN: How about a negative "z" direction? The camera is facing backwards?
+	// update: Yes, it can face backwards! The camera might be in the middle of
+	// the room, and there may or may not be objects behind it, which you would
+	// see if the camera faces backwards.
 	// WARN: is there something here regarding a sum equal to 1?
+	// update: these values should be normalized into a scale of  [-1,1] BEFORE
+	// the rendering happens, so it would be great to normalize them already here.
+	// BUT - for the moment it is already being done after the parsing,
+	// so discuss this in the team and decide together where to keep it!
 
 	// parse more whitespace but not newline
 	while (isspace_but_not_newline(*str))
@@ -109,6 +116,9 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 
 	// TODO: parse ("double fov"): provided in degrees in range [0,180],
 	// but should be converted to rad: provided angle * π / 180.
+	// accept 0.0 for now, but remember testing it. Subject specifies "in range [0,180]"
+	// so better accept it, but check that nothing breaks later on when you run the program.
+
 
 	// advance the pointer until one byte after the '\n', since miniRT employs
 	// get_next_line() - or, if there is still some unwanted input in the
