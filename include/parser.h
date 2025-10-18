@@ -64,6 +64,8 @@ int		isspace_but_not_newline(int c);
 int		ft_isspace(int c);
 int		ft_strtod(char **str, double *result, uint32_t line_num);
 int		parse_color(char **str, t_color *color);
+int		parse_coordinates(char **str, t_vec *position, size_t line_num);
+int		is_valid_separator(char	**str);
 
 // error handling and memory management
 void	handle_gnl_error_and_exit(t_info *info, int gnl_flag);

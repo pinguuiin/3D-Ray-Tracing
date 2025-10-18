@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_color.c                                      :+:      :+:    :+:   */
+/*   parse_triad.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 19:52:08 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/17 20:06:15 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/18 19:38:59 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
 static int	str_to_linear_color(char **str, double *result);
-static int	is_valid_separator(char	**str);
 
 /*
 * This function expects three color values in range 0 to 255, separated by
@@ -63,13 +62,19 @@ static int	str_to_linear_color(char **str, double *result)
 	return (0);
 }
 
-static int	is_valid_separator(char	**str)
+// FIXME: ft_strtod would always return -1 when bumping into the ','.
+// Adapt it, and adapt all of its callers (parse_ambient_lighting()).
+int	parse_coordinates(char **str, t_vec *position, size_t line_num)
 {
-	if (**str == ',')
-		(*str)++;
-	else
-		return (0);
-	if (**str == ' ')
-		(*str)++;
-	return (1);
+	if (ft_strtod(str, &position->x, line_num) == -1)
+		return (-1);
+	if (!is_valid_separator(str);
+		return (-1);
+	if (ft_strtod(str, &position->y, line_num) == -1)
+		return (-1);
+	if (!is_valid_separator(str);
+		return (-1);
+	if (ft_strtod(str, &position->z, line_num) == -1)
+		return (-1);
+	return (0);
 }

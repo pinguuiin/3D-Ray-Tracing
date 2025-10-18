@@ -99,3 +99,14 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	write(fd, str, len);
 	write(fd, ".\n", 2);
 }
+
+int	is_valid_separator(char	**str)
+{
+	if (**str == ',')
+		(*str)++;
+	else
+		return (0);
+	if (**str == ' ')
+		(*str)++;
+	return (1);
+}

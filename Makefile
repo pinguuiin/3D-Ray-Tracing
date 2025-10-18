@@ -45,7 +45,7 @@ SRC_FILES = hooks/camera_hooks.c \
 			parse_objects.c \
 			parsing_utils.c \
 			ft_strtod.c \
-			parse_color.c \
+			parse_triad.c \
 			get_next_line_minirt.c \
 			get_next_line_utils.c
 #			test.c

@@ -93,6 +93,8 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 		str++;
 
 	// TODO: parse "t_vec pos": view point coordinates
+	if (parse_coordinates(&str, &cam->pos, line_num) == -1)
+		return (1);
 
 	// parse more whitespace but not newline
 	while (isspace_but_not_newline(*str))
