@@ -103,6 +103,14 @@ int	parse_direction_vector(char **str, t_vec *direction, uint32_t line_num)
 	if (ft_strtod(str, &position->z, line_num) == -1)
 		return (-1);
 
+	// FIXME: review this part with latest information from partner -
+	// "you can accept anything for the direction, same as for the object's normal vector.
+	// Just save it as a 3d vector using my vec3() function like this:
+	// vec3(-123.0, 12345.0, 0.00001);
+	// Wait. Maybe it can reduce more computing if you could normalize it when saving it.
+	// Just wrap it with one more function:
+	// info->cam.direction = normalize(vec3(-123.0, 12345.0, 0.00001));"
+	/*
 	if (direction->x < -1.0 || direction->x > +1.0
 		|| direction->y < -1.0 || direction->y > +1.0
 		|| direction->z < -1.0 || direction->z > +1.0)
@@ -114,12 +122,13 @@ int	parse_direction_vector(char **str, t_vec *direction, uint32_t line_num)
 			"encountered on line", line_num);
 		return (-1);
 	}
+	*/
 
 	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
-	if (!direction.x && !direction.y && !direction.z)
-		direction.z = 1.0;
-	// else // TODO:
-	// 	normalize values already here?????
+	if (!direction->x && !direction->y && !direction->z)
+		direction->z = 1.0;
+	else // TODO:	normalize values already here?????
+		*direction = normalize(*direction);
 
 	return (0);
 }
