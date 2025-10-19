@@ -110,3 +110,28 @@ int	is_valid_separator(char	**str)
 		(*str)++;
 	return (1);
 }
+
+// Checks the character to which str is pointing at, advances it by one byte
+// and returns 1 if the character is expected, or returns 0 if it is unexpected.
+// The use case for this function should respect the following aspects:
+// - following a call to ft_strtod(), parse_color() or parse_coordinates() // WARN: add appropriate functions if there are any new ones!
+// - when miniRT expects more data in the line, after the last numerical value
+int	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
+{
+	if (isspace_but_not_newline(**str))
+	{
+		(*str)++;
+		return (1); // can remove this maybe?
+	}
+	else if (!**str || **str == '\n')
+	{
+		display_parsing_error("Missing data for element on line:", line_num);
+		return (0);
+	}
+	else
+	{
+		display_parsing_error("Unknown character at tail end of numerical "
+			"value, on line:", line_num);
+		return (0);
+	}
+}
