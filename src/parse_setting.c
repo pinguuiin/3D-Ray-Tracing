@@ -134,8 +134,13 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 	// so discuss this in the team and decide together where to keep it!
 	if (parse_direction_vector(&str, &cam->direction, line_num) == -1)
 		return (1);
+
+	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
+	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
+		&& fabs(cam->direction->z) < EPSILON)
+		cam->direction.z = 1.0;
+	cam->direction = normalize(cam->direction); // normalize
 	
-	// 	normalize already here????? or, within parse_vector_direction().
 
 	// TODO: validate input by checking the character to which str is pointing to right now!
 	// WARN: consider merging this block into one function, with the almost identical block in parse_ambient_lighting()
