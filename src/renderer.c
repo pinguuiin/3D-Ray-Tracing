@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/19 00:32:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/19 04:07:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,13 +197,10 @@ double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 			k = ray_hit_plane(info, ray, id);
 		else
 			k = ray_hit_cylinder(info, ray, id);
-		if (k >= 0.0)
+		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
-			if (k_min < -EPSILON || k < k_min)
-			{
-				k_min = k;
-				hit->obj_id = id;
-			}
+			k_min = k;
+			hit->obj_id = id;
 		}
 		id++;
 	}
