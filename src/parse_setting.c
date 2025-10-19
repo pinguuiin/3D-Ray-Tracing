@@ -132,7 +132,7 @@ static inline double	str_degrees_to_radians(char **str, uint32_t line_num)
 	char		*s;
 
 	angle = 0;
-	s = *str
+	s = *str;
 	if (*s == '+')
 		s++;
 	if (!ft_isdigit(*s))
