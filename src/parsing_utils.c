@@ -135,3 +135,27 @@ int	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 		return (0);
 	}
 }
+
+/*
+* To be used after the last data in a given line (of the input .rt file) has
+* been successfully parsed, and no more data is expected.
+* Since miniRT used get_next_line() to parse the input .rt file, this function
+* allows detection of any unwanted input at the end of the line - whether it
+* is the first character that 's' points to at the start of the function, or
+* after a series of whitespace. Should the line be valid, however, 's' ends up
+* pointing at the nul-terminator (that either follows the newline character, or
+* not, in case it is the last line of the file, and that line does not have a
+* newline character at all).
+*/
+int	is_valid_end_of_line(char *s)
+{
+	while (ft_isspace(*s))
+		s++;
+	if (*s)
+	{
+		display_parsing_error("Unexpected data encountered on line number",
+			line_num);
+		return (0);
+	}
+	return (1);
+}

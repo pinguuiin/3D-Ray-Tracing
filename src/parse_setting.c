@@ -12,6 +12,8 @@
 
 #include "minirt.h"
 
+static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
+
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
@@ -45,17 +47,8 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 		return (1);
 	}
 
-	// advance the pointer until one byte after the '\n', since miniRT employs
-	// get_next_line() - or, if there is still some unwanted input in the
-	// string, the pointer will point to it
-	while (ft_isspace(*str))
-		str++;
-	if (*str)	// there is still data in the line, before its newline - or the color values have a strange tail: error.
-	{
-		display_parsing_error("Unexpected data encountered on line number",
-			line_num);
+	if (!is_valid_end_of_line(str))
 		return (1);
-	}
 	amb->is_provided = 1; // validate the ambient lighting
 	return (0);
 }
@@ -104,23 +97,13 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
-	// TODO: parse ("double fov"): provided in degrees in range [0,180],
-	// but should be converted to rad: provided angle * π / 180.
-	// accept 0.0 for now, but remember testing it. Subject specifies "in range [0,180]"
-	// so better accept it, but check that nothing breaks later on when you run the program.
-
-
-	// advance the pointer until one byte after the '\n', since miniRT employs
-	// get_next_line() - or, if there is still some unwanted input in the
-	// string, the pointer will point to it
-	while (ft_isspace(*str))
-		str++;
-	if (*str)	// there is still data in the line, before its newline: error.
-	{
-		display_parsing_error("Unexpected data encountered on line number",
-			line_num);
+	// FIXME: is it okay that I only accept integers and no floats for this?
+	cam->fov = str_degrees_to_radians(&str, line_num);
+	if (cam->fov < 0.0)
 		return (1);
-	}
+
+	if (!is_valid_end_of_line(str))
+		return (1);
 	cam->is_provided = 1;	// validate the camera
 	return (0);
 }
@@ -138,4 +121,37 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 	while (isspace_but_not_newline(*str))
 		str++;
 
+}
+
+// FIXME: if M_PI does not compile, you may need to either:
+// 1. before the #include <math.h>, add: #define _USE_MATH_DEFINES
+// 2. do a regular ifndef sequence with the value : PI 3.14159265358979323846
+static inline double	str_degrees_to_radians(char **str, uint32_t line_num)
+{
+	uint32_t	angle;
+	char		*s;
+
+	angle = 0;
+	s = *str
+	if (*s == '+')
+		s++;
+	if (!ft_isdigit(*s))
+	{
+		display_parsing_error("Unknown input when expecting an angle value "
+			"between 0 and 180, on line number", line_num);
+		return (-1.0);
+	}
+	while (ft_isdigit(*s))
+	{
+		angle = angle * 10 + *s - '0';
+		if (angle > 180)
+		{
+			display_parsing_error("Unknown input when expecting an angle value "
+				"between 0 and 180, on line number", line_num);
+			return (-1.0);
+		}
+		s++;
+	}
+	*str = s;
+	return (angle * M_PI / 180.0);
 }
