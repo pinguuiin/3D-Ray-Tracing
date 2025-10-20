@@ -21,8 +21,11 @@ static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
 // through potential isspace_but_not_newline().
 int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 {
+	static uint32_t	n_ambients;
+	double			ratio;
+
 	// check if we already have ambient lighting: Only 1 is accepted
-	if (amb->is_provided)
+	if (n_ambients)
 	{
 		display_parsing_error("Too many ambient lighting sources provided; "
 			"Invalid input on line number", line_num);
@@ -30,8 +33,16 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 	}
 	skip_whitespace_but_not_newline(&str);
 
-	if (ft_strtod(&str, &amb->ratio, line_num) == -1)
+	ratio = 0.0;
+	if (ft_strtod(&str, &ratio, line_num) == -1)
 		return (1);
+	if (ratio < 0.0 || ratio > 1.0)
+	{
+		display_parsing_error("Value provided for light source's brightness "
+			"is out of range. Allowed range: 0.0 to 1.0. See line", line_num);
+		return (1);
+	}
+
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
@@ -45,18 +56,23 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 			line_num);
 		return (1);
 	}
+	// FIXME: apply ratio to r, g & b channels.
+	// write a separate function for it! AND, perhaps pass a pointer to ratio to parse_color(), and
+	// just do it from there -> pass to it NULL when you don't need to do that multiplication!
+
 
 	if (!is_valid_end_of_line(str))
 		return (1);
-	amb->is_provided = 1; // validate the ambient lighting
+	n_ambients++;	// validate the ambient lighting
 	return (0);
 }
 
-// TODO:
 int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 {
+	static int	n_cameras;
+
 	// check if we already have a camera: Only 1 is accepted
-	if (cam->is_provided)
+	if (n_cameras)
 	{
 		display_parsing_error("Too many cameras suggested by the input file; "
 			"Invalid input at line number", line_num);
@@ -87,14 +103,13 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 
 	skip_whitespace_but_not_newline(&str);
 
-	// FIXME: is it okay that I only accept integers and no floats for this?
 	cam->fov = str_degrees_to_radians(&str, line_num);
 	if (cam->fov < 0.0)
 		return (1);
 
 	if (!is_valid_end_of_line(str))
 		return (1);
-	cam->is_provided = 1;	// validate the camera
+	n_cameras++;	// validate the camera
 	return (0);
 }
 
@@ -108,8 +123,11 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 // be accepted -> while the bonus (or is it only some bonus parts) require/s it!
 int	parse_light(t_light *light, char *str, uint32_t line_num)
 {
+	static int	n_lights;
+	double		ratio;
+
 	// check if we already have a light source: Only 1 is accepted
-	if (light->is_provided) // the mandatory part only accepts one single light source
+	if (n_lights) // the mandatory part only accepts one single light source
 	{
 		display_parsing_error("Too many light sources present in the scene; "
 			"Only one fixed light is accepted. See line", line_num);
@@ -126,9 +144,10 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	// prase the light brightness ratio in range [0.0,1.0]
-	if (ft_strtod(&str, &light->ratio, line_num) == -1)
+	ratio = 0.0;
+	if (ft_strtod(&str, &ratio, line_num) == -1)
 		return (1);
-	if (light->ratio < 0.0 || light->ratio > 1.0)
+	if (ratio < 0.0 || ratio > 1.0)
 	{
 		display_parsing_error("Value provided for light source's brightness "
 			"is out of range. Allowed range: 0.0 to 1.0. See line", line_num);
@@ -142,10 +161,7 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 	// If there is valid RGB data, we could parse it into the struct, it does
 	// not matter.
 	
-	light->is_provided = 1;
-	if (!*str || *str == '\n')
-		return (0);
-	if (ft_isspace(*str))
+	if (!*str || ft_isspace(*str))
 	{
 		skip_whitespace(&str);
 		if (*str)
@@ -157,9 +173,21 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 					"on line:", line_num);
 				return (1);
 			}
+			// FIXME: apply ratio to r, g & b channels.
+			// write a separate function for it!
 			if (!is_valid_end_of_line(str))
 				return (1);
 		}
+		else
+		{
+			// set all color channels to white as a default color
+			// when none are provided (but adapting the ratio already here) 
+			// FIXME: use a separate function for this!
+			light->color.r = 1.0 * ratio;
+			light->color.g = 1.0 * ratio;
+			light->color.b = 1.0 * ratio;
+		}
+		n_lights++;
 		return (0);
 	}
 	display_parsing_error("Unexpected input found at tail end of light "
