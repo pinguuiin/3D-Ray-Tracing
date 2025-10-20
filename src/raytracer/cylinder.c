@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/21 01:03:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/21 02:05:40 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ double	hit_from_inside(t_info *info, t_object *cy, t_vec ray, t_discrim f)
 	double		hit_h;
 
 	hit_h = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
-	if (fabs(hit_h) - cy->h > EPSILON && hit_h * f.oc_n >= -EPSILON)// intersection point P is out of boundary
+	if (fabs(hit_h) - cy->h > EPSILON && hit_h * f.oc_n >= -EPSILON)  // intersection point P is out of boundary
 		return (-1.0);
 	if (fabs(f.oc_n) - cy->h < -EPSILON)  // inside
 	{
@@ -66,7 +66,7 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 	cy = &info->obj[id];
 	f.oc_n = dot(cy->oc, cy->normal);
 	f.ray_n = dot(ray, cy->normal);
-	f.a = dot(ray, ray) - f.ray_n * f.ray_n;
+	f.a = 1.0 - f.ray_n * f.ray_n;
 	f.b = 2 * (dot(cy->oc, ray) - f.oc_n * f.ray_n);
 	f.c = dot(cy->oc, cy->oc) - f.oc_n * f.oc_n - cy->r * cy->r;
 	if (f.a < EPSILON)  // ray on the same direction with the cylinder axis, ray hit
@@ -77,13 +77,13 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 		{
 			info->is_inside = true;
 			if (f.oc_n * f.ray_n < 0.0)
-				return ((cy->h + fabs(f.oc_n)) / f.ray_n);
-			return ((cy->h - fabs(f.oc_n)) / f.ray_n);
+				return (cy->h + fabs(f.oc_n));
+			return (cy->h - fabs(f.oc_n));
 		}
 		if (fabs(f.oc_n) - cy->h <= EPSILON)  // camera on the cylinder
 			return (0.0);
 		if (f.oc_n * f.ray_n < -EPSILON)  //object center in front of cam; inside cylinder is partially here!
-			return ((fabs(f.oc_n) - cy->h) / f.ray_n);
+			return (fabs(f.oc_n) - cy->h);
 		return (-1.0);
 	}
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;

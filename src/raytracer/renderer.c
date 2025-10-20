@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 23:11:11 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/21 01:53:26 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void	renderer(void *param)
 			ray = vec3(x * info->px - info->viewport_width / 2.0,
 			-(y * info->px - info->viewport_height / 2.0), 0);
 			rotate(info->rot, &ray);
-			ray = add(info->cam.direction, ray);
+			ray = normalize(add(info->cam.direction, ray));
 			draw_pixel(info, ray, x, y);
 			y++;
 		}
