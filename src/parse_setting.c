@@ -28,16 +28,15 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 			"Invalid input on line number", line_num);
 		return (1);
 	}
-	while (isspace_but_not_newline(*str))
-		str++;
+	skip_whitespace_but_not_newline(&str);
 
 	if (ft_strtod(&str, &amb->ratio, line_num) == -1)
 		return (1);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
-	while (isspace_but_not_newline(*str))
-		str++;
+
+	skip_whitespace_but_not_newline(&str);
 
 	if (parse_color(&str, &amb->color) == -1)
 	{
@@ -72,16 +71,16 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 			"Invalid input at line number", line_num);
 		return (1);
 	}
-	while (isspace_but_not_newline(*str))
-		str++;
+
+	skip_whitespace_but_not_newline(&str);
 
 	if (parse_coordinates(&str, &cam->pos, line_num) == -1)
 		return (1);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
-	while (isspace_but_not_newline(*str))
-		str++;
+
+	skip_whitespace_but_not_newline(&str);
 
 	if (parse_direction_vector(&str, &cam->direction, line_num) == -1)
 		return (1);
@@ -94,8 +93,8 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 	
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
-	while (isspace_but_not_newline(*str))
-		str++;
+
+	skip_whitespace_but_not_newline(&str);
 
 	// FIXME: is it okay that I only accept integers and no floats for this?
 	cam->fov = str_degrees_to_radians(&str, line_num);
@@ -118,8 +117,9 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 		return (1);
 
 	}
-	while (isspace_but_not_newline(*str))
-		str++;
+
+	skip_whitespace_but_not_newline(&str);
+
 
 }
 

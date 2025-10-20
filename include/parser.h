@@ -60,8 +60,10 @@ int		parse_plane(char *str, uint32_t line_num);
 int		parse_cylinder(char *str, uint32_t line_num);
 
 // parsing utilities
-int		isspace_but_not_newline(int c);
 int		ft_isspace(int c);
+int		isspace_but_not_newline(int c);
+void	skip_whitespace(char **str);
+void	skip_whitespace_but_not_newline(char **str);
 int		ft_strtod(char **str, double *result, uint32_t line_num);
 int		parse_color(char **str, t_color *color);
 int		parse_coordinates(char **str, t_vec *position, uint32_t line_num);

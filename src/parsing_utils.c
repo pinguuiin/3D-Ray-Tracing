@@ -24,8 +24,21 @@ void	handle_gnl_error_and_exit(t_info *info, int gnl_flag)
 		free_exit(info, "Failed to process input file; buffer size is empty");
 }
 
-// returns true if the character is one of the following: space, form-feed
-// ('\f'), horizontal tab ('\t'), vertical tab ('\v') or carriage return ('\r')
+/*
+* returns true if the character is: space, newline ('\n'), form-feed ('\f'),
+* horizontal tab ('\t'), vertical tab ('\v')  or carriage return ('\r')
+*/
+int	ft_isspace(int c)
+{
+	if (c == ' ' || (c >= '\t' && c <= '\r'))
+		return (1);
+	return (0);
+}
+
+/*
+* returns true if the character is one of the following: space, form-feed
+* ('\f'), horizontal tab ('\t'), vertical tab ('\v') or carriage return ('\r')
+*/
 int	isspace_but_not_newline(int c)
 {
 	if (c == ' ' || c == '\t' || (c >= '\v' && c <= '\r'))
@@ -33,13 +46,24 @@ int	isspace_but_not_newline(int c)
 	return (0);
 }
 
-// returns true if the character is: space, newline ('\n'), form-feed ('\f'),
-// horizontal tab ('\t'), vertical tab ('\v')  or carriage return ('\r')
-int	ft_isspace(int c)
+void	skip_whitespace(char **str)
 {
-	if (c == ' ' || (c >= '\t' && c <= '\r'))
-		return (1);
-	return (0);
+	char	*s;
+
+	s = *str;
+	while (*s == ' ' || (*s >= '\t' && *s <= '\r'))
+		s++;
+	*str = s;
+}
+
+void	skip_whitespace_but_not_newline(char **str)
+{
+	char	*s;
+
+	s = *str;
+	while (*s == ' ' || *s == '\t' || (*s >= '\v' && *s <= '\r'))
+		s++;
+	*str = s;
 }
 
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
@@ -149,8 +173,7 @@ int	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 */
 int	is_valid_end_of_line(char *s)
 {
-	while (ft_isspace(*s))
-		s++;
+	skip_whitespace(&s);
 	if (*s)
 	{
 		display_parsing_error("Unexpected data encountered on line number",

@@ -77,8 +77,9 @@ static void	parse_line(t_info *info, char *line, uint32_t line_num)
 
 	str = line;
 	is_invalid = 0;
-	while (isspace_but_not_newline(*str))
-		str++;
+
+	skip_whitespace_but_not_newline(&str);
+
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
 		return ;
 	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))

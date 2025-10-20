@@ -18,23 +18,20 @@
 // (non-newline) character that follows it!
 int	parse_sphere(char *str, uint32_t line_num)
 {
-	while (isspace_but_not_newline(*str))
-		str++;
+	skip_whitespace_but_not_newline(&str);
 
 
 }
 
 int	parse_plane(char *str, uint32_t line_num)
 {
-	while (isspace_but_not_newline(*str))
-		str++;
+	skip_whitespace_but_not_newline(&str);
 
 }
 
 int	parse_cylinder(char *str, uint32_t line_num)
 {
-	while (isspace_but_not_newline(*str))
-		str++;
+	skip_whitespace_but_not_newline(&str);
 
 
 }
