@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 02:30:05 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/20 22:23:14 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,20 +48,11 @@ typedef enum e_type
 
 }	t_type;
 
-/* Ambient light */
-typedef struct s_ambient
-{
-	t_vec	color;  // each rgb channel normalized from 0-255 to 0.0-1.0 and saved into xyz  ==parsing==
-	double	ratio;
-
-}	t_ambient;
-
 /* Key light */
 typedef struct s_light
 {
 	t_vec	pos;
 	t_vec	color;
-	double	ratio;
 
 }	t_light;
 
@@ -104,8 +95,8 @@ typedef struct s_info
 	double		viewport_height;
 	double		rot[3][3];
 	double		px;
+	t_vec		amb;
 	t_cam		cam;
-	t_ambient	amb;
 	t_light		light;
 	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
 	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
