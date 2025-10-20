@@ -49,10 +49,7 @@ int	main(int argc, char *argv[])
 	mlx_loop_hook(info.mlx, draw, &info);
 	mlx_loop(info.mlx);
 
-	// free memory, and return (0)
-	// WARN: change this to only free all the memory before returning 0
-	// (free_exit() exits with 1!)
-	free_exit(NULL);
+	free_exit(NULL); // this does not actually exit the program, no worries
 	return (0);
 }
 

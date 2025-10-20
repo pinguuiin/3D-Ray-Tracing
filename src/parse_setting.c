@@ -53,15 +53,6 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 }
 
 // TODO:
-
-// TODO: Use the following template for invalid camera attributes:
-/*
-	{
-		display_parsing_error("Invalid camera attributes provided, on line"
-			line_num);
-		return (1);
-	}
-*/
 int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 {
 	// check if we already have a camera: Only 1 is accepted
@@ -107,25 +98,80 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 	return (0);
 }
 
+// TODO: When working on the bonus part:
+// Set 'light' as an array, like the object array.
+// This will be useful for the bonus part, since it could allow several key
+// light sources. It would be easier to transform to it if lights (not ambient
+// lights) are stored as an array
+// NOTE: note the other important distinction beetween mandatory and bonus
+// parts: the color data is unused in the mandatory, but perhaps could still
+// be accepted -> while the bonus (or is it only some bonus parts) require/s it!
 int	parse_light(t_light *light, char *str, uint32_t line_num)
 {
 	// check if we already have a light source: Only 1 is accepted
-	if (light)
+	if (light->is_provided) // the mandatory part only accepts one single light source
 	{
 		display_parsing_error("Too many light sources present in the scene; "
-			"Invalid input found at line number", line_num);
+			"Only one fixed light is accepted. See line", line_num);
 		return (1);
-
 	}
-
 	skip_whitespace_but_not_newline(&str);
 
+	// parse coordinates of the light point
+	if (parse_coordinates(&str, &light->pos, line_num) == -1)
+		return (1);
 
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
+	skip_whitespace_but_not_newline(&str);
+
+	// prase the light brightness ratio in range [0.0,1.0]
+	if (ft_strtod(&str, &light->ratio, line_num) == -1)
+		return (1);
+	if (light->ratio < 0.0 || light->ratio > 1.0)
+	{
+		display_parsing_error("Value provided for light source's brightness "
+			"is out of range. Allowed range: 0.0 to 1.0. See line", line_num);
+		return (1);
+	}
+
+	// WARN:
+	// the next data is unused in the mandatory part.
+	// This means that we should accept cases where there is no more data
+	// at this point! But we should not accept weird data.
+	// If there is valid RGB data, we could parse it into the struct, it does
+	// not matter.
+	
+	light->is_provided = 1;
+	if (!*str || *str == '\n')
+		return (0);
+	if (ft_isspace(*str))
+	{
+		skip_whitespace(&str);
+		if (*str)
+		{
+			if (parse_color(&str, &light->color) == -1)
+			{
+				display_parsing_error("Invalid input for color values.\nPlease "
+					"use three values in range 0 to 255, separated by commas, "
+					"on line:", line_num);
+				return (1);
+			}
+			if (!is_valid_end_of_line(str))
+				return (1);
+		}
+		return (0);
+	}
+	display_parsing_error("Unexpected input found at tail end of light "
+		"source's ratio value, on line", line_num);
+	return (1);
 }
 
-// FIXME: if M_PI does not compile, you may need to either:
-// 1. before the #include <math.h>, add: #define _USE_MATH_DEFINES
-// 2. do a regular ifndef sequence with the value : PI 3.14159265358979323846
+/*
+* Note for users: If M_PI does not compile, you may need to modify the header:
+* 1. add before '#include <math.h>': #define _USE_MATH_DEFINES, or
+* 2. add an 'ifndef' sequence with: PI 3.14159265358979323846
+*/
 static inline double	str_degrees_to_radians(char **str, uint32_t line_num)
 {
 	uint32_t	angle;

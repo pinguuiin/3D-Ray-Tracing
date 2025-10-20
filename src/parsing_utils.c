@@ -145,19 +145,14 @@ int	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 	if (isspace_but_not_newline(**str))
 	{
 		(*str)++;
-		return (1); // can remove this maybe?
+		return (1);
 	}
 	else if (!**str || **str == '\n')
-	{
 		display_parsing_error("Missing data for element on line:", line_num);
-		return (0);
-	}
 	else
-	{
 		display_parsing_error("Unknown character at tail end of numerical "
 			"value, on line:", line_num);
-		return (0);
-	}
+	return (0);
 }
 
 /*
