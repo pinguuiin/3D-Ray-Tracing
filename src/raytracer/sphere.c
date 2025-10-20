@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:05:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 02:05:58 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/20 23:11:44 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,12 @@ double	ray_hit_sphere(t_info *info, t_vec ray, int id)
 		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
 		if (f.root >= EPSILON)
 			return (f.root);
-		// else inside the sphere or sphere behind camera
+		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
+		if (f.root2 >= EPSILON)
+		{
+			info->is_inside = true;
+			return (f.root2);
+		}
 	}
 	return (-1.0);
 }
