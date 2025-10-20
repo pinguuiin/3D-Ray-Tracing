@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/19 04:05:03 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/20 02:30:05 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,10 +120,16 @@ uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 t_vec		color_to_vec(int r, int g, int b);
 
+double		ray_hit_sphere(t_info *info, t_vec ray, int id);
+double		ray_hit_plane(t_info *info, t_vec ray, int id);
+double		ray_hit_cylinder(t_info *info, t_vec ray, int id);
+void		renderer(void *param);
+
+// void		rotate_x(t_vec *vec, double theta);
+void		rotate_y(t_vec *vec, double theta);
+// void		rotate_z(t_vec *vec, double theta);
 void		get_rotation_matrix(t_info *info, t_vec v);
 void		rotate(double rot[3][3], t_vec *v1);
-
-void		renderer(void *param);
 
 void		move_camera(mlx_key_data_t keydata, t_info *info);
 void		rotate_camera(mlx_key_data_t keydata, t_info *info);

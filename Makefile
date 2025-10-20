@@ -28,11 +28,14 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 
 SRC_FILES = test.c \
-			color.c \
-			renderer.c \
-			hooks.c \
-			rotation.c \
-			vector_operations.c
+			hooks/camera_hooks.c \
+			raytracer/cylinder.c \
+			raytracer/plane.c \
+			raytracer/renderer.c \
+			raytracer/sphere.c \
+			utils/color.c \
+			vector/operations.c \
+			vector/rotation.c
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))

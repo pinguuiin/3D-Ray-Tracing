@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/02 05:33:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/20 01:44:36 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,35 +38,6 @@ void	rotate_z(t_vec *vec, double theta)
 	vec->x = vec->x * cos(theta) - vec->y * sin(theta);
 	vec->y = vec->y * cos(theta) + temp * sin(theta);
 }
-
-double	get_angle_between_vectors(double x1, double y1, double x2, double y2)
-{
-	double	sq_len1;
-	double	sq_len2;
-
-	sq_len1 = x1 * x1 + y1 * y1;
-	sq_len2 = x2 * x2 + y2 * y2;
-	if (sq_len1 < EPSILON || sq_len2 < EPSILON)
-		return (0.0);
-	return (acos((x1 * x2 + y1 * y2) / (sqrt(sq_len1) * sqrt(sq_len2))));
-}
-
-// void	get_viewport_rotation(t_info *info, t_vec v1, t_vec v2)
-// {
-// 	info->viewport_rot[0] = get_angle_between_vectors(v1.y, v1.z, v2.y, v2.z);
-// 	info->viewport_rot[1] = get_angle_between_vectors(v1.x, v1.z, v2.x, v2.z);
-// 	info->viewport_rot[2] = get_angle_between_vectors(v1.x, v1.y, v2.x, v2.y);
-// 	if (cross(vec3(0, v1.y, v1.z), vec3(0, v2.y, v2.z)).x > EPSILON)
-// 		info->viewport_rot[0] *= -1;
-// 	if (cross(vec3(v1.x, 0, v1.z), vec3(v2.x, 0, v2.z)).y > EPSILON)
-// 		info->viewport_rot[1] *= -1;
-// 	if (cross(vec3(v1.x, v1.y, 0), vec3(v2.x, v2.y, 0)).z > EPSILON)
-// 		info->viewport_rot[2] *= -1;
-// 	#include <stdio.h>
-// 	printf("cam dir: %f\t%f\t%f\n", info->cam.direction.x, info->cam.direction.y, info->cam.direction.z);
-// 	printf("theta are: %f\t%f\t%f\n", info->viewport_rot[0], info->viewport_rot[1], info->viewport_rot[2]);
-// 	printf("cross: %f\n\n", cross(vec3(v1.x, 0, v1.z), vec3(v2.x, 0, v2.z)).y);
-// }
 
 /* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
