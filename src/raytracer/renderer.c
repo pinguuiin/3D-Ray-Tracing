@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 03:52:21 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/20 21:23:33 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-void	get_hit_attributes(t_info *info, t_vec ray, t_object *obj, t_hit *hit)
+void	get_hit_attributes(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	double	hit_h;
 
@@ -45,14 +45,12 @@ Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 => Specular term is counted when both terms' dot products greater than 0;
 Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 */
-t_vec	reflection(t_info *info, t_vec ray, t_hit *hit)
+t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
-	t_object	*obj;
 	double		flux;
 	double		spec;
 
-	obj = &info->obj[hit->obj_id];
-	get_hit_attributes(info, ray, obj, hit);
+	get_hit_attributes(info, obj, ray, hit);
 	hit->intensity = vec3(0.0, 0.0, 0.0);
 	flux = dot(hit->incoming, hit->normal);
 	if (flux > EPSILON)
@@ -100,9 +98,10 @@ double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 
 void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
-	double	k;
-	t_vec	color;
-	t_hit	hit;
+	double		k;
+	t_object	*obj;
+	t_vec		color;
+	t_hit		hit;
 
 	k = nearest_ray_hit(info, ray, &hit);
 	if (k == -1) // not hit
@@ -110,8 +109,9 @@ void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
 		return ;
 	}
-	color = scale(info->amb.color, info->amb.ratio);
-	color = add(color, reflection(info, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
+	obj = &info->obj[hit.obj_id];
+	color = dot_elem(scale(info->amb.color, info->amb.ratio), obj->color);
+	color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
