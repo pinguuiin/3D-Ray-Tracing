@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/04 00:30:51 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/19 04:05:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"
 # include "vector.h"
+# include "hit.h"
 # include <stdlib.h>
 # include <math.h>
 
@@ -89,33 +90,9 @@ typedef struct s_object
 	t_vec	normal;
 
 	// cylinder
-	double	h;
+	double	h;  // Half height of the cylinder
 
 }	t_object;
-
-/* Coefficient a, b and c, discriminant (delta) and root of the function for hit detection */
-typedef struct s_discrim
-{
-	double	a;
-	double	b;
-	double	c;
-	double	delta;
-	double	root;
-
-}	t_discrim;
-
-typedef struct s_hit
-{
-	t_vec	pos;  // coordinates of the hit point
-	t_vec	incoming;  // normalized ray direction from hit point to light source
-	t_vec	normal;  // normal at the hit point
-	t_vec	ray;  // normalized ray direction from hit point to camera
-	t_vec	outgoing; // normalized specular reflected ray direction
-	t_vec	diffuse;  // diffuse reflection intensity
-	t_vec	specular;  // specular reflection intensity
-	t_vec	intensity;  // intensity = diffuse + specular
-
-}	t_hit;
 
 /* Struct that includes everything */
 typedef struct s_info
@@ -132,7 +109,6 @@ typedef struct s_info
 	t_light		light;
 	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
 	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
-	int			obj_id;  // current object id
 	int			num;  // number of objects
 
 }	t_info;

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/04 01:15:57 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/16 22:56:10 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	main(void)
 	info->amb.ratio = 0.2;
 	info->amb.color = vec3(1.0, 0.9, 0.9);
 
-	info->light.pos = vec3(1.0, 4.0, 0.0);
+	info->light.pos = vec3(5.0, 3.0, 0.0);
 	info->light.ratio = 0.8;
 	info->light.color = vec3(1.0, 1.0, 1.0);
 
@@ -86,11 +86,11 @@ int	main(void)
 	info->cam.direction = normalize(info->cam.direction);
 	get_rotation_matrix(info, info->cam.direction);
 
-	info->obj = malloc(2 * sizeof(t_object));
+	info->obj = malloc(3 * sizeof(t_object));
 	info->obj[0].type = SPHERE;
-	info->obj[0].pos = vec3(0.0, 0.0, 10.0);
+	info->obj[0].pos = vec3(0.0, 0.0, 7.0);
 	info->obj[0].oc = subtract(info->cam.pos, info->obj[0].pos);
-	info->obj[0].r = 4.0;
+	info->obj[0].r = 3.0;
 	info->obj[0].color = vec3(0.0, 1.0, 0.0);
 
 	info->obj[1].type = PLANE;
@@ -100,8 +100,18 @@ int	main(void)
 	if (dot(info->obj[1].normal, info->obj[1].oc) < 0)
 		info->obj[1].normal = scale(info->obj[1].normal, -1);
 	info->obj[1].color = vec3(1.0, 1.0, 1.0);
+
+	info->obj[2].type = CYLINDER;
+	info->obj[2].pos = vec3(2.0, 0.0, 3.0);
+	info->obj[2].color = vec3(1.0, 1.0, 0.0);
+	info->obj[2].oc = subtract(info->cam.pos, info->obj[2].pos);
+	info->obj[2].r = 1.0;
+	info->obj[2].normal = normalize(vec3(0.0, 0.0, 1.0));
+	//direction check?
+	info->obj[2].h = 2.0;
+
 	// info->obj_id = 0;
-	info->num = 2;
+	info->num = 3;
 
 	info->focal_length = 1.0;
 	info->viewport_width = tan(info->cam.fov / 2.0) * 2 * info->focal_length;
