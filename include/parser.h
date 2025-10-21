@@ -52,7 +52,7 @@ typedef union u_vec
 typedef t_vec	t_color;
 
 // scene elements parsing
-int		parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num);
+int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num);
 int		parse_camera(t_cam *cam, char *str, uint32_t line_num);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
 int		parse_sphere(char *str, uint32_t line_num);

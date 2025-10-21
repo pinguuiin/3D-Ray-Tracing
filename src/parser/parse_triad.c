@@ -13,6 +13,8 @@
 #include "minirt.h"
 
 static int	str_to_linear_color(char **str, double *result);
+// FIXME:
+static t_color	apply_ratio_to_rgb_channels(t_color color, double ratio);
 
 /*
 * This function expects three color values in range 0 to 255, separated by
@@ -60,6 +62,15 @@ static int	str_to_linear_color(char **str, double *result)
 	*result = (double) conversion / 255.0;
 	*str = s;
 	return (0);
+}
+
+// FIXME:
+static t_color	apply_ratio_to_rgb_channels(t_color color, double ratio)
+{
+	color.r = color.r * ratio;
+	color.g = color.g * ratio;
+	color.b = color.b * ratio;
+	return (color);
 }
 
 int	parse_coordinates(char **str, t_vec *position, uint32_t line_num)

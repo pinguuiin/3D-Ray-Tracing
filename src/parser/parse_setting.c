@@ -19,7 +19,7 @@ static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it! So you still need to parse
 // through potential isspace_but_not_newline().
-int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
+int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num)
 {
 	static uint32_t	n_ambients;
 	double			ratio;
@@ -49,7 +49,7 @@ int	parse_ambient_lighting(t_ambient *amb, char *str, uint32_t line_num)
 
 	skip_whitespace_but_not_newline(&str);
 
-	if (parse_color(&str, &amb->color) == -1)
+	if (parse_color(&str, amb) == -1)
 	{
 		display_parsing_error("Invalid input for color values.\nPlease use "
 			"three values in range 0 to 255, separated by commas, on line:",
