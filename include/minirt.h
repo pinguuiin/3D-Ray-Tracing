@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 22:23:14 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/20 22:42:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 # include "hit.h"
 # include <stdlib.h>
 # include <math.h>
+# include <stdbool.h>
 
 /* Type of object */
 typedef enum e_type
@@ -101,6 +102,7 @@ typedef struct s_info
 	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
 	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
 	int			num;  // number of objects
+	bool		is_inside;
 
 }	t_info;
 
