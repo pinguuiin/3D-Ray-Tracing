@@ -29,10 +29,11 @@ OBJ_DIR = ./obj
 
 SRC_FILES = test.c \
 			hooks/camera_hooks.c \
-			raytracer/cylinder.c \
-			raytracer/plane.c \
+			raytracer/reflection.c \
 			raytracer/renderer.c \
-			raytracer/sphere.c \
+			shapes/cylinder.c \
+			shapes/plane.c \
+			shapes/sphere.c \
 			utils/color.c \
 			vector/operations.c \
 			vector/rotation.c

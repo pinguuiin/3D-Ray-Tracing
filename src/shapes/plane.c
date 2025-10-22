@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:06:23 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 02:07:13 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/22 02:56:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ f.a = 0, camera on the plane, ray hit, k=0;
 f.a != 0, f.b = 0, ray parallel to the plane, not hit
 f.a != 0, f.b != 0, root > 0, ray hit
 */
-double	ray_hit_plane(t_info *info, t_vec ray, int id)
+double	ray_hit_plane(t_vec ray, t_object *plane, t_vec pos)
 {
-	t_object	*plane;
+	t_vec		oc;
 	t_discrim	f;
 
-	plane = &info->obj[id];
-	f.a = dot(plane->oc, plane->normal);
+	oc = subtract(pos, plane->pos);
+	f.a = dot(oc, plane->normal);
 	f.b = dot(ray, plane->normal);
 	if (fabs(f.a) < EPSILON)
 		return (0.0);
