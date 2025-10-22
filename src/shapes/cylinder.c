@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/21 23:39:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/22 02:55:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,15 @@ double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, double h)
 }
 
 /* ray shooting from outside the infinite cylinder */
-double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f)
+double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 {
 	double	hit_h[2];
 
-	hit_h[0] = dot(add(cy->oc, scale(ray, f.root)), cy->normal);
+	hit_h[0] = dot(add(oc, scale(ray, f.root)), cy->normal);
 	if (fabs(hit_h[0]) - cy->h > EPSILON)  // closer intersection point P is out of boundary
 	{
 		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
-		hit_h[1] = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
+		hit_h[1] = dot(add(oc, scale(ray, f.root2)), cy->normal);
 		if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // ray is out of boundaries
 			return (-1.0);
 		return (hit_flat_disk(hit_h[0], f.oc_n, f.ray_n, cy->h));
@@ -39,14 +39,14 @@ double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f)
 }
 
 /* ray shooting from inside the infinite cylinder */
-double	hit_from_inside(t_info *info, t_object *cy, t_vec ray, t_discrim f)
+double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 {
 	double	hit_h;
 
-	hit_h = dot(add(cy->oc, scale(ray, f.root2)), cy->normal);
+	hit_h = dot(add(oc, scale(ray, f.root2)), cy->normal);
 	if (fabs(f.oc_n) - cy->h < -EPSILON)  // inside the actual cylinder
 	{
-		info->is_inside = true;
+		get_info()->is_inside = true;
 		if (fabs(hit_h) - cy->h < EPSILON)
 			return (f.root2);
 		return (hit_flat_disk(hit_h, f.oc_n, f.ray_n, cy->h));
@@ -76,17 +76,17 @@ double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
 	return (-1.0);
 }
 
-double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
+double	ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec pos)
 {
-	t_object	*cy;
+	t_vec		oc;
 	t_discrim	f;
 
-	cy = &info->obj[id];
-	f.oc_n = dot(cy->oc, cy->normal);
+	oc = subtract(pos, cy->pos);
+	f.oc_n = dot(oc, cy->normal);
 	f.ray_n = dot(ray, cy->normal);
 	f.a = 1.0 - f.ray_n * f.ray_n;
-	f.b = 2 * (dot(cy->oc, ray) - f.oc_n * f.ray_n);
-	f.c = dot(cy->oc, cy->oc) - f.oc_n * f.oc_n - cy->r * cy->r;
+	f.b = 2 * (dot(oc, ray) - f.oc_n * f.ray_n);
+	f.c = dot(oc, oc) - f.oc_n * f.oc_n - cy->r * cy->r;
 	if (f.a < EPSILON)  // ray parallel with the cylinder axis
 		return (ray_parallel_axis(info, cy, f));
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
@@ -94,10 +94,10 @@ double	ray_hit_cylinder(t_info *info, t_vec ray, int id)
 	{
 		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
 		if (f.root > -EPSILON)  // ray hit from outside the infinitely long cylinder
-			return (hit_from_outside(cy, ray, f));
+			return (hit_from_outside(cy, ray, f, oc));
 		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
 		if (f.root2 > -EPSILON)  // ray from inside the infinitely long cylinder
-			return (hit_from_inside(info, cy, ray, f));
+			return (hit_from_inside(cy, ray, f, oc));
 	}
 	return (-1.0);
 }

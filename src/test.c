@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 22:25:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/22 03:26:59 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	main(void)
 	info = get_info();
 	info->amb = scale(vec3(1.0, 0.9, 0.9), 0.2);
 
-	info->light.pos = vec3(5.0, 3.0, 0.0);
+	info->light.pos = vec3(5.0, 8.0, 4.0);
 	info->light.color = scale(vec3(1.0, 1.0, 1.0), 0.8);
 
 	info->cam.fov = 120.0 / 180.0 * M_PI;

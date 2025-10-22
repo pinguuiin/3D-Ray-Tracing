@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 22:42:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/22 02:56:49 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,10 +113,12 @@ uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 t_vec		color_to_vec(int r, int g, int b);
 
-double		ray_hit_sphere(t_info *info, t_vec ray, int id);
-double		ray_hit_plane(t_info *info, t_vec ray, int id);
-double		ray_hit_cylinder(t_info *info, t_vec ray, int id);
+double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec pos);
+double		ray_hit_plane(t_vec ray, t_object *plane, t_vec pos);
+double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec pos);
 void		renderer(void *param);
+
+t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
 // void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);

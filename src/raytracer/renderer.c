@@ -6,68 +6,11 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/21 01:53:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/10/22 02:57:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-void	get_hit_attributes(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
-{
-	double	hit_h;
-
-	hit->pos = add(info->cam.pos, ray);
-	hit->ray = normalize(scale(ray, -1));
-	hit->op = subtract(hit->pos, obj->pos);
-	hit->incoming = normalize(subtract(info->light.pos, hit->pos));
-	if (obj->type == SPHERE)
-		hit->normal = normalize(hit->op);
-	else if (obj->type == CYLINDER)
-	{
-		hit_h = dot(hit->op, obj->normal);
-		if (hit_h - obj->h > -EPSILON)
-			hit->normal = obj->normal;
-		else if (hit_h + obj->h < EPSILON)
-			hit->normal = scale(obj->normal, -1);
-		else
-			hit->normal = normalize(subtract(hit->op, scale(obj->normal, hit_h)));
-	}
-	else if (obj->type == PLANE)
-		hit->normal = obj->normal;
-	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
-	hit->outgoing = subtract(hit->outgoing, hit->incoming);
-}
-
-/* Implement Phong reflection model:
-Diffuse = Kd (incoming light · object normal)
-=> Diffuse term is counted when its dot product is greater than 0
-Specular = Ks (Reflected ray · ray to camera) ^ Shininess
-=> Specular term is counted when both terms' dot products greater than 0;
-Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
-*/
-t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
-{
-	double		flux;
-	double		spec;
-
-	get_hit_attributes(info, obj, ray, hit);
-	hit->intensity = vec3(0.0, 0.0, 0.0);
-	flux = dot(hit->incoming, hit->normal);
-	if (flux > EPSILON)
-	{
-		flux *= KD;
-		hit->diffuse = scale(dot_elem(info->light.color, obj->color), flux);
-		hit->intensity = add(hit->intensity, hit->diffuse);
-		spec = dot(hit->outgoing, hit->ray);
-		if (spec > EPSILON)
-		{
-			spec = KS * pow(spec, SHININESS);
-			hit->specular = scale(info->light.color, spec);
-			hit->intensity = add(hit->intensity, hit->specular);
-		}
-	}
-	return (hit->intensity);
-}
 
 double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 {
@@ -81,11 +24,11 @@ double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 	while (id < info->num)
 	{
 		if (info->obj[id].type == SPHERE)
-			k = ray_hit_sphere(info, ray, id);
+			k = ray_hit_sphere(info, ray, &info->obj[id], info->cam.pos);
 		else if (info->obj[id].type == PLANE)
-			k = ray_hit_plane(info, ray, id);
+			k = ray_hit_plane(ray, &info->obj[id], info->cam.pos);
 		else
-			k = ray_hit_cylinder(info, ray, id);
+			k = ray_hit_cylinder(info, ray, &info->obj[id], info->cam.pos);
 		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
 			k_min = k;
