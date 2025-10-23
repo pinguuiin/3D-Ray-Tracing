@@ -72,7 +72,7 @@ void	parse_scene(t_info *info, char *file_name)
 // If an invalid input is found: exit status is 2
 static void	parse_line(t_info *info, char *line, uint32_t line_num)
 {
-	int		is_invalid;
+	bool	is_invalid;
 	char	*str;	// used to be able to free 'line'
 
 	str = line;

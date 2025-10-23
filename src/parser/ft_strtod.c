@@ -13,7 +13,7 @@
 #include "minirt.h"
 
 static int				parse_plus_or_minus_sign(char **ptr);
-static int				is_start_of_string_valid(const char *s);
+static bool				is_start_of_string_valid(const char *s);
 static inline int64_t	extract_unsigned_integer(char **ptr, size_t *n_digits);
 static inline double	extract_fraction(char **ptr, size_t n_digits);
 static inline int		extract_exponent_and_update_result(char **ptr,
@@ -109,7 +109,7 @@ static int	parse_plus_or_minus_sign(char **ptr)
 	return (sign);
 }
 
-static int	is_start_of_string_valid(const char *s)
+static bool	is_start_of_string_valid(const char *s)
 {
 	if (ft_isdigit(*s))
 		return (1);

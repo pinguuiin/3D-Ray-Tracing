@@ -49,16 +49,13 @@ int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num)
 
 	skip_whitespace_but_not_newline(&str);
 
-	if (parse_color(&str, amb) == -1)
+	if (parse_color(&str, amb, ratio) == -1)
 	{
 		display_parsing_error("Invalid input for color values.\nPlease use "
 			"three values in range 0 to 255, separated by commas, on line:",
 			line_num);
 		return (1);
 	}
-	// FIXME: apply ratio to r, g & b channels.
-	// write a separate function for it! AND, perhaps pass a pointer to ratio to parse_color(), and
-	// just do it from there -> pass to it NULL when you don't need to do that multiplication!
 
 
 	if (!is_valid_end_of_line(str))
@@ -166,27 +163,18 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 		skip_whitespace(&str);
 		if (*str)
 		{
-			if (parse_color(&str, &light->color) == -1)
+			if (parse_color(&str, &light->color, ratio) == -1)
 			{
 				display_parsing_error("Invalid input for color values.\nPlease "
 					"use three values in range 0 to 255, separated by commas, "
 					"on line:", line_num);
 				return (1);
 			}
-			// FIXME: apply ratio to r, g & b channels.
-			// write a separate function for it!
 			if (!is_valid_end_of_line(str))
 				return (1);
 		}
-		else
-		{
-			// set all color channels to white as a default color
-			// when none are provided (but adapting the ratio already here) 
-			// FIXME: use a separate function for this!
-			light->color.r = 1.0 * ratio;
-			light->color.g = 1.0 * ratio;
-			light->color.b = 1.0 * ratio;
-		}
+		else	// no color provided by input for 'light', so set it to white
+			apply_ratio_to_color(&light->color, ratio, 0);
 		n_lights++;
 		return (0);
 	}

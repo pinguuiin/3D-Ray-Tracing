@@ -124,7 +124,7 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	write(fd, ".\n", 2);
 }
 
-int	is_valid_separator(char	**str)
+bool	is_valid_separator(char	**str)
 {
 	if (**str == ',')
 		(*str)++;
@@ -140,7 +140,7 @@ int	is_valid_separator(char	**str)
 // The use case for this function should respect the following aspects:
 // - following a call to ft_strtod(), parse_color() or parse_coordinates() // WARN: add appropriate functions if there are any new ones!
 // - when miniRT expects more data in the line, after the last numerical value
-int	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
+bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 {
 	if (isspace_but_not_newline(**str))
 	{
@@ -166,7 +166,7 @@ int	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 * not, in case it is the last line of the file, and that line does not have a
 * newline character at all).
 */
-int	is_valid_end_of_line(char *s)
+bool	is_valid_end_of_line(char *s)
 {
 	skip_whitespace(&s);
 	if (*s)

@@ -65,13 +65,14 @@ int		isspace_but_not_newline(int c);
 void	skip_whitespace(char **str);
 void	skip_whitespace_but_not_newline(char **str);
 int		ft_strtod(char **str, double *result, uint32_t line_num);
-int		parse_color(char **str, t_color *color);
+int		parse_color(char **str, t_color *color, double ratio);
+void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
 int		parse_coordinates(char **str, t_vec *position, uint32_t line_num);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
 int		parse_direction_vector(char **str, t_vec *direction, uint32_t line_num);
-int		is_valid_separator(char	**str);
-int		is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
-int		is_valid_end_of_line(char *s);
+bool	is_valid_separator(char	**str);
+bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
+bool	is_valid_end_of_line(char *s);
 
 // error handling and memory management
 void	handle_gnl_error_and_exit(t_info *info, int gnl_flag);

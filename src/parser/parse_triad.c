@@ -13,8 +13,6 @@
 #include "minirt.h"
 
 static int	str_to_linear_color(char **str, double *result);
-// FIXME:
-static t_color	apply_ratio_to_rgb_channels(t_color color, double ratio);
 
 /*
 * This function expects three color values in range 0 to 255, separated by
@@ -26,7 +24,7 @@ static t_color	apply_ratio_to_rgb_channels(t_color color, double ratio);
 * At the end of the function, the caller's 'str' points one character past the
 * last digit of the third value.
 */
-int	parse_color(char **str, t_color *color)
+int	parse_color(char **str, t_color *color, double ratio)
 {
 	if (str_to_linear_color(str, &color->r) == -1)
 		return (-1);
@@ -38,6 +36,7 @@ int	parse_color(char **str, t_color *color)
 		return (-1);
 	if (str_to_linear_color(str, &color->b) == -1)
 		return (-1);
+	apply_ratio_to_color(color, ratio, 1);
 	return (0);
 }
 
@@ -64,13 +63,30 @@ static int	str_to_linear_color(char **str, double *result)
 	return (0);
 }
 
-// FIXME:
-static t_color	apply_ratio_to_rgb_channels(t_color color, double ratio)
+/*
+* In case where the RGB channels of 'color' are provided by the input file,
+* is_provided should be passed as 1 or 'true', and this function then applies
+* 'ratio' to those values (which should have been previously parsed and
+* normalized by parse_color().
+* Otherwise, is_provided should be 0 or 'false'. In this case, miniRT defaults
+* to WHITE, and the normalized RGB values should therefore be set to 1.0. Since
+* multiplying by 1.0 is redundant, this function simply assigns the ratio itself
+* to each channel.
+*/
+void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
 {
-	color.r = color.r * ratio;
-	color.g = color.g * ratio;
-	color.b = color.b * ratio;
-	return (color);
+	if (is_provided)
+	{
+		color->r = color->r * ratio;
+		color->g = color->g * ratio;
+		color->b = color->b * ratio;
+	}
+	else
+	{
+		color->r = ratio;
+		color->g = ratio;
+		color->b = ratio;
+	}
 }
 
 int	parse_coordinates(char **str, t_vec *position, uint32_t line_num)
