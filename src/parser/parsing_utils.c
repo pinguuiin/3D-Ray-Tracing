@@ -88,8 +88,30 @@ void	skip_whitespace_but_not_newline(char **str)
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
 void	clean_up_parsing_memory(t_parser *parser, char *line)
 {
-	// FIXME: now we rather want to free the parser stuff, not info.
+	// WARN: # 2: you need to adjust your freeing function to use the very same
+	// insertion_point pointer. At the start of the freeing function, reset
+	// that pointer to head's address. And walk the list using that double pointer,
+	// assigning to it the next pointer every time, until it is pointing to NULL.
+	// No need for an extra variable.
 
+	t_node_light	*current;
+	t_node_light	*next;
+
+	current = NULL;
+	if (parser->head)
+	{
+		current = parser->head;
+		while (current)
+		{
+			next = current->next;
+			free(current);
+			current = next;
+		}
+	}
+
+	// free object list	// FIXME:
+
+	// free the returned line (from get_next_line_minirt())
 	free(line);
 
 

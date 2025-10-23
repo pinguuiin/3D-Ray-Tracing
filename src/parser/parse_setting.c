@@ -197,28 +197,50 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 {
 	double	ratio;
-	t_light	*current;
+	// t_light	*current; // we try without this one
 
-	if (!parser->light_list)
+	// alternate version without 'current'
+	*parser->insertion_point = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+	if (!*parser->insertion_point)
+		return (-1);
+
+
+	// WARN: before finishing up with your function:
+	// set parser->insertion_point = &parser->insertion_point->next;
+	// So that on the next iteration, you are already set to allocate space for
+	// the next node, your insertion_point will be already at the "hole"
+	//
+	// WARN: # 2: you need to adjust your freeing function to use the very same
+	// insertion_point pointer. At the start of the freeing function, reset
+	// that pointer to head's address. And walk the list using that double pointer,
+	// assigning to it the next pointer every time, until it is pointing to NULL.
+	// No need for an extra variable.
+
+
+
+
+
+
+
+	if (!parser->head)
 	{
-		parser->light_list = (t_node_light *) ft_calloc(1, sizeof(t_light_node));
-		if (!parser->light_list)
+		parser->head = (t_node_light *) ft_calloc(1, sizeof(t_light_node));
+		if (!parser->head)
 			return (-1); // the rest of cleanup is taken care of
-		parser->current_light = parser->light_list;
-
-
-
-
-
-
+		parser->(*insertion_point) = parser->head->next; // WARN: redundant, you just want
+		// this pointer to be NULL, which the pointer you assigned to it is as well.
+		// insertion_point allows me to not need to go through the list every
+		// single time I need to allocate a new one!
+		// we should not use it for freeing, however, as it will point at NULL
+		// every time.
 
 	}
 	else
 	{
-		parser->current_light->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-		if (!parser->current_light->next)
+		parser->insertion_point->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+		if (!parser->insertion_point->next)
 			return (-1);
-		parser->current_light = parser->current_light->next;
+		parser->insertion_point = parser->insertion_point->next;
 
 	}
 
@@ -227,7 +249,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 	/*
 	 * This block is only for the mandatory part.
 	// check if we already have a light source: Only 1 is accepted
-	if (info->n_light) // the mandatory part only accepts one single light source
+	if (!parser->head) // the mandatory part only accepts one single light source
 	{
 		display_parsing_error("Too many light sources present in the scene; "
 			"Only one fixed light is accepted. See line", line_num);
@@ -279,7 +301,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 		}
 		else	// no color provided by input for 'light', so set it to white
 			apply_ratio_to_color(&light->color, ratio, 0);
-		info->n_light++;
+		info->n_light++;	// WARN: since we don't gave an 'info' pointer here right now, could we do without it, and count n_lights later on when copying the elements into the array?
 		return (0);
 	}
 	display_parsing_error("Unexpected input found at tail end of light "

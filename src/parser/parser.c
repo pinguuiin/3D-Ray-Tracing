@@ -26,6 +26,10 @@ void	parse_scene(char *file_name)
 	line_num = 1;
 	error_code = 0;
 
+	// initialize parser struct
+	ft_bzero(&parser, sizeof (t_parser));
+	parser->insertion_point = &parser->head;
+
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
 		error_code = -4;
@@ -80,8 +84,6 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 	info = get_info();
 	str = line;
 
-	// initialize parser struct
-	ft_bzero(&parser, sizeof (t_parser));
 
 	skip_whitespace_but_not_newline(&str);
 

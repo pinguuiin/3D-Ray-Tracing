@@ -32,24 +32,27 @@
 // Once you come back from that main parsing stack frame, we should not have
 // use for it at all -> we would have already copied its contains to the arrays
 // which are in 'info' and which will be used by the renderer.
-typedef struct s_parser
-{
-	t_node_light	*light_list; // head of list
-	t_node_light	*current_light;
-
-	t_object		*obj_list;
-	// t_object		*next_obj;
-	// t_object		*curr_obj;
-
-}	t_parser;
 
 // wrapper for each t_light node, only needed in parsing
 typedef struct s_node_light
 {
-	t_light			current; // current 'light' element
-	t_node_light	*next;
+	t_light				current; // current 'light' element
+	struct s_node_light	*next;
+	// FIXME: when compiling the project, try to see if replacing 'struct s_node_light'
+	// with 't_node_light' would work. I suppose it wouldn't compile since it is
+	// not yet declared in this scope!
 
 }	t_node_light;
+
+typedef struct s_parser
+{
+	t_node_light	*head; // head of list
+	t_node_light	**insertion_point; // might be unnecessary - or might allow not needing to go through the whole list every time you need to allocate a new node?
+
+	t_object		*obj_list;
+	// t_node_obj	*curr_obj;
+
+}	t_parser;
 
 /*
 * 3d vector which can be used interchangeably for:
