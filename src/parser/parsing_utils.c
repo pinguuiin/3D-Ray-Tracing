@@ -14,14 +14,33 @@
 
 static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 
-void	handle_gnl_error_and_exit(t_info *info, int gnl_flag)
+/*
+* 'error_code' with the value 1 signifies that there has been a misconfiguration
+* in the input file, and that an error message has already been displayed on the
+* standard error - a message which always begins with "Error", followed by a
+* newline and by a more specific message attempting to describe the error (and
+* displaying the number of line on which it occured).
+* All other cases are rather fatal system errors, and their error messages are
+* not preceded by the string "Error\n".
+* This function can serve in providing the exit status for the program, by
+* passing its call as an argument to exit(). Invalid input returns 2, while
+* a system error returns 3.
+*/
+int	handle_parsing_error(int error_code, char *line, t_parser *parser)
 {
-	if (gnl_flag == -1)
-		free_exit(info, "Dynamic memory allocation request has failed.");
-	if (gnl_flag == -2)
-		free_exit(info, "System call failed; Unable to read input file data");
-	if (gnl_flag == -3)
-		free_exit(info, "Failed to process input file; buffer size is empty");
+	clean_up_parsing_memory(parser, line);
+	if (error_code == 1)
+		return (2);
+	if (error_code == -1)
+		ft_putendl_fd(2, "Dynamic memory allocation request has failed.");
+	else if (error_code == -2)
+		ft_putendl_fd(2, "System call failed; Unable to read input file data.");
+	else if (error_code == -3)
+		ft_putendl_fd(2, "Failed to process input file; buffer size is empty.");
+	else if (error_code == -4)
+		ft_putendl_fd("Failed to open input file.");
+	ft_putendl_fd(2, "Aborting miniRT.");
+	return (3);
 }
 
 /*
@@ -67,13 +86,21 @@ void	skip_whitespace_but_not_newline(char **str)
 }
 
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
-void	clean_up_parsing_memory(t_info *info, char *line)
+void	clean_up_parsing_memory(t_parser *parser, char *line)
 {
+	// FIXME: now we rather want to free the parser stuff, not info.
+
 	free(line);
+
+
+	/*
+	 * WARN: I am pretty sure this function is only used BEFORE MLX initialization.
+	 * so no need to make those checks. But let's double check later.
 	if (info->img)
 		mlx_delete_image(info->mlx, info->img);
 	if (info->mlx)
 		mlx_terminate(info->mlx);
+	*/
 }
 
 void	display_parsing_error(const char *msg, uint32_t line_num)

@@ -14,6 +14,12 @@
 
 static void	handle_unexpected_arg_count(int argc);
 
+// return values:
+//	1:	MLX function failures (WARN: not sure about this one!)
+//	2:	invalid input from .rt file
+//	3:	fatal system error during parsing (open(), malloc(), read(), empty
+//	buffer for get_next_line_minirt())
+// 	0:	If program ran smoothly
 int	main(int argc, char *argv[])
 {
 	t_info	*info;

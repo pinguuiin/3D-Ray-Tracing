@@ -185,7 +185,12 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 }
 */
 
+// FIXME: issue with centralizing memory allocation failure handling from parse_light()!
+// Try to somehow simplify the design and call handle_fatal_parsing_error()?
+// It should be possible if you manage to return in all the way up to parse_scene(),
+// now that handle_gnl_error...() is called handle_fatal_parsing_error()...
 
+// FIXME: INCOMPLETE LIST -> ARRAY STRUCTURE. only a draft!
 // TODO: When working on the bonus part:
 // Set 'light' as an array, like the object array.
 // This will be useful for the bonus part, since it could allow several key
@@ -196,16 +201,40 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 // be accepted -> while the bonus (or is it only some bonus parts) require/s it!
 int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 {
-	static int	n_lights;
-	double		ratio;
+	// FIXME: if malloc() fails, simply return (-1);
+	// the program will call handle_fatal_parsing_error() and take care of things
+	double	ratio;
+	t_light	*current;
 
+	if (!parser->light_list)
+	{
+		parser->light_list = (t_node_light *) ft_calloc(1, sizeof(t_light_node));
+		if (!parser->light_list)
+			return (-1); // cleanup will happen in 
+		parser->current_light = parser->light_list;
+
+
+
+
+
+
+
+	}
+	else
+	{
+		parser->current_light->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+		if (!parser->current_light->next)
+			return (-1);
+		parser->current_light = parser->current_light->next;
+
+	}
 
 
 	
 	/*
 	 * This block is only for the mandatory part.
 	// check if we already have a light source: Only 1 is accepted
-	if (n_lights) // the mandatory part only accepts one single light source
+	if (info->n_light) // the mandatory part only accepts one single light source
 	{
 		display_parsing_error("Too many light sources present in the scene; "
 			"Only one fixed light is accepted. See line", line_num);
@@ -257,7 +286,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 		}
 		else	// no color provided by input for 'light', so set it to white
 			apply_ratio_to_color(&light->color, ratio, 0);
-		n_lights++;
+		info->n_light++;
 		return (0);
 	}
 	display_parsing_error("Unexpected input found at tail end of light "

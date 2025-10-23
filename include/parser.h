@@ -34,12 +34,22 @@
 // which are in 'info' and which will be used by the renderer.
 typedef struct s_parser
 {
-	t_light		*light_list;
-	t_light		*next_light;
-	t_object	*obj_list;
-	t_object	*next_obj;
+	t_node_light	*light_list; // head of list
+	t_node_light	*current_light;
+
+	t_object		*obj_list;
+	// t_object		*next_obj;
+	// t_object		*curr_obj;
 
 }	t_parser;
+
+// wrapper for each t_light node, only needed in parsing
+typedef struct s_node_light
+{
+	t_light			current; // current 'light' element
+	t_node_light	*next;
+
+}	t_node_light;
 
 /*
 * 3d vector which can be used interchangeably for:
@@ -75,6 +85,7 @@ typedef union u_vec
 typedef t_vec	t_color;
 
 // scene elements parsing
+void	parse_scene(char *file_name);
 int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num);
 int		parse_camera(t_cam *cam, char *str, uint32_t line_num);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
@@ -98,8 +109,8 @@ bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
 bool	is_valid_end_of_line(char *s);
 
 // error handling and memory management
-void	handle_gnl_error_and_exit(t_info *info, int gnl_flag);
+int		handle_parsing_error(int error_code, char *line, t_parser *parser);
 void	display_parsing_error(const char *msg, uint32_t line_num);
-void	clean_up_parsing_memory(t_info *info, char *line);
+void	clean_up_parsing_memory(t_parser *parser, char *line);
 
 #endif
