@@ -185,11 +185,6 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 }
 */
 
-// FIXME: issue with centralizing memory allocation failure handling from parse_light()!
-// Try to somehow simplify the design and call handle_fatal_parsing_error()?
-// It should be possible if you manage to return in all the way up to parse_scene(),
-// now that handle_gnl_error...() is called handle_fatal_parsing_error()...
-
 // FIXME: INCOMPLETE LIST -> ARRAY STRUCTURE. only a draft!
 // TODO: When working on the bonus part:
 // Set 'light' as an array, like the object array.
@@ -201,8 +196,6 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 // be accepted -> while the bonus (or is it only some bonus parts) require/s it!
 int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 {
-	// FIXME: if malloc() fails, simply return (-1);
-	// the program will call handle_fatal_parsing_error() and take care of things
 	double	ratio;
 	t_light	*current;
 
@@ -210,7 +203,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 	{
 		parser->light_list = (t_node_light *) ft_calloc(1, sizeof(t_light_node));
 		if (!parser->light_list)
-			return (-1); // cleanup will happen in 
+			return (-1); // the rest of cleanup is taken care of
 		parser->current_light = parser->light_list;
 
 

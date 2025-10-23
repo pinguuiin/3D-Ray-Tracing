@@ -20,25 +20,25 @@ void	parse_scene(char *file_name)
 	int			fd;
 	char		*line;
 	uint32_t	line_num; // always positive!
-	int			err_code;
+	int			error_code;
 
 	line = NULL;
 	line_num = 1;
-	err_code = 0;
+	error_code = 0;
 
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
-		err_code = -4;
-	while (!err_code)
+		error_code = -4;
+	while (!error_code)
 	{
-		err_code = get_next_line_minirt(fd, &line);
+		error_code = get_next_line_minirt(fd, &line);
 
-		if (!err_code)
+		if (!error_code)
 		{
 			if (line)
 			{
-				err_code = parse_line(&parser, line, line_num);
-				if (!err_code)
+				error_code = parse_line(&parser, line, line_num);
+				if (!error_code)
 				{
 					free(line);
 					line = NULL;
@@ -64,8 +64,8 @@ void	parse_scene(char *file_name)
 			}
 		}
 	}
-	if (err_code)
-		exit(handle_fatal_parsing_error(err_code, line, &parser));
+	if (error_code)
+		exit(handle_fatal_parsing_error(error_code, line, &parser));
 
 }
 
@@ -75,12 +75,10 @@ void	parse_scene(char *file_name)
 static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 {
 	t_info	*info;
-	int		err_code;
 	char	*str;	// used to be able to free 'line'
 
 	info = get_info();
 	str = line;
-	err_code = 0;
 
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
@@ -88,34 +86,32 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
-		return ;
+		return (0);
 	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))
-		err_code = parse_ambient_lighting(&info->amb, str + 2, line_num);
+		return (parse_ambient_lighting(&info->amb, str + 2, line_num));
 	else if (*str == 'C' && isspace_but_not_newline(*(str + 1)))
-		err_code = parse_camera(&info->cam, str + 2, line_num);
+		return (parse_camera(&info->cam, str + 2, line_num));
 	else if (*str == 'L' && isspace_but_not_newline(*(str + 1)))
-		err_code = parse_light(&parser, str + 2, line_num);
+		return (parse_light(&parser, str + 2, line_num));
 	else if (*str == 's' && *(str + 1) == 'p'
 		&& isspace_but_not_newline(*(str + 2)))
-		err_code = parse_sphere(str + 3, line_num);
+		return (parse_sphere(str + 3, line_num));
 	else if (*str == 'p' && *(str + 1) == 'l'
 		&& isspace_but_not_newline(*(str + 2)))
-		err_code = parse_plane(str + 3, line_num);
+		return (parse_plane(str + 3, line_num));
 	else if (*str == 'c' && *(str + 1) == 'y'
 		&& isspace_but_not_newline(*(str + 2)))
-		err_code = parse_cylinder(str + 3, line_num);
-	else
-	{
+		return (parse_cylinder(str + 3, line_num));
 	// The next boolean check is important, because if it returns false, we have
 	// an empty whitespace line ending with the EOF, which might simply be the
 	// input file's very last line. That should not be considered as a parsing
 	// error, and the program should proceed.
-		if (*str)
-		{
-			err_code = 1;
-			display_parsing_error("Unexpected input provided on line number",
-				line_num);
-		}
+	if (*str)
+	{
+		err_code = 1;
+		display_parsing_error("Unexpected input provided on line number",
+			line_num);
+		return (1);
 	}
-	return (err_code);
+	return (0);
 }
