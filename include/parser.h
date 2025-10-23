@@ -18,6 +18,29 @@
 // # include <fcntl.h>		// open(), close()
 # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
+// FIXME: lists of lights and of objects.
+// Should be all 'transferred' once parsing is complete and validated:
+// 1. all data copied to the array of lights 'light' (which should become a pointer)
+// and the array of objects 'obj' in 'info' struct.
+// 2. These lists should be freed and cleaned up once 'transferred'
+// 3. If this structure is successful and we go through with it:
+// 	consider deleting the obj_lst member of 'info', and you would only have a
+// 	pointer to this parsing instead.
+// FIXME: ideally, you don't even want to have a pointer nor this struct itself
+// within the 'info' struct. You want to declare it in in one of parsing's main
+// stack frames, and pass it around by reference;
+// Once you come back from that main parsing stack frame, we should not have
+// use for it at all -> we would have already copied its contains to the arrays
+// which are in 'info' and which will be used by the renderer.
+typedef struct s_parser
+{
+	t_light		*light_list;
+	t_light		*next_light;
+	t_object	*obj_list;
+	t_object	*next_obj;
+
+}	t_parser;
+
 /*
 * 3d vector which can be used interchangeably for:
 *	- x, y, z coordinates

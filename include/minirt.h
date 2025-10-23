@@ -100,8 +100,8 @@ typedef struct s_info
 	double		px;
 	t_vec		amb;
 	t_cam		cam;
-	t_light		light;
-	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
+	t_light		*light;	// array of lights
+	t_object	*obj;  	// array of objects
 	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
 	int			num;  // number of objects
 	bool		is_inside;

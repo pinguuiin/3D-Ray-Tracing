@@ -72,11 +72,13 @@ void	parse_scene(t_info *info, char *file_name)
 // If an invalid input is found: exit status is 2
 static void	parse_line(t_info *info, char *line, uint32_t line_num)
 {
-	bool	is_invalid;
-	char	*str;	// used to be able to free 'line'
+	t_parser	parser;
+	bool		is_invalid;
+	char		*str;	// used to be able to free 'line'
 
 	str = line;
 	is_invalid = 0;
+	ft_bzero(&parser, sizeof (t_parser));
 
 	skip_whitespace_but_not_newline(&str);
 
@@ -87,7 +89,7 @@ static void	parse_line(t_info *info, char *line, uint32_t line_num)
 	else if (*str == 'C' && isspace_but_not_newline(*(str + 1)))
 		is_invalid = parse_camera(&info->cam, str + 2, line_num);
 	else if (*str == 'L' && isspace_but_not_newline(*(str + 1)))
-		is_invalid = parser_light(&info->light, str + 2, line_num);
+		is_invalid = parse_light(&parser, str + 2, line_num);
 	else if (*str == 's' && *(str + 1) == 'p'
 		&& isspace_but_not_newline(*(str + 2)))
 		is_invalid = parse_sphere(str + 3, line_num);
