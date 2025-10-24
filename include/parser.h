@@ -36,7 +36,7 @@
 // wrapper for each t_light node, only needed in parsing
 typedef struct s_node_light
 {
-	t_light				current; // current 'light' element
+	t_light				light; // current 'light' element
 	struct s_node_light	*next;
 	// FIXME: when compiling the project, try to see if replacing 'struct s_node_light'
 	// with 't_node_light' would work. I suppose it wouldn't compile since it is
@@ -46,11 +46,11 @@ typedef struct s_node_light
 
 typedef struct s_parser
 {
-	t_node_light	*head; // head of list
-	t_node_light	**tail; // might be unnecessary - or might allow not needing to go through the whole list every time you need to allocate a new node?
+	t_node_light	*head; // head of 'lights' list
+	t_node_light	*current;
 
-	t_object		*obj_list;
-	// t_node_obj	*curr_obj;
+	// t_node_obj		*head_obj;
+	// t_node_obj		*curr_obj;
 
 	uint8_t			n_ambs;
 	uint8_t			n_cams;

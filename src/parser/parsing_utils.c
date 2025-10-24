@@ -88,19 +88,6 @@ void	skip_whitespace_but_not_newline(char **str)
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
 void	clean_up_parsing_memory(t_parser *parser, char *line)
 {
-	t_node_light	**next;
-
-	parser->tail = &parser->head;
-	while (*parser->tail)
-	{
-		next = &(*parser->tail)->next;
-		free(*parser->tail);
-		parser->tail = next;
-	}
-
-	/*
-	 * more traditional alternative, not sure if it is compatible with the
-	 * double pointer technique...
 	t_node_light	*current;
 	t_node_light	*next;
 
@@ -111,7 +98,6 @@ void	clean_up_parsing_memory(t_parser *parser, char *line)
 		free(current);
 		current = next;
 	}
-	*/
 
 
 	// FIXME:	free object list

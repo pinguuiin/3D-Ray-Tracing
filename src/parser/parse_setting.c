@@ -119,9 +119,10 @@ int	parse_camera(t_cam *cam, char *str, uint8_t line_num, uint8_t *n_cams)
 int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 {
 	double	ratio;
-	t_light	*light;
+	t_light	*light; // shortcut, for readability
 
 	light = NULL; // can be omitted
+
 	/*
 	 * This block is only for the mandatory part.
 	// check if we already have a light source: Only 1 is accepted
@@ -133,20 +134,22 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 	}
 	*/
 
-
 	// allocate new light node, check for malloc() failure
-	*parser->tail = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-	if (!*parser->tail)
-		return (-1);
-
-	// assign address to 'light', for readability
-	light = &(*parser->tail)->current;
-
-	// now we can already move the double pointer 'tail' to point at the hole ('next' pointer),
-	// so on the next iteration, allocation would be made at the right spot.
-	// we assign the address of 'next' to tail
-	parser->tail = &(*parser->tail)->next;
-
+	if (!parser->head)
+	{
+		parser->head = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+		if (!parser->head)
+			return (-1);
+		parser->current = parser->head;
+	}
+	else
+	{
+		parser->current->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+		if (!parser->current->next)
+			return (-1);
+		parser->current = parser->current->next;
+	}
+	light = &parser->current->light;
 
 	// parse the string into the allocated 'light'
 	skip_whitespace_but_not_newline(&str);
