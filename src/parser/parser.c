@@ -28,7 +28,7 @@ void	parse_scene(char *file_name)
 
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
-	parser->insertion_point = &parser->head;
+	parser->tail = &parser->head;
 
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)

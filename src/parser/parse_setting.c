@@ -19,13 +19,13 @@ static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it! So you still need to parse
 // through potential isspace_but_not_newline().
-int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num)
+int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
+		uint8_t *n_ambs)
 {
-	static uint32_t	n_ambients;
 	double			ratio;
 
 	// check if we already have ambient lighting: Only 1 is accepted
-	if (n_ambients)
+	if (*n_ambs)
 	{
 		display_parsing_error("Too many ambient lighting sources provided; "
 			"Invalid input on line number", line_num);
@@ -57,19 +57,16 @@ int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num)
 		return (1);
 	}
 
-
 	if (!is_valid_end_of_line(str))
 		return (1);
-	n_ambients++;	// validate the ambient lighting
+	(*n_ambs)++;	// validate the ambient lighting
 	return (0);
 }
 
-int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
+int	parse_camera(t_cam *cam, char *str, uint8_t line_num, uint8_t *n_cams)
 {
-	static int	n_cameras;
-
 	// check if we already have a camera: Only 1 is accepted
-	if (n_cameras)
+	if (*n_cams)
 	{
 		display_parsing_error("Too many cameras suggested by the input file; "
 			"Invalid input at line number", line_num);
@@ -106,84 +103,9 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num)
 
 	if (!is_valid_end_of_line(str))
 		return (1);
-	n_cameras++;	// validate the camera
+	(*n_cams)++;	// validate the camera
 	return (0);
 }
-
-// TODO: When working on the bonus part:
-// Set 'light' as an array, like the object array.
-// This will be useful for the bonus part, since it could allow several key
-// light sources. It would be easier to transform to it if lights (not ambient
-// lights) are stored as an array
-// NOTE: note the other important distinction beetween mandatory and bonus
-// parts: the color data is unused in the mandatory, but perhaps could still
-// be accepted -> while the bonus (or is it only some bonus parts) require/s it!
-/*
-int	parse_light(t_light *light, char *str, uint32_t line_num)
-{
-	static int	n_lights;
-	double		ratio;
-
-	// check if we already have a light source: Only 1 is accepted
-	if (n_lights) // the mandatory part only accepts one single light source
-	{
-		display_parsing_error("Too many light sources present in the scene; "
-			"Only one fixed light is accepted. See line", line_num);
-		return (1);
-	}
-	skip_whitespace_but_not_newline(&str);
-
-	// parse coordinates of the light point
-	if (parse_coordinates(&str, &light->pos, line_num) == -1)
-		return (1);
-
-	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
-		return (1);
-	skip_whitespace_but_not_newline(&str);
-
-	// prase the light brightness ratio in range [0.0,1.0]
-	ratio = 0.0;
-	if (ft_strtod(&str, &ratio, line_num) == -1)
-		return (1);
-	if (ratio < 0.0 || ratio > 1.0)
-	{
-		display_parsing_error("Value provided for light source's brightness "
-			"is out of range. Allowed range: 0.0 to 1.0. See line", line_num);
-		return (1);
-	}
-
-	// WARN:
-	// the next data is unused in the mandatory part.
-	// This means that we should accept cases where there is no more data
-	// at this point! But we should not accept weird data.
-	// If there is valid RGB data, we could parse it into the struct, it does
-	// not matter.
-	
-	if (!*str || ft_isspace(*str))
-	{
-		skip_whitespace(&str);
-		if (*str)
-		{
-			if (parse_color(&str, &light->color, ratio) == -1)
-			{
-				display_parsing_error("Invalid input for color values.\nPlease "
-					"use three values in range 0 to 255, separated by commas, "
-					"on line:", line_num);
-				return (1);
-			}
-			if (!is_valid_end_of_line(str))
-				return (1);
-		}
-		else	// no color provided by input for 'light', so set it to white
-			apply_ratio_to_color(&light->color, ratio, 0);
-		n_lights++;
-		return (0);
-	}
-	display_parsing_error("Unexpected input found at tail end of light "
-		"source's ratio value, on line", line_num);
-	return (1);
-}
-*/
 
 // FIXME: INCOMPLETE LIST -> ARRAY STRUCTURE. only a draft!
 // TODO: When working on the bonus part:
@@ -197,65 +119,36 @@ int	parse_light(t_light *light, char *str, uint32_t line_num)
 int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 {
 	double	ratio;
-	// t_light	*current; // we try without this one
+	t_light	*light;
 
-	// alternate version without 'current'
-	*parser->insertion_point = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-	if (!*parser->insertion_point)
-		return (-1);
-
-
-	// WARN: before finishing up with your function:
-	// set parser->insertion_point = &parser->insertion_point->next;
-	// So that on the next iteration, you are already set to allocate space for
-	// the next node, your insertion_point will be already at the "hole"
-	//
-	// WARN: # 2: you need to adjust your freeing function to use the very same
-	// insertion_point pointer. At the start of the freeing function, reset
-	// that pointer to head's address. And walk the list using that double pointer,
-	// assigning to it the next pointer every time, until it is pointing to NULL.
-	// No need for an extra variable.
-
-
-
-
-
-
-
-	if (!parser->head)
-	{
-		parser->head = (t_node_light *) ft_calloc(1, sizeof(t_light_node));
-		if (!parser->head)
-			return (-1); // the rest of cleanup is taken care of
-		parser->(*insertion_point) = parser->head->next; // WARN: redundant, you just want
-		// this pointer to be NULL, which the pointer you assigned to it is as well.
-		// insertion_point allows me to not need to go through the list every
-		// single time I need to allocate a new one!
-		// we should not use it for freeing, however, as it will point at NULL
-		// every time.
-
-	}
-	else
-	{
-		parser->insertion_point->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-		if (!parser->insertion_point->next)
-			return (-1);
-		parser->insertion_point = parser->insertion_point->next;
-
-	}
-
-
-	
+	light = NULL; // can be omitted
 	/*
 	 * This block is only for the mandatory part.
 	// check if we already have a light source: Only 1 is accepted
-	if (!parser->head) // the mandatory part only accepts one single light source
+	if (parser->n_lights) // the mandatory part only accepts one single light source
 	{
 		display_parsing_error("Too many light sources present in the scene; "
 			"Only one fixed light is accepted. See line", line_num);
 		return (1);
 	}
 	*/
+
+
+	// allocate new light node, check for malloc() failure
+	*parser->tail = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+	if (!*parser->tail)
+		return (-1);
+
+	// assign address to 'light', for readability
+	light = &(*parser->tail)->current;
+
+	// now we can already move the double pointer 'tail' to point at the hole ('next' pointer),
+	// so on the next iteration, allocation would be made at the right spot.
+	// we assign the address of 'next' to tail
+	parser->tail = &(*parser->tail)->next;
+
+
+	// parse the string into the allocated 'light'
 	skip_whitespace_but_not_newline(&str);
 
 	// parse coordinates of the light point
@@ -264,6 +157,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
+
 	skip_whitespace_but_not_newline(&str);
 
 	// prase the light brightness ratio in range [0.0,1.0]
@@ -283,7 +177,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 	// at this point! But we should not accept weird data.
 	// If there is valid RGB data, we could parse it into the struct, it does
 	// not matter.
-	
+
 	if (!*str || ft_isspace(*str))
 	{
 		skip_whitespace(&str);
@@ -301,7 +195,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 		}
 		else	// no color provided by input for 'light', so set it to white
 			apply_ratio_to_color(&light->color, ratio, 0);
-		info->n_light++;	// WARN: since we don't gave an 'info' pointer here right now, could we do without it, and count n_lights later on when copying the elements into the array?
+		parser->n_lights++; // keep count of valid lights
 		return (0);
 	}
 	display_parsing_error("Unexpected input found at tail end of light "

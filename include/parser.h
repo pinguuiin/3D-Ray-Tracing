@@ -47,10 +47,15 @@ typedef struct s_node_light
 typedef struct s_parser
 {
 	t_node_light	*head; // head of list
-	t_node_light	**insertion_point; // might be unnecessary - or might allow not needing to go through the whole list every time you need to allocate a new node?
+	t_node_light	**tail; // might be unnecessary - or might allow not needing to go through the whole list every time you need to allocate a new node?
 
 	t_object		*obj_list;
 	// t_node_obj	*curr_obj;
+
+	uint8_t			n_ambs;
+	uint8_t			n_cams;
+	uint32_t		n_light;
+	uint32_t		n_objs;
 
 }	t_parser;
 
@@ -89,8 +94,9 @@ typedef t_vec	t_color;
 
 // scene elements parsing
 void	parse_scene(char *file_name);
-int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num);
-int		parse_camera(t_cam *cam, char *str, uint32_t line_num);
+int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
+			uint8_t *n_ambs);
+int		parse_camera(t_cam *cam, char *str, uint8_t line_num, uint8_t *n_cams);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
 int		parse_sphere(char *str, uint32_t line_num);
 int		parse_plane(char *str, uint32_t line_num);
