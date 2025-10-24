@@ -23,15 +23,6 @@
 // 1. all data copied to the array of lights 'light' (which should become a pointer)
 // and the array of objects 'obj' in 'info' struct.
 // 2. These lists should be freed and cleaned up once 'transferred'
-// 3. If this structure is successful and we go through with it:
-// 	consider deleting the obj_lst member of 'info', and you would only have a
-// 	pointer to this parsing instead.
-// FIXME: ideally, you don't even want to have a pointer nor this struct itself
-// within the 'info' struct. You want to declare it in in one of parsing's main
-// stack frames, and pass it around by reference;
-// Once you come back from that main parsing stack frame, we should not have
-// use for it at all -> we would have already copied its contains to the arrays
-// which are in 'info' and which will be used by the renderer.
 
 // wrapper for each t_light node, only needed in parsing
 typedef struct s_node_light
@@ -44,17 +35,24 @@ typedef struct s_node_light
 
 }	t_node_light;
 
+typedef struct s_node_obj
+{
+	t_object			object;
+	struct s_node_obj	*next;
+
+}	t_node_obj;
+
 typedef struct s_parser
 {
 	t_node_light	*head; // head of 'lights' list
 	t_node_light	*current;
 
-	// t_node_obj		*head_obj;
-	// t_node_obj		*curr_obj;
+	t_node_obj		*head_obj;
+	t_node_obj		*curr_obj;
 
 	uint8_t			n_ambs;
 	uint8_t			n_cams;
-	uint32_t		n_light;
+	uint32_t		n_lights;
 	uint32_t		n_objs;
 
 }	t_parser;
@@ -98,9 +96,9 @@ int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 			uint8_t *n_ambs);
 int		parse_camera(t_cam *cam, char *str, uint8_t line_num, uint8_t *n_cams);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
-int		parse_sphere(char *str, uint32_t line_num);
-int		parse_plane(char *str, uint32_t line_num);
-int		parse_cylinder(char *str, uint32_t line_num);
+int		parse_sphere(t_parser *parser, char *str, uint32_t line_num);
+int		parse_plane(t_parser *parser, char *str, uint32_t line_num);
+int		parse_cylinder(t_parser *parser, char *str, uint32_t line_num);
 
 // parsing utilities
 int		ft_isspace(int c);

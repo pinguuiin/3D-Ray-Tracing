@@ -90,7 +90,10 @@ void	clean_up_parsing_memory(t_parser *parser, char *line)
 {
 	t_node_light	*current;
 	t_node_light	*next;
+	t_node_obj		*curr_obj;
+	t_node_obj		*next_obj;
 
+	// free linked list of lights
 	current = parser->head;
 	while (current)
 	{
@@ -99,16 +102,23 @@ void	clean_up_parsing_memory(t_parser *parser, char *line)
 		current = next;
 	}
 
+	// free linked list of objects
+	curr_obj = parser->head_obj;
+	while (curr_obj)
+	{
+		next_obj = curr_obj->next;
+		free(curr_obj);
+		curr_obj = next_obj;
+	}
 
-	// FIXME:	free object list
-
-	// free the returned line (from get_next_line_minirt())
+	// free the returned line obtained by get_next_line_minirt()
 	free(line);
-
 
 	/*
 	 * WARN: I am pretty sure this function is only used BEFORE MLX initialization.
 	 * so no need to make those checks. But let's double check later.
+	 * NOTE: Also, I am pretty sure I'd like to use this function after I am done
+	 * parsing a valid file, and so I for sure don't want to include this next block.
 	if (info->img)
 		mlx_delete_image(info->mlx, info->img);
 	if (info->mlx)
