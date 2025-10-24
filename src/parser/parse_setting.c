@@ -63,7 +63,7 @@ int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 	return (0);
 }
 
-int	parse_camera(t_cam *cam, char *str, uint8_t line_num, uint8_t *n_cams)
+int	parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams)
 {
 	// check if we already have a camera: Only 1 is accepted
 	if (*n_cams)

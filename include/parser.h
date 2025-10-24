@@ -94,7 +94,7 @@ typedef t_vec	t_color;
 void	parse_scene(char *file_name);
 int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 			uint8_t *n_ambs);
-int		parse_camera(t_cam *cam, char *str, uint8_t line_num, uint8_t *n_cams);
+int		parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
 int		parse_sphere(t_parser *parser, char *str, uint32_t line_num);
 int		parse_plane(t_parser *parser, char *str, uint32_t line_num);
