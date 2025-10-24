@@ -107,7 +107,6 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams)
 	return (0);
 }
 
-// FIXME: INCOMPLETE LIST -> ARRAY STRUCTURE. only a draft!
 // TODO: When working on the bonus part:
 // Set 'light' as an array, like the object array.
 // This will be useful for the bonus part, since it could allow several key

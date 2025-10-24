@@ -90,7 +90,7 @@ typedef union u_vec
 
 typedef t_vec	t_color;
 
-// scene elements parsing
+// scene and elements parsing
 void	parse_scene(char *file_name);
 int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 			uint8_t *n_ambs);
@@ -115,7 +115,7 @@ bool	is_valid_separator(char	**str);
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
 bool	is_valid_end_of_line(char *s);
 
-// error handling and memory management
+// error messaging and memory management
 int		handle_parsing_error(int error_code, char *line, t_parser *parser);
 void	display_parsing_error(const char *msg, uint32_t line_num);
 void	clean_up_parsing_memory(t_parser *parser, char *line);

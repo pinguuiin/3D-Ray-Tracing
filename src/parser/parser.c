@@ -68,8 +68,7 @@ void	parse_scene(char *file_name)
 		}
 	}
 	if (error_code)
-		exit(handle_fatal_parsing_error(error_code, line, &parser));
-
+		exit(handle_parsing_error(error_code, line, &parser));
 }
 
 // FIXME: consider doing the isspace_but_not_newline() checks from the specific
