@@ -22,7 +22,7 @@ static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
 int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 		uint8_t *n_ambs)
 {
-	double			ratio;
+	double	ratio;
 
 	// check if we already have ambient lighting: Only 1 is accepted
 	if (*n_ambs)

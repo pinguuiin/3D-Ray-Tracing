@@ -79,13 +79,6 @@ typedef union u_vec
 		double	b;
 	};
 
-	struct
-	{
-		double	u;
-		double	v;
-		double	w;
-	};
-
 }	t_vec;
 
 typedef t_vec	t_color;

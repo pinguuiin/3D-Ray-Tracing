@@ -95,14 +95,16 @@ int	parse_coordinates(char **str, t_vec *position, uint32_t line_num)
 		return (-1);
 	if (!is_valid_separator(str))
 	{
-		display_parsing_error("Unexpected input on line:", line_num);
+		display_parsing_error("Unexpected input between x and y coordinates "
+			"on line:", line_num);
 		return (-1);
 	}
 	if (ft_strtod(str, &position->y, line_num) == -1)
 		return (-1);
 	if (!is_valid_separator(str))
 	{
-		display_parsing_error("Unexpected input on line:", line_num);
+		display_parsing_error("Unexpected input between y and z coordinates "
+			"on line:", line_num);
 		return (-1);
 	}
 	if (ft_strtod(str, &position->z, line_num) == -1)
@@ -116,14 +118,16 @@ int	parse_direction_vector(char **str, t_vec *direction, uint32_t line_num)
 		return (-1);
 	if (!is_valid_separator(str))
 	{
-		display_parsing_error("Unexpected input on line:", line_num);
+		display_parsing_error("Unexpected input between orientation components "
+			"x and y, on line:", line_num);
 		return (-1);
 	}
 	if (ft_strtod(str, &position->y, line_num) == -1)
 		return (-1);
 	if (!is_valid_separator(str))
 	{
-		display_parsing_error("Unexpected input on line:", line_num);
+		display_parsing_error("Unexpected input between orientation components "
+			"y and z, on line:", line_num);
 		return (-1);
 	}
 	if (ft_strtod(str, &position->z, line_num) == -1)
