@@ -23,12 +23,15 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	t_object	*sphere;
 
 	sphere = NULL;
+
+	// initialize sphere
 	if (create_new_object_node(parser) == -1)
 		return (-1);
 	sphere = &parser->curr_obj->object;
 	sphere->type = SPHERE;
 
 
+	// start parsing 'str'
 	skip_whitespace_but_not_newline(&str);
 
 	// parse x,y,z coordinates of the center of the sphere (t_vec 'pos')
@@ -55,7 +58,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	// parse R,G,B colors in range [0-255]
-	if (parse_color(&str, ) == -1) // FIXME: lacking display_error_message() for the moment!
+	if (parse_color(&str, &sphere->color, NULL) == -1)
 	{
 		display_parsing_error("Invalid input for color values.\nPlease use "
 			"three values in range 0 to 255, separated by commas, on line:",
@@ -65,7 +68,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	if (!is_valid_end_of_line(str))
 		return (1);
 
-	parser->n_objs++;
+	parser->n_objs++; // validate sphere.
 	return (0);
 }
 
@@ -74,22 +77,60 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	t_object	*plane;
 
 	plane = NULL;
+
+	// initialize plane
 	if (create_new_object_node(parser) == -1)
 		return (-1);
 	plane = &parser->curr_obj->object;
 	plane->type = PLANE;
 
+	// start parsing 'str'
+	skip_whitespace_but_not_newline(&str);
 
+	// parse x,y,z coordinates of a point in the plane (t_vec 'pos')
+	if (parse_coordinates(&str, &plane->pos, line_num) == -1)
+		return (1);
 
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
+	skip_whitespace_but_not_newline(&str);
 
+	// parse 3d normalized normal vector. In range [-1,1] for each x,y,z axis (t_vec 'normal')
+
+	if (parse_xyz_components(&str, &plane->normal, line_num) == -1) // TODO: resolve issue between parse_coordinates() and parse_direction_vector()...
+		return (1);
+
+	/*
+	// FIXME: are we sure not to accept all zeroes ?
+	// UPDATE: No, that was only valid for the camera!!!
+	// From Ping:
+	// "for plane and cylinder, if they don't have a proper normal vector, we return error"
+	// BUT WHAT IS NOT A PROPER NORMAL VECTOR?????????????????
+	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
+	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
+		&& fabs(cam->direction->z) < EPSILON)
+		cam->direction.z = 1.0;
+
+	cam->direction = normalize(cam->direction); // normalize
+	*/
+
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
 	skip_whitespace_but_not_newline(&str);
 
 
+	// parse R,G,B colors in range [0-255] 
+	if (parse_color(&str, &plane->color, NULL) == -1)
+	{
+		display_parsing_error("Invalid input for color values.\nPlease use "
+			"three values in range 0 to 255, separated by commas, on line:",
+		return (1);
+	}
 
+	if (!is_valid_end_of_line(str))
+		return (1);
 
-
-
-	parser->n_objs++;
+	parser->n_objs++; // validate plane
 	return (0);
 }
 
@@ -118,7 +159,7 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 
 
 
-	parser->n_objs++;
+	parser->n_objs++; // validate object
 	return (0);
 }
 

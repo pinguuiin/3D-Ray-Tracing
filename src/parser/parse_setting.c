@@ -49,7 +49,7 @@ int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 
 	skip_whitespace_but_not_newline(&str);
 
-	if (parse_color(&str, amb, ratio) == -1)
+	if (parse_color(&str, amb, &ratio) == -1)
 	{
 		display_parsing_error("Invalid input for color values.\nPlease use "
 			"three values in range 0 to 255, separated by commas, on line:",
@@ -185,7 +185,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 		skip_whitespace(&str);
 		if (*str)
 		{
-			if (parse_color(&str, &light->color, ratio) == -1)
+			if (parse_color(&str, &light->color, &ratio) == -1)
 			{
 				display_parsing_error("Invalid input for color values.\nPlease "
 					"use three values in range 0 to 255, separated by commas, "
