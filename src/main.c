@@ -87,9 +87,9 @@ static int	parse_input_argument(char *arg)
 	bool	should_copy;
 	size_t	len;
 
+	temp_1 = arg;
 	should_copy = 0;
 	len = 0;
-	temp_1 = arg;
 	skip_whitespace(&temp_1);
 	if (temp_1 != arg)
 		should_copy = 1;
@@ -100,11 +100,12 @@ static int	parse_input_argument(char *arg)
 
 	if (*temp_1 == '.')
 		temp_1++;
-	if (*temp_1 == 'r' && *(temp_1 + 1) == 't' && ft_isspace(*(temp_1 + 2)))
+	if (*temp_1 == 'r' && *(temp_1 + 1) == 't'
+		&& !*(temp_1 + 2) || (ft_isspace(*(temp_1 + 2))))
 	{
 		temp_1 += 2;
-		len += 3; // we add to len: '.rt'
-		temp_2 = temp_1 + 1;
+		len += 4; // we add to len: '.rt\0'
+		temp_2 = temp_1;
 		skip_whitespace(&temp_2);
 		if (*temp_2)
 		{
@@ -112,15 +113,18 @@ static int	parse_input_argument(char *arg)
 				".rt file is accepted\n");
 			return (-1);
 		}
-		temp_1 -= (len + 1);
+		if (temp_2 != temp_1)
+			should_copy = 1;
+
+		// WARN: does this next line even work as I want it to? would the string
+		// passed to parse_scene(), which would simply be argv[1], stop at the first null
+		// terminator it sees?
+		*temp_1 = '\0';
+		temp_1 -= (len - 1);
 
 		if (should_copy)
 		{
 			arg = ft_memmove(arg, temp_1, len);
-			arg[len] = '\0';
-			// WARN: does this even work as I want it to? would the string
-			// passed to parse_scene(), which would simply be argv[1], stop at the first null
-			// terminator it sees?
 
 		}
 	}
