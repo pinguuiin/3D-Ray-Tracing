@@ -47,11 +47,12 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 		return (1);
 	if (sphere->r < EPSILON)  // No need to use fabs() here, since a negative value does not make sense for the diameter.
 	{
-		display_parsing_error("Invalid diameter provided for sphere object; "
-			"It has to be a postive value. See line number", line_num);
+		display_parsing_error("Unable to render sphere: diameter provided "
+			"has to be a positive value, for it to be a valid sphere.\n"
+			"See line:", line_num);
 		return (1);
 	}
-	sphere->r *= .50; // convert diameter to radius.
+	sphere->r *= 0.5; // convert diameter to radius.
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
@@ -96,14 +97,14 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
 		return (1);
 
-	if (fabs(plane->x) < EPSILON && fabs(plane->y) < EPSILON
-		&& fabs(plane->y < EPSILON))
+	if (fabs(plane->normal.x) < EPSILON && fabs(plane->normal.y) < EPSILON
+		&& fabs(plane->normal.y < EPSILON))
 	{
 		display_parsing_error("Provided normal vector for plane has a "
 			"magnitude of zero; Unable to render object. See line:", line_num);
 		return (1);
 	}
-	*plane = normalize(*plane);
+	plane->normal = normalize(plane->normal);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
@@ -137,40 +138,73 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 
 	// parse x,y,z coordinates of the center of the cylinder (t_vec 'pos')
 
-	
+	if (parse_3d_vector(&str, &cylinder->pos, line_num) == -1)
+		return (1);
 
-
-
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
+	skip_whitespace_but_not_newline(&str);
 
 	// parse three dimensional normalized vector of the cylinder's axis (t_vec 'normal')
 	// it is not an actual normal, but the direction of the central axis of the cylinder.
+	if (parse_3d_vector(&str, &cylinder->normal, line_num) == -1)
+		return (1);
+	if (fabs(cylinder->normal.x) < EPSILON && fabs(cylinder->normal.y) < EPSILON
+		&& fabs(cylinder->normal.z) < EPSILON)
+	{
+		display_parsing_error("Provided vector for cylinder's axis has a "
+			"magnitude of zero; Unable to render object. See line:", line_num);
+		return (1);
+	}
+	cylinder->normal = normalize(cylinder->normal);
 
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
+	skip_whitespace_but_not_newline(&str);
 
+	// parse the cylinder's diameter, and halve it, storing the RADIUS instead
+	// of the given diameter, in double 'r'.
 
+	if (ft_strtod(&str, &cylinder->r, line_num) == -1)
+		return (1);
+	if (cylinder->r < EPSILON)
+	{
+		display_parsing_error("Unable to render cylinder: diameter provided "
+			"has to be a positive value, for it to be a valid cylinder.\n"
+			"See line:", line_num);
+		return (1);
+	}
+	cylinder->r *= 0.5;
 
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
+	skip_whitespace_but_not_newline(&str);
 
+	// parse the cylinder's full height, and halve it as well, storing half the
+	// given height into double 'h'
 
-	// parse the cylinder's diameter, and halve it, storing the RADIUS instead of the given
-	// diameter, in double 'r'.
+	if (ft_strtod(&str, &cylinder->h, line_num) == -1)
+		return (1);
+	if (cylinder->h < EPSILON)
+	{
+		display_parsing_error("Unable to render cylinder: height provided "
+			"has to be a positive value, for it to be a valid cylinder.\n"
+			"See line:", line_num);
+		return (1);
+	}
+	cylinder->h *= 0.5;
 
-
-
-
-
-	// parse the cylinder's full height, and halve it as well, storing half the given height
-	// into double 'h'
-
-
-
-
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (1);
+	skip_whitespace_but_not_newline(&str);
 
 	// parse the cylinder's color, into t_vec/ t_color 'color'
 
+	if (parse_color(&str, &cylinder->color, NULL, line_num) == -1)
+		return (1);
 
-
-
-
-
+	if (!is_valid_end_of_line(str))
+		return (1);
 
 	parser->n_objs++; // validate cylinder
 	return (0);

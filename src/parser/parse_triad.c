@@ -101,15 +101,6 @@ void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
 	}
 }
 
-// FIXME: the main difference between those is that, according to the subject:
-// parse_direction_vector() for camera, plane and cylinder should all be in range [-1.0,1.0]!
-// I think that's why you started writing a new function, to begin with....
-// But partner said to accept values beyond that range, and that they would be
-// normalized later.... - There is something here that I do not understand, I should
-// be checking after each call to the new parsing three dimensional vector components function
-// if the vector is a valid one -> but the check for the camera, that is already done,
-// is different from the others -> the others should check whether the vector is a "valid
-// normal vector"
 int	parse_3d_vector(char **str, t_vec *vector, uint32_t line_num)
 {
 	if (ft_strtod(str, &vector->x, line_num) == -1)

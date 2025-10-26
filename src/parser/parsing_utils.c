@@ -73,7 +73,7 @@ bool	is_valid_separator(char	**str, uint32_t line_num)
 // Checks the character to which str is pointing at, advances it by one byte
 // and returns 1 if the character is expected, or returns 0 if it is unexpected.
 // The use case for this function should respect both of the following aspects:
-// - right after a call to ft_strtod(), parse_color() or parse_3d_vector() // WARN: add appropriate functions if there are any new ones!
+// - right after a call to ft_strtod(), parse_color() or parse_3d_vector()
 // - when miniRT expects yet more data after the last value that has been parsed
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 {
