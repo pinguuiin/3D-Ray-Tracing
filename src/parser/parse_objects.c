@@ -13,6 +13,7 @@
 #include "minirt.h"
 
 static int	create_new_object_node(t_parser *parser);
+static int	is_valid_n_of_objects(uint8_t n_objs, uint32_t line_num);
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
@@ -57,7 +58,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
 	skip_whitespace_but_not_newline(&str);
-E
+
 	// parse R,G,B colors in range [0-255]
 	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
 		return (1);
@@ -66,6 +67,11 @@ E
 		return (1);
 
 	parser->n_objs++; // validate sphere.
+
+	// check that not too many objects were provided by the user.
+	if (!is_valid_n_of_objects(parser->n_objects, line_num);
+		return (1);
+
 	return (0);
 }
 
@@ -118,6 +124,11 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 		return (1);
 
 	parser->n_objs++; // validate plane
+
+	// check that not too many objects were provided by the user.
+	if (!is_valid_n_of_objects(parser->n_objects, line_num);
+		return (1);
+
 	return (0);
 }
 
@@ -207,6 +218,11 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 		return (1);
 
 	parser->n_objs++; // validate cylinder
+
+	// check that not too many objects were provided by the user.
+	if (!is_valid_n_of_objects(parser->n_objects, line_num);
+		return (1);
+
 	return (0);
 }
 
@@ -227,5 +243,14 @@ static int	create_new_object_node(t_parser *parser)
 			return (-1);
 		parser->curr_obj = parser->curr_obj->next;
 	}
+	return (0);
+}
+
+static int	is_valid_n_of_objects(uint8_t n_objs, uint32_t line_num)
+{
+	if (n_objs <= 30)
+		return (1);
+	display_parsing_error("miniRT only accepts up to 30 objects. 31st object "
+		"is on line number", line_num);
 	return (0);
 }

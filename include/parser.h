@@ -53,7 +53,7 @@ typedef struct s_parser
 	uint8_t			n_ambs;
 	uint8_t			n_cams;
 	uint32_t		n_lights;
-	uint32_t		n_objs;
+	uint8_t			n_objs;
 
 }	t_parser;
 
