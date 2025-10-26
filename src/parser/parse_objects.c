@@ -96,19 +96,14 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
 		return (1);
 
-	/*
-	// FIXME: are we sure not to accept all zeroes ?
-	// UPDATE: No, that was only valid for the camera!!!
-	// From Ping:
-	// "for plane and cylinder, if they don't have a proper normal vector, we return error"
-	// BUT WHAT IS NOT A PROPER NORMAL VECTOR?????????????????
-	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
-	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
-		&& fabs(cam->direction->z) < EPSILON)
-		cam->direction.z = 1.0;
+	// FIXME: add here:
+	// - normalizing
+	// - error handling for a "proper normal vector".
+	// Do not copy the error handling done for parse_camera()'s direction,
+	// it is different here.
 
-	cam->direction = normalize(cam->direction); // normalize
-	*/
+
+
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
