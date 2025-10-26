@@ -35,7 +35,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	// parse x,y,z coordinates of the center of the sphere (t_vec 'pos')
-	if (parse_coordinates(&str, &sphere->pos, line_num) == -1)
+	if (parse_3d_vector(&str, &sphere->pos, line_num) == -1)
 		return (1);
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
@@ -58,12 +58,8 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	// parse R,G,B colors in range [0-255]
-	if (parse_color(&str, &sphere->color, NULL) == -1)
-	{
-		display_parsing_error("Invalid input for color values.\nPlease use "
-			"three values in range 0 to 255, separated by commas, on line:",
+	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
 		return (1);
-	}
 
 	if (!is_valid_end_of_line(str))
 		return (1);
@@ -88,7 +84,7 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	// parse x,y,z coordinates of a point in the plane (t_vec 'pos')
-	if (parse_coordinates(&str, &plane->pos, line_num) == -1)
+	if (parse_3d_vector(&str, &plane->pos, line_num) == -1)
 		return (1);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
@@ -97,7 +93,7 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 
 	// parse 3d normalized normal vector. In range [-1,1] for each x,y,z axis (t_vec 'normal')
 
-	if (parse_xyz_components(&str, &plane->normal, line_num) == -1) // TODO: resolve issue between parse_coordinates() and parse_direction_vector()...
+	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
 		return (1);
 
 	/*
@@ -119,13 +115,9 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 
-	// parse R,G,B colors in range [0-255] 
-	if (parse_color(&str, &plane->color, NULL) == -1)
-	{
-		display_parsing_error("Invalid input for color values.\nPlease use "
-			"three values in range 0 to 255, separated by commas, on line:",
+	// parse R,G,B colors in range [0-255]
+	if (parse_color(&str, &plane->color, NULL, line_num) == -1)
 		return (1);
-	}
 
 	if (!is_valid_end_of_line(str))
 		return (1);

@@ -54,12 +54,17 @@ void	skip_whitespace_but_not_newline(char **str)
 	*str = s;
 }
 
-bool	is_valid_separator(char	**str)
+bool	is_valid_separator(char	**str, uint32_t line_num)
 {
 	if (**str == ',')
 		(*str)++;
 	else
+	{
+		display_parsing_error("Invalid input when expecting a comma to "
+			"separate between elements of a triad of values.\n"
+			"See line number:", line_num);
 		return (0);
+	}
 	if (**str == ' ')
 		(*str)++;
 	return (1);
@@ -67,9 +72,9 @@ bool	is_valid_separator(char	**str)
 
 // Checks the character to which str is pointing at, advances it by one byte
 // and returns 1 if the character is expected, or returns 0 if it is unexpected.
-// The use case for this function should respect the following aspects:
-// - following a call to ft_strtod(), parse_color() or parse_coordinates() // WARN: add appropriate functions if there are any new ones!
-// - when miniRT expects more data in the line, after the last numerical value
+// The use case for this function should respect both of the following aspects:
+// - right after a call to ft_strtod(), parse_color() or parse_3d_vector() // WARN: add appropriate functions if there are any new ones!
+// - when miniRT expects yet more data after the last value that has been parsed
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 {
 	if (isspace_but_not_newline(**str))

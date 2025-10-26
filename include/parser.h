@@ -99,12 +99,11 @@ int		isspace_but_not_newline(int c);
 void	skip_whitespace(char **str);
 void	skip_whitespace_but_not_newline(char **str);
 int		ft_strtod(char **str, double *result, uint32_t line_num);
-int		parse_color(char **str, t_color *color, double *ratio);
+int		parse_color(char **str, t_color *color, double *ratio, uint32_t line_num);
 void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
-int		parse_coordinates(char **str, t_vec *position, uint32_t line_num);
+int		parse_3d_vector(char **str, t_vec *vector, uint32_t line_num);
 int		parse_light(t_light *light, char *str, uint32_t line_num);
-int		parse_direction_vector(char **str, t_vec *direction, uint32_t line_num);
-bool	is_valid_separator(char	**str);
+bool	is_valid_separator(char	**str, uint32_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
 bool	is_valid_end_of_line(char *s);
 

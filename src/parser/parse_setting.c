@@ -49,13 +49,8 @@ int	parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 
 	skip_whitespace_but_not_newline(&str);
 
-	if (parse_color(&str, amb, &ratio) == -1)
-	{
-		display_parsing_error("Invalid input for color values.\nPlease use "
-			"three values in range 0 to 255, separated by commas, on line:",
-			line_num);
+	if (parse_color(&str, amb, &ratio, line_num) == -1)
 		return (1);
-	}
 
 	if (!is_valid_end_of_line(str))
 		return (1);
@@ -75,7 +70,7 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams)
 
 	skip_whitespace_but_not_newline(&str);
 
-	if (parse_coordinates(&str, &cam->pos, line_num) == -1)
+	if (parse_3d_vector(&str, &cam->pos, line_num) == -1)
 		return (1);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
@@ -83,7 +78,7 @@ int	parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams)
 
 	skip_whitespace_but_not_newline(&str);
 
-	if (parse_direction_vector(&str, &cam->direction, line_num) == -1)
+	if (parse_3d_vector(&str, &cam->direction, line_num) == -1)
 		return (1);
 
 	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
@@ -154,7 +149,7 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 	skip_whitespace_but_not_newline(&str);
 
 	// parse coordinates of the light point
-	if (parse_coordinates(&str, &light->pos, line_num) == -1)
+	if (parse_3d_vector(&str, &light->pos, line_num) == -1)
 		return (1);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
@@ -185,13 +180,8 @@ int	parse_light(t_parser *parser, char *str, uint32_t line_num)
 		skip_whitespace(&str);
 		if (*str)
 		{
-			if (parse_color(&str, &light->color, &ratio) == -1)
-			{
-				display_parsing_error("Invalid input for color values.\nPlease "
-					"use three values in range 0 to 255, separated by commas, "
-					"on line:", line_num);
+			if (parse_color(&str, &light->color, &ratio, line_num) == -1)
 				return (1);
-			}
 			if (!is_valid_end_of_line(str))
 				return (1);
 		}
