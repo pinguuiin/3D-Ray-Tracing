@@ -56,7 +56,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
 	skip_whitespace_but_not_newline(&str);
-
+E
 	// parse R,G,B colors in range [0-255]
 	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
 		return (1);
@@ -96,19 +96,18 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
 		return (1);
 
-	// FIXME: add here:
-	// - normalizing
-	// - error handling for a "proper normal vector".
-	// Do not copy the error handling done for parse_camera()'s direction,
-	// it is different here.
-
-
-
+	if (fabs(plane->x) < EPSILON && fabs(plane->y) < EPSILON
+		&& fabs(plane->y < EPSILON))
+	{
+		display_parsing_error("Provided normal vector for plane has a "
+			"magnitude of zero; Unable to render object. See line:", line_num);
+		return (1);
+	}
+	*plane = normalize(*plane);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (1);
 	skip_whitespace_but_not_newline(&str);
-
 
 	// parse R,G,B colors in range [0-255]
 	if (parse_color(&str, &plane->color, NULL, line_num) == -1)
@@ -126,15 +125,46 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	t_object	*cylinder;
 
 	cylinder = NULL;
+
+	// initialize cylinder
 	if (create_new_object_node(parser) == -1)
 		return (-1);
 	cylinder = &parser->curr_obj->object;
 	cylinder->type = CYLINDER;
 
-
-
+	// start parsing 'str'
 	skip_whitespace_but_not_newline(&str);
 
+	// parse x,y,z coordinates of the center of the cylinder (t_vec 'pos')
+
+	
+
+
+
+
+	// parse three dimensional normalized vector of the cylinder's axis (t_vec 'normal')
+	// it is not an actual normal, but the direction of the central axis of the cylinder.
+
+
+
+
+
+
+	// parse the cylinder's diameter, and halve it, storing the RADIUS instead of the given
+	// diameter, in double 'r'.
+
+
+
+
+
+	// parse the cylinder's full height, and halve it as well, storing half the given height
+	// into double 'h'
+
+
+
+
+
+	// parse the cylinder's color, into t_vec/ t_color 'color'
 
 
 
@@ -142,11 +172,7 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 
 
 
-
-
-
-
-	parser->n_objs++; // validate object
+	parser->n_objs++; // validate cylinder
 	return (0);
 }
 
