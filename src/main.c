@@ -78,3 +78,73 @@ static void	handle_unexpected_arg_count(int argc)
 			"valid .rt scene\n") - 1);
 	}
 }
+
+// TESTING: required!
+static int	parse_input_argument(char *arg)
+{
+	char	*temp_1;
+	char	*temp_2;
+	bool	should_copy;
+	size_t	len;
+
+	should_copy = 0;
+	len = 0;
+	temp_1 = arg;
+	skip_whitespace(&temp_1);
+	if (temp_1 != arg)
+		should_copy = 1;
+		
+
+	// WARN: careful: we might be on the null terminator at this point.
+	len = skip_non_whitespace_chars_until_file_extension(&temp_1);
+
+	if (*temp_1 == '.')
+		temp_1++;
+	if (*temp_1 == 'r' && *(temp_1 + 1) == 't' && ft_isspace(*(temp_1 + 2)))
+	{
+		temp_1 += 2;
+		len += 3; // we add to len: '.rt'
+		temp_2 = temp_1 + 1;
+		skip_whitespace(&temp_2);
+		if (*temp_2)
+		{
+			ft_putstr_fd(2, "Invalid argument provided. Only a single valid "
+				".rt file is accepted\n");
+			return (-1);
+		}
+		temp_1 -= (len + 1);
+
+		if (should_copy)
+		{
+			arg = ft_memmove(arg, temp_1, len);
+			arg[len] = '\0';
+			// WARN: does this even work as I want it to? would the string
+			// passed to parse_scene(), which would simply be argv[1], stop at the first null
+			// terminator it sees?
+
+		}
+	}
+	else
+	{
+		ft_putstr_fd(2, "Invalid file provided. miniRT only accepts valid "
+			"scene description files with the '.rt' extension.\n");
+		return (-1);
+	}
+	return (0);
+}
+
+static size_t	skip_non_whitspace_chars_until_file_extension(**temp_1)
+{
+	char	*s;
+	size_t	i;
+
+	i = 0;
+	s = *temp_1;
+	while (*s && && *s != '.' && *s != ' ' && *s < '\t' && *s > '\r')
+	{
+		i++;
+		s++;
+	}
+	*temp_1 = s;
+	return (i);
+}
