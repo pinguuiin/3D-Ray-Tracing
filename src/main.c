@@ -13,7 +13,7 @@
 #include "minirt.h"
 
 static int		parse_input_argument(char *arg);
-static size_t	skip_non_whitespace_chars_until_file_extension(char **temp_1);
+static size_t	skip_non_whitespace_chars_until_file_extension(char **ptr);
 static void		handle_unexpected_arg_count(int argc);
 
 // return values:
@@ -31,18 +31,7 @@ int	main(int argc, char *argv[])
 
 	if (argc == 2)
 	{
-		// FIXME: write a function that parses through the file's name, making
-		// sure that it is a filename with no strange tails, that it ends
-		// with ".rt" (!!!) and nothing else behind, except, if you want to be
-		// very forgiving : accept whitespace, if the user would provide the
-		// argument within quotes........
-		// parse_scene() opens the whole argv[1] - consider cleaning up that
-		// file name into a different string, if necessary, and pass that string
-		// instead, allowing it to be freed from there as soon as the file is closed
-		// AND every time you call free_exit() or clean_up_parsing_and_exit().
-		// NOTE: Alternatively: can you simply overwrite the beginning of argv[1],
-		// directly, null terminating it yourself, thus avoiding all trouble with
-		// malloc() and free()???
+		parse_input_argument(argv[1]);
 		parse_scene(info, argv[1]);
 	}
 	else
@@ -82,51 +71,55 @@ static void	handle_unexpected_arg_count(int argc)
 }
 
 // TESTING: required!
+// FIXME: This would not accept relative paths!!!! because of the '.' limitation.
+// Try to make it accept:
+// ./ and
+// ../
 static int	parse_input_argument(char *arg)
 {
-	char	*temp_1;
-	char	*temp_2;
+	char	*ptr;
+	char	*temp;
 	bool	should_copy;
 	size_t	len;
 
-	temp_1 = arg;
+	ptr = arg;
 	should_copy = 0;
 	len = 0;
-	skip_whitespace(&temp_1);
-	if (temp_1 != arg)
+	skip_whitespace(&ptr);
+	if (ptr != arg)
 		should_copy = 1;
 		
 
 	// WARN: careful: we might be on the null terminator at this point.
-	len = skip_non_whitespace_chars_until_file_extension(&temp_1);
+	len = skip_non_whitespace_chars_until_file_extension(&ptr);
 
-	if (*temp_1 == '.')
-		temp_1++;
-	if (*temp_1 == 'r' && *(temp_1 + 1) == 't'
-		&& (!*(temp_1 + 2) || ft_isspace(*(temp_1 + 2))))
+	if (*ptr == '.')
+		ptr++;
+	if (*ptr == 'r' && *(ptr + 1) == 't'
+		&& (!*(ptr + 2) || ft_isspace(*(ptr + 2))))
 	{
-		temp_1 += 2;
+		ptr += 2;
 		len += 4; // we add to len: '.rt\0'
-		temp_2 = temp_1;
-		skip_whitespace(&temp_2);
-		if (*temp_2)
+		temp = ptr;
+		skip_whitespace(&temp);
+		if (*temp)
 		{
 			ft_putstr_fd("Invalid argument provided. Only a single valid "
-				".rt file is accepted\n", 2);
+				".rt file is accepted.\n", 2);
 			return (-1);
 		}
-		if (temp_2 != temp_1)
+		if (temp != ptr)
 			should_copy = 1;
 
 		// WARN: does this next line even work as I want it to? would the string
 		// passed to parse_scene(), which would simply be argv[1], stop at the first null
 		// terminator it sees?
-		*temp_1 = '\0';
-		temp_1 -= (len - 1);
+		*ptr = '\0';
+		ptr -= (len - 1);
 
 		if (should_copy)
 		{
-			arg = ft_memmove(arg, temp_1, len);
+			arg = ft_memmove(arg, ptr, len);
 
 		}
 	}
@@ -139,18 +132,18 @@ static int	parse_input_argument(char *arg)
 	return (0);
 }
 
-static size_t	skip_non_whitespace_chars_until_file_extension(char **temp_1)
+static size_t	skip_non_whitespace_chars_until_file_extension(char **ptr)
 {
 	char	*s;
 	size_t	i;
 
 	i = 0;
-	s = *temp_1;
+	s = *ptr;
 	while (*s && *s != '.' && *s != ' ' && (*s < '\t' || *s > '\r'))
 	{
 		i++;
 		s++;
 	}
-	*temp_1 = s;
+	*ptr = s;
 	return (i);
 }
