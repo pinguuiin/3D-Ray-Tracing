@@ -84,6 +84,7 @@ typedef union u_vec
 typedef t_vec	t_color;
 
 // scene and elements parsing
+int		parse_argument(int argc, char *argv[]);
 void	parse_scene(char *file_name);
 int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 			uint8_t *n_ambs);

@@ -40,6 +40,7 @@ SRC_FILES = main.c \
 			utils/color.c \
 			vector/operations.c \
 			vector/rotation.c \
+			parser/handle_argv.c \
 			parser/parser.c \
 			parser/parse_setting.c \
 			parser/parse_objects.c \
