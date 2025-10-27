@@ -146,7 +146,7 @@ static size_t	skip_non_whitespace_chars_until_file_extension(char **temp_1)
 
 	i = 0;
 	s = *temp_1;
-	while (*s && *s != '.' && *s != ' ' && *s < '\t' && *s > '\r')
+	while (*s && *s != '.' && *s != ' ' && (*s < '\t' || *s > '\r'))
 	{
 		i++;
 		s++;
