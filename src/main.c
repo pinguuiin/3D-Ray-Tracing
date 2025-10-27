@@ -74,10 +74,10 @@ static void	handle_unexpected_arg_count(int argc)
 	}
 	else
 	{
-		write(2, "Too many arguments provided. Please provide only one "
-			"valid .rt scene\n",
-			sizeof ("Too many arguments provided. Please provide only one "
-			"valid .rt scene\n") - 1);
+		write(2, "Too many arguments provided. Only one valid .rt scene "
+			"file is accepted.\n",
+			sizeof ("Too many arguments provided. Only one valid .rt scene "
+			"file is accepted.\n") - 1);
 	}
 }
 
@@ -132,8 +132,8 @@ static int	parse_input_argument(char *arg)
 	}
 	else
 	{
-		ft_putstr_fd("Invalid file provided. miniRT only accepts valid "
-			"scene description files with the '.rt' extension.\n", 2);
+		ft_putstr_fd("Unsupported file type detected; "
+			"please provide a valid .rt file.\n", 2);
 		return (-1);
 	}
 	return (0);
