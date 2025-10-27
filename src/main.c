@@ -12,7 +12,9 @@
 
 #include "minirt.h"
 
-static void	handle_unexpected_arg_count(int argc);
+static int		parse_input_argument(char *arg);
+static size_t	skip_non_whitespace_chars_until_file_extension(char **temp_1);
+static void		handle_unexpected_arg_count(int argc);
 
 // return values:
 //	1:	MLX function failures (WARN: not sure about this one!)
@@ -45,7 +47,7 @@ int	main(int argc, char *argv[])
 	}
 	else
 	{
-		handle_inappropriate_argc(argc);
+		handle_unexpected_arg_count(argc);
 		return (1);
 	}
 
@@ -101,7 +103,7 @@ static int	parse_input_argument(char *arg)
 	if (*temp_1 == '.')
 		temp_1++;
 	if (*temp_1 == 'r' && *(temp_1 + 1) == 't'
-		&& !*(temp_1 + 2) || (ft_isspace(*(temp_1 + 2))))
+		&& (!*(temp_1 + 2) || ft_isspace(*(temp_1 + 2))))
 	{
 		temp_1 += 2;
 		len += 4; // we add to len: '.rt\0'
@@ -109,8 +111,8 @@ static int	parse_input_argument(char *arg)
 		skip_whitespace(&temp_2);
 		if (*temp_2)
 		{
-			ft_putstr_fd(2, "Invalid argument provided. Only a single valid "
-				".rt file is accepted\n");
+			ft_putstr_fd("Invalid argument provided. Only a single valid "
+				".rt file is accepted\n", 2);
 			return (-1);
 		}
 		if (temp_2 != temp_1)
@@ -130,21 +132,21 @@ static int	parse_input_argument(char *arg)
 	}
 	else
 	{
-		ft_putstr_fd(2, "Invalid file provided. miniRT only accepts valid "
-			"scene description files with the '.rt' extension.\n");
+		ft_putstr_fd("Invalid file provided. miniRT only accepts valid "
+			"scene description files with the '.rt' extension.\n", 2);
 		return (-1);
 	}
 	return (0);
 }
 
-static size_t	skip_non_whitspace_chars_until_file_extension(**temp_1)
+static size_t	skip_non_whitespace_chars_until_file_extension(char **temp_1)
 {
 	char	*s;
 	size_t	i;
 
 	i = 0;
 	s = *temp_1;
-	while (*s && && *s != '.' && *s != ' ' && *s < '\t' && *s > '\r')
+	while (*s && *s != '.' && *s != ' ' && *s < '\t' && *s > '\r')
 	{
 		i++;
 		s++;

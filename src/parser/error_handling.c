@@ -32,14 +32,14 @@ int	handle_parsing_error(int error_code, char *line, t_parser *parser)
 	if (error_code == 1)
 		return (2);
 	if (error_code == -1)
-		ft_putendl_fd(2, "Dynamic memory allocation request has failed.");
+		ft_putendl_fd("Dynamic memory allocation request has failed.", 2);
 	else if (error_code == -2)
-		ft_putendl_fd(2, "System call failed; Unable to read input file data.");
+		ft_putendl_fd("System call failed; Unable to read input file data.", 2);
 	else if (error_code == -3)
-		ft_putendl_fd(2, "Failed to process input file; buffer size is empty.");
+		ft_putendl_fd("Failed to process input file; buffer size is empty.", 2);
 	else if (error_code == -4)
-		ft_putendl_fd("Failed to open input file.");
-	ft_putendl_fd(2, "Aborting miniRT.");
+		ft_putendl_fd("Failed to open input file.", 2);
+	ft_putendl_fd("Aborting miniRT.", 2);
 	return (3);
 }
 
