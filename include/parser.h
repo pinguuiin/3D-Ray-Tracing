@@ -85,7 +85,7 @@ typedef t_vec	t_color;
 
 // scene and elements parsing
 int		parse_argument(int argc, char *argv[]);
-void	parse_scene(char *file_name);
+void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
 			uint8_t *n_ambs);
 int		parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams);

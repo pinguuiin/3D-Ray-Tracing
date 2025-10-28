@@ -14,7 +14,7 @@
 
 static int	parse_line(t_parser *parser, char *line, uint32_t line_num);
 
-void	parse_scene(char *file_name)
+void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
 	int			fd;
@@ -29,7 +29,7 @@ void	parse_scene(char *file_name)
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
 
-	fd = open(file_name, O_RDONLY);
+	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		error_code = -4;
 	while (!error_code)
@@ -58,10 +58,21 @@ void	parse_scene(char *file_name)
 				// objects (what is the minimum required - should we accept a
 				// scene with 0 objects?)
 
+
+				// check that we have all data we need in order to execute rendering.
+				// Else: set error_code to 1, display an error message (display_parsing_error()).
+				// so that the program would exit
+
 				// FIXME:
 				// once you transfer the objects list/s into into the array of all of the
 				// objects' structs, organize them in order ----> the count for each will
 				// allow us to optimize.
+
+				// - transfer the lights and all objects linked lists into their respective arrays;
+				// - destroy the lists
+				// - return ;
+				
+
 
 				return ;
 			}
@@ -115,3 +126,5 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 	}
 	return (0);
 }
+
+static void	transfer_lists_to_arrays(t_info *info, t_parser *parser)
