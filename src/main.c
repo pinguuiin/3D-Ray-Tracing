@@ -12,35 +12,6 @@
 
 #include "minirt.h"
 
-static void	key_handler(mlx_key_data_t keydata, void *param);
-
-// return values:
-//	1:	MLX function failures (WARN: not sure about this one!)
-//	2:	invalid input - unexpected argument or misconfigured .rt file
-//	3:	fatal system error during parsing (open(), malloc(), read(), empty
-//	buffer for get_next_line_minirt())
-// 	0:	If program ran smoothly
-int	main(int argc, char *argv[])
-{
-	t_info	*info;
-
-	// info is a static variable within get_info(), so its values are zeroed.
-	info = get_info();
-
-	if (parse_argument(argc, argv) == -1)
-		return (2);
-	parse_scene(info, argv[1]);
-
-	// graphic rendering
-	initialize_mlx(&info);
-	mlx_key_hook(info.mlx, &key_handler, &info);
-	mlx_loop_hook(info.mlx, draw, &info);
-	mlx_loop(info.mlx);
-
-	free_exit(NULL); // this does not actually exit the program, no worries
-	return (0);
-}
-
 t_info	*get_info(void)
 {
 	static t_info	info;
@@ -53,6 +24,8 @@ int	free_exit(char *s)
 	t_info	*info;
 
 	info = get_info();
+	free(info->light);
+	free(info->obj);
 	if (info->img)
 		mlx_delete_image(info->mlx, info->img);
 	if (info->mlx)
@@ -95,4 +68,30 @@ void	initialize_mlx(t_info *info)
 		exit(free_exit("Image buffer creation failed"));
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
 		exit(free_exit("Pushing image to window failed"));
+}
+
+// return values:
+//	1:	MLX function failures (WARN: not sure about this one!)
+//	2:	invalid input - unexpected argument or misconfigured .rt file
+//	3:	fatal system error during parsing, such as failures of open(), malloc()
+//		and read() functions, or an empty buffer for get_next_line_minirt()
+// 	0:	If program runs smoothly
+int	main(int argc, char *argv[])
+{
+	t_info	*info;
+
+	info = get_info();
+
+	if (parse_argument(argc, argv) == -1)
+		return (2);
+	parse_scene(info, argv[1]);
+
+	// graphic rendering
+	initialize_mlx(&info);
+	mlx_key_hook(info.mlx, &key_handler, &info);
+	mlx_loop_hook(info.mlx, draw, &info);
+	mlx_loop(info.mlx);
+
+	free_exit(NULL); // this does not actually exit the program, no worries
+	return (0);
 }

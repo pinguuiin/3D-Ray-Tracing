@@ -63,18 +63,13 @@ void	parse_scene(t_info *info, char *filename)
 				// Else: set error_code to 1, display an error message (display_parsing_error()).
 				// so that the program would exit
 
-				// FIXME:
-				// once you transfer the objects list/s into into the array of all of the
-				// objects' structs, organize them in order ----> the count for each will
-				// allow us to optimize.
+				// transfer the lights and all objects linked lists into their respective arrays;
+				error_code = transfer_lists_to_arrays(info, &parser);
 
-				// - transfer the lights and all objects linked lists into their respective arrays;
-				// - destroy the lists
-				// - return ;
-				
-
-
-				return ;
+				// destroy the lists and return (unless malloc() failure has occured,
+				// in which case error_code is -1, which will be handled after the loop.
+				if (!error_code)
+					return;
 			}
 		}
 	}
@@ -127,4 +122,142 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 	return (0);
 }
 
-static void	transfer_lists_to_arrays(t_info *info, t_parser *parser)
+// TODO:
+static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
+{
+	uint8_t	i;
+
+	// update n_light in 'info'
+	info->n_light = parser->n_lights;
+
+
+	// allocate array of lights in 'info'
+	// make ft_calloc() failure check!
+
+	info->light = (t_light *) ft_calloc(parser->n_lights, sizeof (t_light));
+	if (!info->light)
+		return (-1);
+
+
+	// FIXME: can we safely remove parser->current? Do I really need it?? have to review allocation in parse_light() first, it has to be refactored for us to know...
+	// FIXME: refactor the following block. i can be an internal variable of that function, do not mix it with the above declared uint8_t i.
+	t_node_light	*current;
+	uint32_t		i;
+
+	current = parser->head;
+	i = 0;
+
+	while (current)
+	{
+		info->light[i].pos.x = current->object.pos.x;
+		info->light[i].pos.y = current->object.pos.y;
+		info->light[i].pos.z = current->object.pos.z;
+
+		info->light[i].color.x = current->object.color.x;
+		info->light[i].color.y = current->object.color.y;
+		info->light[i].color.z = current->object.color.z;
+		i++;
+		current = current->next;
+	}
+	// FIXME: end of refactoring block.
+
+
+
+
+
+	// update n_obj in 'info'
+	info->n_obj = parser->spheres + parser->planes + parser->cylinders;
+
+
+	// allocate array of objects. make ft_calloc() failure check!
+	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
+	if (!info->obj)
+		return (-1);
+
+	// TODO:
+	// copy all spheres' data to the START of the array.
+
+	i = 0;
+
+
+	// TODO:
+	// copy all planes' data to the MIDDLE of the array.
+	// do NOT reset i, it keeps incrementing through the array.
+
+
+
+
+	// TODO:
+	// copy all cylinders' data to the END of the array.
+
+
+
+	// destroy both linked lists
+	clean_up_parsing_memory(parser, NULL);
+}
+
+// FIXME:
+static int	transfer_light()
+{
+	while 
+
+
+}
+
+
+// FIXME: refactor.
+static uint8_t	copy_obj_type_to_array(t_type type, t_parser *parser, uint8_t i)
+{
+	t_info		*info;
+	uint8_t		n_objects;
+	t_node_obj	*current;
+
+	info = get_info();
+
+	if (type == SPHERE)
+		n_objects = parser->n_spheres;
+	else if (type == PLANE)
+		n_objects = parser->n_planes;
+	else
+		n_objects = parser->n_cylinders;
+
+	current = parser->head_obj;
+	while (n_objects)
+	{
+		while (current)
+		{
+			// FIXME: refactor the next block into a separate function !!!
+			if (current->object.type == type)
+			{
+				// copy all data
+				info->obj[i].type = type;
+
+				info->obj[i].pos.x = current->object.pos.x;
+				info->obj[i].pos.y = current->object.pos.y;
+				info->obj[i].pos.z = current->object.pos.z;
+
+				info->obj[i].color.x = current->object.color.x;
+				info->obj[i].color.y = current->object.color.y;
+				info->obj[i].color.z = current->object.color.z;
+
+				if (type != PLANE)
+					info->obj[i].r = current->object.r;
+
+				if (type != SPHERE)
+				{
+					info->obj[i].normal.x = current->object.normal.x;
+					info->obj[i].normal.y = current->object.normal.y;
+					info->obj[i].normal.z = current->object.normal.z;
+				}
+
+				if (type == CYLINDER)
+					info->obj[i].h = current->object.h;
+
+				i++;
+				n_objects--;
+			}
+			current = current->next;
+		}
+	}
+	return (i);
+}

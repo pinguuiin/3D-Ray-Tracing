@@ -45,7 +45,7 @@ typedef struct s_node_obj
 typedef struct s_parser
 {
 	t_node_light	*head; // head of 'lights' list
-	t_node_light	*current;
+	t_node_light	*current; // NOTE: am I really using this one???
 
 	t_node_obj		*head_obj;
 	t_node_obj		*curr_obj;
@@ -53,7 +53,9 @@ typedef struct s_parser
 	uint8_t			n_ambs;
 	uint8_t			n_cams;
 	uint32_t		n_lights;
-	uint8_t			n_objs;
+	uint8_t			n_spheres;
+	uint8_t			n_planes;
+	uint8_t			n_cylinders;
 
 }	t_parser;
 

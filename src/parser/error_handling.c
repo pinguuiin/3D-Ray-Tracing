@@ -118,7 +118,8 @@ void	clean_up_parsing_memory(t_parser *parser, char *line)
 	}
 
 	// free the returned line obtained by get_next_line_minirt()
-	free(line);
+	if (line)
+		free(line);
 
 	/*
 	 * WARN: I am pretty sure this function is only used BEFORE MLX initialization.
