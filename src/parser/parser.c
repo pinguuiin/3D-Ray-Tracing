@@ -18,10 +18,10 @@ void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
 	char		*line;
-	int			error_code;
+	t_status	status;
 
 	line = NULL;
-	error_code = 0;
+	status = NO_ERROR;
 
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
@@ -29,17 +29,17 @@ void	parse_scene(t_info *info, char *filename)
 
 	parser.fd = open(filename, O_RDONLY);
 	if (parser.fd == -1)
-		error_code = -4;
-	while (!error_code)
+		status = OPEN_FAILURE;
+	while (status == NO_ERROR)
 	{
-		error_code = get_next_line_minirt(parser.fd, &line);
+		status = get_next_line_minirt(parser.fd, &line);
 
-		if (!error_code)
+		if (status == NO_ERROR)
 		{
 			if (line)
 			{
-				error_code = parse_line(&parser, line);
-				if (!error_code)
+				status = parse_line(&parser, line);
+				if (status == NO_ERROR)
 				{
 					free(line);
 					line = NULL;
@@ -58,15 +58,15 @@ void	parse_scene(t_info *info, char *filename)
 
 
 				// check that we have all data we need in order to execute rendering.
-				// Else: set error_code to 1, display an error message (display_parsing_error()).
+				// Else: set status to INVALID_INPUT, display an error message (display_parsing_error()).
 				// so that the program would exit
 
 				// transfer the lights and all objects linked lists into their respective arrays;
-				error_code = transfer_lists_to_arrays(info, &parser);
+				status = transfer_lists_to_arrays(info, &parser);
 
 				// destroy the lists and return (unless malloc() failure has occured,
-				// in which case error_code is -1, which will be handled after the loop.
-				if (!error_code)
+				// in which case status is ALLOCATION_FAILURE, which will be handled after the loop.
+				if (status == NO_ERROR)
 				{
 					// destroy both linked lists, and close the file descriptor
 					if (clean_up_parser(parser, NULL) == -1) // if true, close() failed, but memory has been freed. Time to exit.
@@ -76,8 +76,8 @@ void	parse_scene(t_info *info, char *filename)
 			}
 		}
 	}
-	if (error_code)
-		exit(handle_parsing_error(error_code, line, &parser));
+	if (status != NO_ERROR)
+		exit(handle_parsing_error(status, line, &parser));
 }
 
 // FIXME: consider doing the isspace_but_not_newline() checks from the specific
@@ -117,10 +117,9 @@ static int	parse_line(t_parser *parser, char *line)
 	// error, and the program should proceed.
 	if (*str)
 	{
-		err_code = 1;
 		display_parsing_error("Unexpected input provided on line number",
 			parser->line_num);
-		return (1);
+		return (INVALID_INPUT);
 	}
 	return (0);
 }

@@ -14,6 +14,7 @@
 
 static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 
+// FIXME: review notes if you go through with the STATUS and t_status changes (from error_code)!
 /*
 * 'error_code' with the value 1 signifies that there has been a misconfiguration
 * in the input file, and that an error message has already been displayed on the
@@ -28,32 +29,33 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 */
 // FIXME: write macros for each error_code : INVALID_INPUT, OPEN_FAILURE,
 // CLOSE_FAILURE, READ_FAILURE, EMPTY_BUFFER_SIZE, ALLOCATION_FAILURE
-int	handle_parsing_error(int error_code, char *line, t_parser *parser)
+int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 {
-	if (error_code == -4)
+	if (status == OPEN_FAILURE)
 	{
-		// error_code -4 means that open() failed. No need to call close(),
+		// status -4 means that open() failed. No need to call close(),
 		// and nothing has been allocated yet, so no need to clean_up_parser().
 		ft_putstr_fd("Failed to open input file. Aborting miniRT.\n", 2);
-		return (3);
+		return (SYSTEM_FAILURE);
 	}
 
 	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
-	if (clean_up_parser(parser, line) == -1)
-		return (3);
+	if (clean_up_parser(parser, line) == CLOSE_FAILURE)
+		return (SYSTEM_FAILURE);
 
-	if (error_code == 1)
-		return (2);
 
-	if (error_code == -1)
+	if (status == INVALID_INPUT)
+		return (INPUT_ERROR);
+
+	if (status == ALLOCATION_FAILURE)
 		ft_putstr_fd("Dynamic memory allocation request has failed. ", 2);
-	else if (error_code == -2)
+	else if (status == READ_FAILURE)
 		ft_putstr_fd("System call failed; Unable to read input file data. ", 2);
-	else if (error_code == -3)
+	else if (status == BUFFER_SIZE_ERROR)
 		ft_putstr_fd("Failed to process input file; buffer size is empty. ", 2);
 
 	ft_putstr_fd("Aborting miniRT.\n", 2);
-	return (3);
+	return (SYSTEM_FAILURE);
 }
 
 void	display_parsing_error(const char *msg, uint32_t line_num)
@@ -113,9 +115,10 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 * It also closes the file descriptor associated with the input .rt file.
 *
 * Return Values:
-* 	 0:	Dynamically allocated memory was properly freed and file descriptor
+*	0:	Dynamically allocated memory was properly freed and file descriptor
 *		was properly closed.
-*	-1:	Allocated memory was successfully freed, but close() has failed.
+*	CLOSE_FAILURE:	Allocated memory was successfully freed, but close() has
+*		failed.
 */
 int	clean_up_parser(t_parser *parser, char *line)
 {
@@ -149,7 +152,7 @@ int	clean_up_parser(t_parser *parser, char *line)
 	if (close(parser->fd) == -1)
 	{
 		ft_putstr_fd("Failed to close input file. Aborting miniRT.\n", 2);
-		return (-1);
+		return (CLOSE_FAILURE);
 	}
 
 	/*

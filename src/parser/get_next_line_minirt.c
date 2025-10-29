@@ -26,6 +26,12 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 		read_and_manage_output().
 */
 
+
+// FIXME: fix all exit statuses to match the new status macros
+
+// FIXME: cap the BUFFER_SIZE to something reasonable, check according to your original gnl.
+// so we don't have some funny surprises. And handle the error with returning BUFFER_SIZE_ERROR
+
 // Return values:
 //  0: success; next line is ready
 // -1: malloc() failure

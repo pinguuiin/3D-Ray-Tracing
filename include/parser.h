@@ -18,6 +18,32 @@
 // # include <fcntl.h>		// open(), close()
 // # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
+
+// FIXME: do we also want CLOSE_FAILURE?
+// but it would be better to have all negative.....
+// which would require a lot of changes, especially for INVALID_INPUT!
+typedef enum e_status
+{
+	NO_ERROR			=	0, // WARN: is it used?
+	INVALID_INPUT		= 	-1,
+	ALLOCATION_FAILURE	=	-2,
+	OPEN_FAILURE		=	-3,
+	CLOSE_FAILURE		=	-4, // WARN: is it used?
+	READ_FAILURE		=	-5,
+	BUFFER_SIZE_ERROR	=	-6,
+}	t_status;
+
+typedef enum e_exit_code
+{
+	SUCCESS			=	0,
+	MLX_FAILURE		=	1,
+	INPUT_ERROR		=	2,
+	SYSTEM_FAILURE	=	3 // WARN: is it used? it is more for the return value from main ! but could be super useful too.
+
+}	t_exit_code;
+
+
+
 // FIXME: lists of lights and of objects.
 // Should be all 'transferred' once parsing is complete and validated:
 // 1. all data copied to the array of lights 'light' (which should become a pointer)
@@ -111,7 +137,7 @@ bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
 bool	is_valid_end_of_line(char *s);
 
 // error messaging and memory management
-int		handle_parsing_error(int error_code, char *line, t_parser *parser);
+int		handle_parsing_error(t_status status, char *line, t_parser *parser);
 void	display_parsing_error(const char *msg, uint32_t line_num);
 int		clean_up_parser(t_parser *parser, char *line);
 
