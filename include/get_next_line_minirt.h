@@ -25,8 +25,6 @@
 #  define BUFFER_SIZE 1024
 # endif
 
-# include <fcntl.h>		// open(), close()
-
 /*
 * NOTE: get_next_line() uses system call read() with a given file descriptor
 * and returns the next line from that file, in order of appearance: The first

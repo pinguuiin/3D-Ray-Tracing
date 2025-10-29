@@ -73,8 +73,9 @@ void	initialize_mlx(t_info *info)
 // return values:
 //	1:	MLX function failures (WARN: not sure about this one!)
 //	2:	invalid input - unexpected argument or misconfigured .rt file
-//	3:	fatal system error during parsing, such as failures of open(), malloc()
-//		and read() functions, or an empty buffer for get_next_line_minirt()
+//	3:	fatal system error during parsing, such as failures of open(), malloc(),
+//		read() and close() functions, or buffer for get_next_line_minirt() is
+//		predefined as empty.
 // 	0:	If program runs smoothly
 int	main(int argc, char *argv[])
 {

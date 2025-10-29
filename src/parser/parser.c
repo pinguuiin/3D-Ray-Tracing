@@ -17,7 +17,7 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num);
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
-	int			fd;
+	int			fd; // FIXME: move into parser struct??
 	char		*line;
 	uint32_t	line_num; // always positive!
 	int			error_code;

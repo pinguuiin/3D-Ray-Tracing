@@ -12,9 +12,9 @@
 
 #include "minirt.h"
 
+static void		handle_unexpected_arg_count(int argc);
 static size_t	skip_filename_and_count_length(char **ptr);
 static bool		is_valid_file_extension(char *s, size_t len);
-static void		handle_unexpected_arg_count(int argc);
 
 int	parse_argument(int argc, char *argv[])
 {
@@ -42,7 +42,7 @@ int	parse_argument(int argc, char *argv[])
 	// validate ".rt" end of file name (only valid extension for input file)
 	if (!is_valid_file_extension(ptr, len))
 	{
-		ft_putstr_fd("unsupported file type detected; "
+		ft_putstr_fd("Unsupported file type detected; "
 			"please provide a valid .rt file.\n", 2);
 		return (-1);
 	}
@@ -52,7 +52,7 @@ int	parse_argument(int argc, char *argv[])
 	skip_whitespace(&temp);
 	if (*temp)
 	{
-		ft_putstr_fd("invalid argument provided. only a single valid "
+		ft_putstr_fd("Invalid argument provided. only a single valid "
 			".rt file is accepted.\n", 2);
 		return (-1);
 	}
@@ -94,7 +94,7 @@ static void	handle_unexpected_arg_count(int argc)
 {
 	if (argc == 1)
 	{
-		ft_putstr_fd("No input scene file provided.\nPlease provide valid "
+		ft_putstr_fd("No input scene file provided.\nPlease provide a valid "
 			".rt file for the miniRT program to render - for example:\n"
 			"./miniRT beautiful_scene.rt\n", 2);
 	}
