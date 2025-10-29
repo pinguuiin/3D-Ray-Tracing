@@ -93,5 +93,5 @@ int	main(int argc, char *argv[])
 	mlx_loop(info.mlx);
 
 	free_exit(NULL); // this does not actually exit the program, no worries
-	return (0);
+	return (SUCCESS);
 }

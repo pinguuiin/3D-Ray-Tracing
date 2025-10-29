@@ -30,17 +30,18 @@ typedef enum e_status
 	OPEN_FAILURE		=	-3,
 	CLOSE_FAILURE		=	-4, // WARN: is it used?
 	READ_FAILURE		=	-5,
-	BUFFER_SIZE_ERROR	=	-6,
+	BUFFER_SIZE_ERROR	=	-6
+
 }	t_status;
 
-typedef enum e_exit_code
+enum e_exit_code
 {
 	SUCCESS			=	0,
 	MLX_FAILURE		=	1,
 	INPUT_ERROR		=	2,
-	SYSTEM_FAILURE	=	3 // WARN: is it used? it is more for the return value from main ! but could be super useful too.
+	SYSTEM_FAILURE	=	3
 
-}	t_exit_code;
+};
 
 
 

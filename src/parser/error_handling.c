@@ -117,7 +117,7 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 *	0:	Dynamically allocated memory was properly freed and file descriptor
 *		was properly closed.
 *	CLOSE_FAILURE:	Allocated memory was successfully freed, but close() has
-*		failed.
+*		failed. It is safe to end the program.
 */
 int	clean_up_parser(t_parser *parser, char *line)
 {

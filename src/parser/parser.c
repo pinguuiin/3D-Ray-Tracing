@@ -69,8 +69,8 @@ void	parse_scene(t_info *info, char *filename)
 				if (status == NO_ERROR)
 				{
 					// destroy both linked lists, and close the file descriptor
-					if (clean_up_parser(parser, NULL) == -1) // if true, close() failed, but memory has been freed. Time to exit.
-						exit (3);
+					if (clean_up_parser(parser, NULL) == CLOSE_FAILURE) // if true, close() failed, but memory has been freed. Time to exit.
+						exit (SYSTEM_FAILURE);
 					return ;
 				}
 			}
@@ -121,7 +121,7 @@ static int	parse_line(t_parser *parser, char *line)
 			parser->line_num);
 		return (INVALID_INPUT);
 	}
-	return (0);
+	return (NO_ERROR);
 }
 
 // TODO:
@@ -138,7 +138,7 @@ static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
 
 	info->light = (t_light *) ft_calloc(parser->n_lights, sizeof (t_light));
 	if (!info->light)
-		return (-1);
+		return (ALLOCATION_FAILURE);
 
 
 	// FIXME: can we safely remove parser->current? Do I really need it?? have to review allocation in parse_light() first, it has to be refactored for us to know...
@@ -174,7 +174,7 @@ static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
 	// allocate array of objects. make ft_calloc() failure check!
 	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
 	if (!info->obj)
-		return (-1);
+		return (ALLOCATION_FAILURE);
 
 	// TODO:
 	// copy all spheres' data to the START of the array.
@@ -194,6 +194,7 @@ static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
 
 
 
+	return (NO_ERROR);
 }
 
 // FIXME:
