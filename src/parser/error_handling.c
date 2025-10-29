@@ -30,7 +30,6 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 // CLOSE_FAILURE, READ_FAILURE, EMPTY_BUFFER_SIZE, ALLOCATION_FAILURE
 int	handle_parsing_error(int error_code, char *line, t_parser *parser)
 {
-
 	if (error_code == -4)
 	{
 		// error_code -4 means that open() failed. No need to call close(),
@@ -114,9 +113,9 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 * It also closes the file descriptor associated with the input .rt file.
 *
 * Return Values:
-*  0: Dynamically allocated memory is properly freed and file descriptor is
-*	  closed.
-* -1: Allocated memory was successfully freed, but close() has failed.
+* 	 0:	Dynamically allocated memory was properly freed and file descriptor
+*		was properly closed.
+*	-1:	Allocated memory was successfully freed, but close() has failed.
 */
 int	clean_up_parser(t_parser *parser, char *line)
 {

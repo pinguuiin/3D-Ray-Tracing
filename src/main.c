@@ -83,8 +83,7 @@ int	main(int argc, char *argv[])
 
 	info = get_info();
 
-	if (parse_argument(argc, argv) == -1)
-		return (2);
+	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
 	// graphic rendering
