@@ -43,7 +43,6 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	if (clean_up_parser(parser, line) == CLOSE_FAILURE)
 		return (SYSTEM_FAILURE);
 
-
 	if (status == INVALID_INPUT)
 		return (INPUT_ERROR);
 
