@@ -44,6 +44,7 @@ typedef struct s_node_obj
 
 typedef struct s_parser
 {
+	int				fd;
 	t_node_light	*head; // head of 'lights' list
 	t_node_light	*current; // NOTE: am I really using this one???
 
@@ -112,6 +113,6 @@ bool	is_valid_end_of_line(char *s);
 // error messaging and memory management
 int		handle_parsing_error(int error_code, char *line, t_parser *parser);
 void	display_parsing_error(const char *msg, uint32_t line_num);
-void	clean_up_parsing_memory(t_parser *parser, char *line);
+int		clean_up_parser(t_parser *parser, char *line);
 
 #endif

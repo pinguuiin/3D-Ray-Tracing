@@ -17,7 +17,6 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num);
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
-	int			fd; // FIXME: move into parser struct??
 	char		*line;
 	uint32_t	line_num; // always positive!
 	int			error_code;
@@ -29,12 +28,12 @@ void	parse_scene(t_info *info, char *filename)
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
 
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
+	parser.fd = open(filename, O_RDONLY);
+	if (parser.fd == -1)
 		error_code = -4;
 	while (!error_code)
 	{
-		error_code = get_next_line_minirt(fd, &line);
+		error_code = get_next_line_minirt(parser.fd, &line);
 
 		if (!error_code)
 		{
@@ -69,7 +68,12 @@ void	parse_scene(t_info *info, char *filename)
 				// destroy the lists and return (unless malloc() failure has occured,
 				// in which case error_code is -1, which will be handled after the loop.
 				if (!error_code)
-					return;
+				{
+					// destroy both linked lists, and close the file descriptor
+					if (clean_up_parser(parser, NULL) == -1) // if true, close() failed, but memory has been freed. Time to exit.
+						exit (3);
+					return ;
+				}
 			}
 		}
 	}
@@ -192,8 +196,6 @@ static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
 
 
 
-	// destroy both linked lists
-	clean_up_parsing_memory(parser, NULL);
 }
 
 // FIXME:

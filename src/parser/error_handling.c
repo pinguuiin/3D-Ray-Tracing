@@ -26,31 +26,34 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 * passing its call as an argument to exit(). Invalid input returns 2, while
 * a system error returns 3.
 */
-// FIXME: check all calls to this function, now that we close(fd) from here!
-// FIXME: Also, move int fd into the parser struct.
+// FIXME: write macros for each error_code : INVALID_INPUT, OPEN_FAILURE,
+// CLOSE_FAILURE, READ_FAILURE, EMPTY_BUFFER_SIZE, ALLOCATION_FAILURE
 int	handle_parsing_error(int error_code, char *line, t_parser *parser)
 {
-	// FIXME: not sure about close() failure at all!!!!
-	clean_up_parsing_memory(parser, line);
 
-	if (close(parser->fd) == -1)
+	if (error_code == -4)
 	{
-		ft_putendl_fd("Failed to close input file.", 2);
-		error_code = -5;
+		// error_code -4 means that open() failed. No need to call close(),
+		// and nothing has been allocated yet, so no need to clean_up_parser().
+		ft_putstr_fd("Failed to open input file. Aborting miniRT.\n", 2);
+		return (3);
 	}
 
+	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
+	if (clean_up_parser(parser, line) == -1)
+		return (3);
 
 	if (error_code == 1)
 		return (2);
+
 	if (error_code == -1)
-		ft_putendl_fd("Dynamic memory allocation request has failed.", 2);
+		ft_putstr_fd("Dynamic memory allocation request has failed. ", 2);
 	else if (error_code == -2)
-		ft_putendl_fd("System call failed; Unable to read input file data.", 2);
+		ft_putstr_fd("System call failed; Unable to read input file data. ", 2);
 	else if (error_code == -3)
-		ft_putendl_fd("Failed to process input file; buffer size is empty.", 2);
-	else if (error_code == -4)
-		ft_putendl_fd("Failed to open input file.", 2);
-	ft_putendl_fd("Aborting miniRT.", 2);
+		ft_putstr_fd("Failed to process input file; buffer size is empty. ", 2);
+
+	ft_putstr_fd("Aborting miniRT.\n", 2);
 	return (3);
 }
 
@@ -103,7 +106,19 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 }
 
 // WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
-void	clean_up_parsing_memory(t_parser *parser, char *line)
+/*
+* This function frees the dynamically allocated memory used by parsing, i.e:
+* - linked list for 'lights'
+* - linked list for all 'objects'
+* - 'line', returned by get_next_line_minirt()
+* It also closes the file descriptor associated with the input .rt file.
+*
+* Return Values:
+*  0: Dynamically allocated memory is properly freed and file descriptor is
+*	  closed.
+* -1: Allocated memory was successfully freed, but close() has failed.
+*/
+int	clean_up_parser(t_parser *parser, char *line)
 {
 	t_node_light	*current;
 	t_node_light	*next;
@@ -132,6 +147,12 @@ void	clean_up_parsing_memory(t_parser *parser, char *line)
 	if (line)
 		free(line);
 
+	if (close(parser->fd) == -1)
+	{
+		ft_putstr_fd("Failed to close input file. Aborting miniRT.\n", 2);
+		return (-1);
+	}
+
 	/*
 	 * WARN: I am pretty sure this function is only used BEFORE MLX initialization.
 	 * so no need to make those checks. But let's double check later.
@@ -142,4 +163,6 @@ void	clean_up_parsing_memory(t_parser *parser, char *line)
 	if (info->mlx)
 		mlx_terminate(info->mlx);
 	*/
+
+	return (0);
 }
