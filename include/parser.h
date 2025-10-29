@@ -16,7 +16,7 @@
 // WARN: only add these libraries here if they are not on minirt.h - or perhaps
 // leave them still here as they are relevant to the parsing?
 // # include <fcntl.h>		// open(), close()
-# include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
+// # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
 // FIXME: lists of lights and of objects.
 // Should be all 'transferred' once parsing is complete and validated:
@@ -51,9 +51,10 @@ typedef struct s_parser
 	t_node_obj		*head_obj;
 	t_node_obj		*curr_obj;
 
+	uint32_t		line_num;
+	uint32_t		n_lights;
 	uint8_t			n_ambs;
 	uint8_t			n_cams;
-	uint32_t		n_lights;
 	uint8_t			n_spheres;
 	uint8_t			n_planes;
 	uint8_t			n_cylinders;
@@ -89,10 +90,9 @@ typedef t_vec	t_color;
 // scene and elements parsing
 void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
-int		parse_ambient_lighting(t_color *amb, char *str, uint32_t line_num,
-			uint8_t *n_ambs);
-int		parse_camera(t_cam *cam, char *str, uint32_t line_num, uint8_t *n_cams);
-int		parse_light(t_light *light, char *str, uint32_t line_num);
+int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
+int		parse_camera(t_cam *cam, char *str, t_parser *parser);
+int		parse_light(t_parser *parser, char *str);
 int		parse_sphere(t_parser *parser, char *str, uint32_t line_num);
 int		parse_plane(t_parser *parser, char *str, uint32_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, uint32_t line_num);

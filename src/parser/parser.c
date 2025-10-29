@@ -12,21 +12,20 @@
 
 #include "minirt.h"
 
-static int	parse_line(t_parser *parser, char *line, uint32_t line_num);
+static int	parse_line(t_parser *parser, char *line);
 
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
 	char		*line;
-	uint32_t	line_num; // always positive!
 	int			error_code;
 
 	line = NULL;
-	line_num = 1;
 	error_code = 0;
 
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
+	parser->line_num = 1;
 
 	parser.fd = open(filename, O_RDONLY);
 	if (parser.fd == -1)
@@ -39,13 +38,13 @@ void	parse_scene(t_info *info, char *filename)
 		{
 			if (line)
 			{
-				error_code = parse_line(&parser, line, line_num);
+				error_code = parse_line(&parser, line);
 				if (!error_code)
 				{
 					free(line);
 					line = NULL;
-					if (line_num < UINT32_MAX) // just to avoid a 'potential' segfault
-						line_num++;
+					if (parser->line_num < UINT32_MAX) // just to avoid a 'potential' segfault
+						parser->line_num++;
 				}
 			}
 			else	// file has been fully read.
@@ -84,7 +83,7 @@ void	parse_scene(t_info *info, char *filename)
 // FIXME: consider doing the isspace_but_not_newline() checks from the specific
 // parsing functions, to make this look more clean -> and to go with the general
 // "atoi()" type logic....
-static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
+static int	parse_line(t_parser *parser, char *line)
 {
 	t_info	*info;
 	char	*str;	// used to be able to free 'line'
@@ -98,20 +97,20 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
 		return (0);
 	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))
-		return (parse_ambient_lighting(&info->amb, str + 2, line_num));
+		return (parse_ambient_lighting(&info->amb, str + 2, parser));
 	else if (*str == 'C' && isspace_but_not_newline(*(str + 1)))
-		return (parse_camera(&info->cam, str + 2, line_num));
+		return (parse_camera(&info->cam, str + 2, parser));
 	else if (*str == 'L' && isspace_but_not_newline(*(str + 1)))
-		return (parse_light(&parser, str + 2, line_num));
+		return (parse_light(&parser, str + 2, parser));
 	else if (*str == 's' && *(str + 1) == 'p'
 		&& isspace_but_not_newline(*(str + 2)))
-		return (parse_sphere(str + 3, line_num));
+		return (parse_sphere(str + 3, parser->line_num));
 	else if (*str == 'p' && *(str + 1) == 'l'
 		&& isspace_but_not_newline(*(str + 2)))
-		return (parse_plane(str + 3, line_num));
+		return (parse_plane(str + 3, parser->line_num));
 	else if (*str == 'c' && *(str + 1) == 'y'
 		&& isspace_but_not_newline(*(str + 2)))
-		return (parse_cylinder(str + 3, line_num));
+		return (parse_cylinder(str + 3, parser->line_num));
 	// The next boolean check is important, because if it returns false, we have
 	// an empty whitespace line ending with the EOF, which might simply be the
 	// input file's very last line. That should not be considered as a parsing
@@ -120,7 +119,7 @@ static int	parse_line(t_parser *parser, char *line, uint32_t line_num)
 	{
 		err_code = 1;
 		display_parsing_error("Unexpected input provided on line number",
-			line_num);
+			parser->line_num);
 		return (1);
 	}
 	return (0);
