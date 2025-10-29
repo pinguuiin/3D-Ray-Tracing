@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "minirt.h"
 
 int	process_buffer(char **line, char *buffer, size_t *i)
 {
@@ -23,7 +23,7 @@ int	process_buffer(char **line, char *buffer, size_t *i)
 			(*i) += 1;
 			*line = update_line(*line, buffer, i);
 			if (!*line)
-				return (-1);
+				return (ALLOCATION_FAILURE);
 			j = *i;
 			while (buffer[j])
 				j++;

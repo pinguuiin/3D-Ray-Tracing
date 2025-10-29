@@ -26,6 +26,9 @@
 # endif
 
 /*
+* // FIXME: this comment is imprecise, since the minirt version does not RETURN the
+*       line, rather a status -> but it sets the '**output' line in the way described
+*       by the comment...
 * NOTE: get_next_line() uses system call read() with a given file descriptor
 * and returns the next line from that file, in order of appearance: The first
 * call returns the first line, the second returns the second... If it is called
@@ -44,6 +47,7 @@
 * 	e.	if BUFFER_SIZE is unreasonably large
 * 	f.	if the file descriptor is a negative one
 *
+* // FIXME: below this line too, "returned line" is off...
 * WARN: The returned line is dynamically allocated within get_next_line();
 * Therefore, it is the caller's responsibility to remember freeing that memory,
 * if they want to avoid memory leaks.

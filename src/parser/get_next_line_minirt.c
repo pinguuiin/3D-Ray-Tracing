@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "minirt.h"
 
 static char	*review_line_and_clean_buffer(char *line, char *buffer, size_t *i);
 static int	read_and_manage_output(int fd, char *buffer, char **line);
@@ -18,25 +18,26 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 /*
  NOTE: regarding the variable "line_status":
 	line_status =  1 : line is valid and should be returned to main
-	line_status = -1 : malloc() for line has failed; NULL should be
-		returned all the way up to main, in order to communicate the failure.
 	line_status =  0 : line is still valid (or NULL, but valid); it should
 		NOT be returned to main yet
-	line_status = -2 : signals failure of read() within the helper function
-		read_and_manage_output().
+	line_status = ALLOCATION_FAILURE: malloc() for line has failed, and that
+		should be communicated to the caller.
+	line_status = READ_FAILURE : signals failure of read() within the helper
+		function read_and_manage_output().
 */
 
+// FIXME: cap the BUFFER_SIZE to something reasonable?
+// So we don't have some funny surprises. And handle that error with returning BUFFER_SIZE_ERROR,
+// just as we do for the empty buffer ----> but this would require review of the notes
+// regarding buffer_size_error or handle_parsing_error() etc.
 
-// FIXME: fix all exit statuses to match the new status macros
-
-// FIXME: cap the BUFFER_SIZE to something reasonable, check according to your original gnl.
-// so we don't have some funny surprises. And handle the error with returning BUFFER_SIZE_ERROR
-
-// Return values:
-//  0: success; next line is ready
-// -1: malloc() failure
-// -2: read() failure
-// -3: BUFFER_SIZE is 0 (defaults to 1024 in get_next_line's header)
+/*
+* Return values:
+*	0: success; next line is ready
+*	ALLOCATION_FAILURE: malloc() failure
+*	READ_FAILURE: read() failure
+*	BUFFER_SIZE_ERROR: BUFFER_SIZE has been predefined in compilation to zero
+*/
 int	get_next_line_minirt(int fd, char **output)
 {
 	static char	buffer[BUFFER_SIZE + 1];
@@ -46,14 +47,14 @@ int	get_next_line_minirt(int fd, char **output)
 
 	line = NULL;
 	if (!BUFFER_SIZE)
-		return (-3);
+		return (BUFFER_SIZE_ERROR);
 	line_status = 0;
 	i = 0;
 	if (buffer[i])
 	{
 		line_status = process_buffer(&line, buffer, &i);
-		if (line_status == -1) // no worries here: line is always NULL before the line above this one, no need to free it.
-			return (-1);
+		if (line_status == ALLOCATION_FAILURE) // no worries here: line is always NULL before the line above this one, no need to free it.
+			return (ALLOCATION_FAILURE);
 		if (line_status == 1) // next line is ready: OK to return
 		{
 			*output = line;
@@ -61,7 +62,7 @@ int	get_next_line_minirt(int fd, char **output)
 		}
 		line = review_line_and_clean_buffer(line, buffer, &i);
 		if (!line)
-			return (2);
+			return (ALLOCATION_FAILURE);
 	}
 	line_status = read_and_manage_output(fd, buffer, &line)
 	if (line_status < 0)
@@ -96,16 +97,16 @@ static int	read_and_manage_output(int fd, char *buffer, char **line)
 		buffer[bytes_read] = '\0';
 		i = 0;
 		line_status = process_buffer(line, buffer, &i);
-		if (line_status == -1 || line_status == 1)
+		if (line_status == ALLOCATION_FAILURE || line_status == 1)
 			return (line_status);
 		*line = review_line_and_clean_buffer(*line, buffer, &i);
 		if (!*line)
-			return (-1);
+			return (ALLOCATION_FAILURE);
 		if (bytes_read < BUFFER_SIZE)
 			return (1);
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 	}
 	if (bytes_read == -1)
-		return (-2);
+		return (READ_FAILURE);
 	return (1);
 }
