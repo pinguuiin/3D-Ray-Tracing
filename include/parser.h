@@ -19,16 +19,13 @@
 // # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
 
-// FIXME: do we also want CLOSE_FAILURE?
-// but it would be better to have all negative.....
-// which would require a lot of changes, especially for INVALID_INPUT!
 typedef enum e_status
 {
-	NO_ERROR			=	0, // WARN: is it used?
+	NO_ERROR			=	0,
 	INVALID_INPUT		= 	-1,
 	ALLOCATION_FAILURE	=	-2,
 	OPEN_FAILURE		=	-3,
-	CLOSE_FAILURE		=	-4, // WARN: is it used?
+	CLOSE_FAILURE		=	-4,
 	READ_FAILURE		=	-5,
 	BUFFER_SIZE_ERROR	=	-6
 
@@ -42,8 +39,6 @@ enum e_exit_code
 	SYSTEM_FAILURE	=	3
 
 };
-
-
 
 // FIXME: lists of lights and of objects.
 // Should be all 'transferred' once parsing is complete and validated:

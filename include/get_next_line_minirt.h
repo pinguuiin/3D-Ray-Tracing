@@ -30,7 +30,10 @@
 * and returns the next line from that file, in order of appearance: The first
 * call returns the first line, the second returns the second... If it is called
 * sufficient times until there is no more data in the file, all of the file's
-* contains are returned.
+* contains have been returned.
+*
+* // FIXME: this block needs review!!! since the get_next_line_MINIRT() version
+* 		 does not return NULL and handles return values quiet differently.
 * RETURN VALUES:	1. A pointer to the first character of the line, or
 * 					2. NULL - in the following cases:
 * 	a.	if EOF has been reached and there are no more lines to return (or if
