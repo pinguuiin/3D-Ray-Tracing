@@ -85,7 +85,7 @@ static int	str_to_linear_color(char **str, double *result, uint32_t line_num)
 * multiplying by 1.0 is redundant, this function simply assigns the ratio itself
 * to each channel.
 */
-void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
+void inline	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
 {
 	if (is_provided)
 	{
