@@ -13,6 +13,7 @@
 #include "minirt.h"
 
 static int	parse_line(t_parser *parser, char *line);
+static void	transfer_light(t_parser *parser, t_info *info);
 
 void	parse_scene(t_info *info, char *filename)
 {
@@ -125,7 +126,7 @@ static int	parse_line(t_parser *parser, char *line)
 }
 
 // TODO:
-static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
+static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
 	uint8_t	i;
 
@@ -142,28 +143,8 @@ static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
 
 
 	// FIXME: can we safely remove parser->current? Do I really need it?? have to review allocation in parse_light() first, it has to be refactored for us to know...
-	// FIXME: refactor the following block. i can be an internal variable of that function, do not mix it with the above declared uint8_t i.
-	t_node_light	*current;
-	uint32_t		i;
-
-	current = parser->head;
-	i = 0;
-
-	while (current)
-	{
-		info->light[i].pos.x = current->object.pos.x;
-		info->light[i].pos.y = current->object.pos.y;
-		info->light[i].pos.z = current->object.pos.z;
-
-		info->light[i].color.x = current->object.color.x;
-		info->light[i].color.y = current->object.color.y;
-		info->light[i].color.z = current->object.color.z;
-		i++;
-		current = current->next;
-	}
-	// FIXME: end of refactoring block.
-
-
+	// copy 'light' linked list data into the new 'light' array
+	transfer_light(parser, info);
 
 
 
@@ -197,12 +178,25 @@ static int	transfer_lists_to_arrays(t_info *info, t_parser *parser)
 	return (NO_ERROR);
 }
 
-// FIXME:
-static int	transfer_light()
+static void	transfer_light(t_parser *parser, t_info *info)
 {
-	while 
+	t_node_light	*current;
+	uint32_t		i;
 
+	current = parser->head;
+	i = 0;
+	while (current)
+	{
+		info->light[i].pos.x = current->object.pos.x;
+		info->light[i].pos.y = current->object.pos.y;
+		info->light[i].pos.z = current->object.pos.z;
 
+		info->light[i].color.r = current->object.color.r;
+		info->light[i].color.g = current->object.color.g;
+		info->light[i].color.b = current->object.color.b;
+		i++;
+		current = current->next;
+	}
 }
 
 
@@ -237,9 +231,9 @@ static uint8_t	copy_obj_type_to_array(t_type type, t_parser *parser, uint8_t i)
 				info->obj[i].pos.y = current->object.pos.y;
 				info->obj[i].pos.z = current->object.pos.z;
 
-				info->obj[i].color.x = current->object.color.x;
-				info->obj[i].color.y = current->object.color.y;
-				info->obj[i].color.z = current->object.color.z;
+				info->obj[i].color.r = current->object.color.r;
+				info->obj[i].color.g = current->object.color.g;
+				info->obj[i].color.b = current->object.color.b;
 
 				if (type != PLANE)
 					info->obj[i].r = current->object.r;
