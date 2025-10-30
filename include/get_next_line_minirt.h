@@ -16,8 +16,8 @@
 /*
 * NOTE: We define buffer size if it hasn't been defined when compiling.
 * Size 1024 is a well-established convention providing good balance between
-* performance, memory efficiency and portability with modern hardware; That's
-* why it has been chosen as the default size. But we can compile the function
+* performance, memory efficiency and portability with modern hardware; This is
+* why it has been chosen as the default size. But one can compile the function
 * with a different BUFFER_SIZE, using flag -D BUFFER_SIZE=<n>.
 */
 
@@ -29,7 +29,20 @@
 * // FIXME: this comment is imprecise, since the minirt version does not RETURN the
 *       line, rather a status -> but it sets the '**output' line in the way described
 *       by the comment...
-* NOTE: get_next_line() uses system call read() with a given file descriptor
+* NOTE: get_next_line_minirt() is a variation of the get_next_line() function,
+* which is specifically designed for the miniRT program, but could be of great
+* use in many other ones. Instead of returning a pointer to the dynamically
+* allocated line (which is basically a copy of the line starting at the position
+* of the provided file descriptor's offset), or a NULL pointer when failure
+* occurs or when the offset is located on the EOF character, this version
+* assigns that very same pointer via the double pointer 'output', passed
+* as an extra argument to this upgraded version. This allows get_next_line_
+* minirt() to be able to return an integer value, communicating  // FIXME:
+* //FIXME:  (WE ARE HEREEEEEEE)
+// FIXME: 
+* 
+*
+* uses system call read() with a given file descriptor
 * and returns the next line from that file, in order of appearance: The first
 * call returns the first line, the second returns the second... If it is called
 * sufficient times until there is no more data in the file, all of the file's
