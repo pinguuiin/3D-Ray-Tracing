@@ -32,7 +32,7 @@ void	parse_scene(t_info *info, char *filename)
 		status = OPEN_FAILURE;
 	while (status == NO_ERROR)
 	{
-		status = get_next_line_minirt(parser.fd, &line);
+		status = get_next_line_revised(parser.fd, &line);
 
 		if (status == NO_ERROR)
 		{

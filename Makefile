@@ -24,7 +24,7 @@ LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 INC_DIR = include
 
 HEADERS = $(INC_DIR)/minirt.h $(INC_DIR)/vector.h $(INC_DIR)/parser.h \
-		  $(INC_DIR)/get_next_line_minirt.h
+		  $(INC_DIR)/get_next_line_revised.h
 HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
@@ -48,9 +48,8 @@ SRC_FILES = main.c \
 			parser/error_handling.c \
 			parser/ft_strtod.c \
 			parser/parse_triad.c \
-			parser/get_next_line_minirt.c \
+			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c
-#			test.c
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))

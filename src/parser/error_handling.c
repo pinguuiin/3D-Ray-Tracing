@@ -110,7 +110,7 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 * This function frees the dynamically allocated memory used by parsing, i.e:
 * - linked list for 'lights'
 * - linked list for all 'objects'
-* - 'line', returned by get_next_line_minirt()
+* - 'line', returned by get_next_line_revised()
 * It also closes the file descriptor associated with the input .rt file.
 *
 * Return Values:
@@ -144,7 +144,7 @@ int	clean_up_parser(t_parser *parser, char *line)
 		curr_obj = next_obj;
 	}
 
-	// free the returned line obtained by get_next_line_minirt()
+	// free the returned line obtained by get_next_line_revised()
 	if (line)
 		free(line);
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_minirt.c                             :+:      :+:    :+:   */
+/*   get_next_line_revised.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 21:19:02 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/09/30 18:28:49 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/10/30 18:06:39 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 
 /*
 * Return values:
-*	0: success; next line is ready
+*	0: success; next line is either ready or empty (in case EOF is reached).
 *	ALLOCATION_FAILURE: malloc() failure
 *	READ_FAILURE: read() failure
 *	BUFFER_SIZE_ERROR: BUFFER_SIZE has been predefined in compilation to zero
 */
-int	get_next_line_minirt(int fd, char **output)
+int	get_next_line_revised(int fd, char **output)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	int			line_status;
@@ -53,7 +53,7 @@ int	get_next_line_minirt(int fd, char **output)
 	if (buffer[i])
 	{
 		line_status = process_buffer(&line, buffer, &i);
-		if (line_status == ALLOCATION_FAILURE) // no worries here: line is always NULL before the line above this one, no need to free it.
+		if (line_status == ALLOCATION_FAILURE) // no worries here: 'line' is always NULL before this boolean check, no need to free it.
 			return (ALLOCATION_FAILURE);
 		if (line_status == 1) // next line is ready: OK to return
 		{
