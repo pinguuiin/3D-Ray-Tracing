@@ -40,11 +40,16 @@ enum e_exit_code
 
 };
 
-// FIXME: lists of lights and of objects.
-// Should be all 'transferred' once parsing is complete and validated:
-// 1. all data copied to the array of lights 'light' (which should become a pointer)
-// and the array of objects 'obj' in 'info' struct.
-// 2. These lists should be freed and cleaned up once 'transferred'
+// FIXME: delete this when sure not to use it (only used in order to create_new_node()
+// using the very same function for both linked lists (LIGHT and OBJECT),
+// but I am probably going to abandon that idea, the function is soooo complicated
+// and odd looking. Better revert back too the original split functions, create_new_light_node()
+// and creat_new_obj_node()
+typedef enum e_list_id
+{
+	LIGHT,
+	OBJECT
+}	t_list_id;
 
 // wrapper for each t_light node, only needed in parsing
 typedef struct s_node_light
@@ -138,6 +143,7 @@ int		parse_3d_vector(char **str, t_vec *vector, uint32_t line_num);
 bool	is_valid_separator(char	**str, uint32_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
 bool	is_valid_end_of_line(char *s);
+int		create_new_node(void *head, void *current, t_list_id id, size_t size);
 
 // error messaging and memory management
 int		handle_parsing_error(t_status status, char *line, t_parser *parser);

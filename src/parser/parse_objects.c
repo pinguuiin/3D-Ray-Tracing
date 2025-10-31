@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-static int	create_new_object_node(t_parser *parser);
+// static int	create_new_object_node(t_parser *parser); // NOTE: put this back if ever the complicated version create_new_node() does not work (or you decide to not go with it!!)
 static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num);
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
@@ -26,9 +26,19 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	sphere = NULL;
 
 	// initialize sphere
+
+	if (create_new_node(&parser->head_obj, &parser->curr->obj, OBJECT, sizeof (t_node_obj)) == -1)
+		return (ALLOCATION_FAILURE);
+
+
+	/*
+	 * WARN: this is the alternate version, which I most probably am going to end
+	 * up using instead of the above !!!
 	if (create_new_object_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
+	*/
 	sphere = &parser->curr_obj->object;
+
 	sphere->type = SPHERE;
 
 
@@ -82,8 +92,17 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	plane = NULL;
 
 	// initialize plane
+	if (create_new_node(&parser->head_obj, &parser->curr->obj, OBJECT, sizeof (t_node_obj)) == -1)
+		return (ALLOCATION_FAILURE);
+
+
+	/*
+	 * WARN: this is the alternate version, which I most probably am going to end
+	 * up using instead of the above !!!
 	if (create_new_object_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
+	*/
+
 	plane = &parser->curr_obj->object;
 	plane->type = PLANE;
 
@@ -139,8 +158,16 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	cylinder = NULL;
 
 	// initialize cylinder
+	if (create_new_node(&parser->head_obj, &parser->curr->obj, OBJECT, sizeof (t_node_obj)) == -1)
+		return (ALLOCATION_FAILURE);
+
+	/*
+	 * WARN: this is the alternate version, which I most probably am going to end
+	 * up using instead of the above !!!
 	if (create_new_object_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
+	*/
+
 	cylinder = &parser->curr_obj->object;
 	cylinder->type = CYLINDER;
 
@@ -226,25 +253,22 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	return (NO_ERROR);
 }
 
+/*
 static int	create_new_object_node(t_parser *parser)
 {
+	t_node_obj	*new_node;
+
+	new_node = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
+	if (!new_node)
+		return (-1);
 	if (!parser->head_obj)
-	{
-		parser->head_obj = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
-		if (!parser->head_obj)
-			return (-1);
-		parser->curr_obj = parser->head_obj;
-	}
+		parser->head_obj = new_node;
 	else
-	{
-		parser->curr_obj->next = (t_node_obj *) ft_calloc(1,
-			sizeof (t_node_obj));
-		if (!parser->curr_obj->next)
-			return (-1);
-		parser->curr_obj = parser->curr_obj->next;
-	}
+		parser->curr_obj->next = new_node;
+	parser->curr_obj = new_node;
 	return (0);
 }
+*/
 
 static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num)
 {

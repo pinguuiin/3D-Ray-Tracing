@@ -112,3 +112,85 @@ bool	is_valid_end_of_line(char *s)
 	}
 	return (1);
 }
+
+// WARN: this is the crazily complicated looking function that merges create_
+// new_light_node() and create_new_obj_node(), using void pointers.
+// The separate functions are ready in parse_setting.c and parse_objects.c
+// Please delete this if it does not work, and delete also the enum t_list_id
+int	create_new_node(void *head, void *current, t_list_id id, size_t size)
+{
+	void	*result;
+
+	result = ft_calloc(1, size);
+	if (!result)
+		return (-1);
+
+	if (!head)
+	{
+		if (id == LIGHT)
+		{
+			*(t_node_light **)head = result;
+			*(t_node_light **)current = result;
+		}
+		else
+		{
+			*(t_node_obj **)head = result;
+			*(t_node_obj **)current = result;
+		}
+	}
+	else
+	{
+		if (id == LIGHT)
+		{
+			(*(t_node_light **)current)->next = result;
+			*(t_node_light **)current = (*(t_node_light **)current)->next;
+		}
+		else
+		{
+			(*(t_node_obj **)current)->next = result;
+			*(t_node_obj **)current = (*(t_node_obj **)current)->next;
+		}
+	}
+	// NOTE: remember assigning the local *light or *sphere/*plane/*cylinder to the newly allocated node, at the caller, just after this call :-)
+	return (0);
+}
+
+/*
+// NOTE: alternate version with local double pointers
+// FIXME: delete this when not used anymore!
+static int	create_new_node(void **head, void **current, t_list_id list_id)
+{
+	t_node_light 	**light;
+	t_node_obj		**obj;
+
+	if (list_id == LIGHT)
+	{
+		*light = (t_node_obj *) ft_calloc(1, sizeof(t_node_light));
+		if (!*light)
+			return (-1);
+		
+	}
+	else
+	{
+		*obj = (t_node_obj *) ft_calloc(1, sizeof(t_node_obj));
+		if (!*obj)
+			return (-1);
+	}
+
+
+
+
+	if (list_id == LIGHT)
+		*current = (t_node_light *) *current;
+	else
+		*current = (t_node_obj *) *current;
+
+	if (!*head)
+	{
+
+
+	}
+
+
+}
+*/

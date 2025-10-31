@@ -121,7 +121,6 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 */
 int	clean_up_parser(t_parser *parser, char *line)
 {
-	// FIXME: Can we use the already included current pointers from the parser, instead???
 	t_node_light	*current;
 	t_node_light	*next;
 	t_node_obj		*curr_obj;

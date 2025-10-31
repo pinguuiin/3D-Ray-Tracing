@@ -128,20 +128,16 @@ int	parse_light(t_parser *parser, char *str)
 	*/
 
 	// allocate new light node, check for malloc() failure
-	if (!parser->head)
-	{
-		parser->head = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-		if (!parser->head)
-			return (ALLOCATION_FAILURE);
-		parser->current = parser->head;
-	}
-	else
-	{
-		parser->current->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-		if (!parser->current->next)
-			return (ALLOCATION_FAILURE);
-		parser->current = parser->current->next;
-	}
+	if (create_new_node(&parser->head, &parser->current, LIGHT, sizeof (t_light_node)) == -1)
+		return (ALLOCATION_FAILURE);
+
+	/*
+	 * WARN: this is the alternate version, which I most probably am going to end
+	 * up using instead of the above !!!
+	if (create_new_light_node(parser) == -1)
+		return (ALLOCATION_FAILURE);
+	*/
+
 	light = &parser->current->light;
 
 	// parse the string into the allocated 'light'
@@ -229,73 +225,19 @@ static inline double	str_degrees_to_radians(char **str, uint32_t line_num)
 	return (angle * M_PI / 180.0);
 }
 
-// NOTE: draft, first try merging the creation functions into one using void pointers!
-static void	create_new_light_node(t_parser *parser)
+/*
+static int	create_new_light_node(t_parser *parser)
 {
+	t_node_light	*new_node;
+
+	new_node = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+	if (!new_node)
+		return (-1);
 	if (!parser->head)
-	{
-		parser->head = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-		if (!parser->head)
-			return (-1);
-		parser->current = parser->head;
-	}
+		parser->head = new_node;
 	else
-	{
-		parser->current->next = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
-		if (!parser->current->next)
-			return (-1);
-		parser->current = parser->current->next;
-	}
-
-
-
-	// WARN: just here as a template for create_new_light_node() -> check if we can merge them?
-static int	create_new_object_node(t_parser *parser)
-{
-	if (!parser->head_obj)
-	{
-		parser->head_obj = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
-		if (!parser->head_obj)
-			return (-1);
-		parser->curr_obj = parser->head_obj;
-	}
-	else
-	{
-		parser->curr_obj->next = (t_node_obj *) ft_calloc(1,
-			sizeof (t_node_obj));
-		if (!parser->curr_obj->next)
-			return (-1);
-		parser->curr_obj = parser->curr_obj->next;
-	}
+		parser->current->next = new_node;
+	parser->current = new_node;
 	return (0);
 }
-
-	// FIXME: did the merge of the functions succeed? Is it viable?
-	// not so sure since these are void pointers....
-	// Maybe just cast them in the very beginning of the function?
-	// Plus, if you go ahead with this, remember to add the enum for LIGHT & OBJECT, and to fix all calls, remove the other two functions frm this file (and create_new_object_node() from parse_objects.c)!
-static int	create_new_node(void **head, void **current, t_list_id list_id)
-{
-	if (!*head)
-	{
-		if (list_id == LIGHT)
-			*head = (t_node_light *) ft_calloc(1, sizeof (t_node_light));
-		else
-			*head = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
-		if (!*head)
-			return (-1);
-		*current = *head;
-	}
-	else
-	{
-		if (list_id == LIGHT)
-			*current = (t_node_light *) ft_calloc(1, sizeof (t_node_light));
-		else
-			*current = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
-		if (!*current)
-			return (-1);
-		current = current->next;
-	}
-	// NOTE: remember assigning the local *light or *sphere/*plane/*cylinder to the newly allocated node, at the caller, just after this call :-)
-	return (0);
-}
+*/
