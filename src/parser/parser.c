@@ -13,7 +13,9 @@
 #include "minirt.h"
 
 static int	parse_line(t_parser *parser, char *line);
-static void	transfer_light(t_parser *parser, t_info *info);
+static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
+static void	copy_light(t_parser *parser, t_info *info);
+static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj);
 
 void	parse_scene(t_info *info, char *filename)
 {
@@ -92,7 +94,6 @@ static int	parse_line(t_parser *parser, char *line)
 	info = get_info();
 	str = line;
 
-
 	skip_whitespace_but_not_newline(&str);
 
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
@@ -125,7 +126,7 @@ static int	parse_line(t_parser *parser, char *line)
 	return (NO_ERROR);
 }
 
-// TODO:
+// FIXME: can we safely remove parser->current? Do I really need it?? have to review allocation in parse_light() first, it has to be refactored for us to know...
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
 	uint8_t	i;
@@ -133,52 +134,41 @@ static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 	// update n_light in 'info'
 	info->n_light = parser->n_lights;
 
-
 	// allocate array of lights in 'info'
-	// make ft_calloc() failure check!
 
 	info->light = (t_light *) ft_calloc(parser->n_lights, sizeof (t_light));
 	if (!info->light)
 		return (ALLOCATION_FAILURE);
 
 
-	// FIXME: can we safely remove parser->current? Do I really need it?? have to review allocation in parse_light() first, it has to be refactored for us to know...
 	// copy 'light' linked list data into the new 'light' array
-	transfer_light(parser, info);
-
-
+	copy_light(parser, info);
 
 	// update n_obj in 'info'
 	info->n_obj = parser->spheres + parser->planes + parser->cylinders;
-
 
 	// allocate array of objects. make ft_calloc() failure check!
 	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
 	if (!info->obj)
 		return (ALLOCATION_FAILURE);
 
-	// TODO:
-	// copy all spheres' data to the START of the array.
 
 	i = 0;
 
+	// copy all spheres' data to the START of the array.
+	copy_obj(SPHERE, parser, &i, parser->n_spheres);
 
-	// TODO:
 	// copy all planes' data to the MIDDLE of the array.
 	// do NOT reset i, it keeps incrementing through the array.
+	copy_obj(PLANE, parser, &i, parser->n_planes);
 
-
-
-
-	// TODO:
 	// copy all cylinders' data to the END of the array.
-
-
+	copy_obj(CYLINDER, parser, &i, parser->n_cylinders);
 
 	return (NO_ERROR);
 }
 
-static void	transfer_light(t_parser *parser, t_info *info)
+static void	copy_light(t_parser *parser, t_info *info)
 {
 	t_node_light	*current;
 	uint32_t		i;
@@ -187,72 +177,32 @@ static void	transfer_light(t_parser *parser, t_info *info)
 	i = 0;
 	while (current)
 	{
-		info->light[i].pos.x = current->object.pos.x;
-		info->light[i].pos.y = current->object.pos.y;
-		info->light[i].pos.z = current->object.pos.z;
-
-		info->light[i].color.r = current->object.color.r;
-		info->light[i].color.g = current->object.color.g;
-		info->light[i].color.b = current->object.color.b;
+		info->light = current->object->light;
 		i++;
 		current = current->next;
 	}
 }
 
-
-// FIXME: refactor.
-static uint8_t	copy_obj_type_to_array(t_type type, t_parser *parser, uint8_t i)
+static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj)
 {
 	t_info		*info;
-	uint8_t		n_objects;
+	uint8_t		j;
 	t_node_obj	*current;
 
 	info = get_info();
-
-	if (type == SPHERE)
-		n_objects = parser->n_spheres;
-	else if (type == PLANE)
-		n_objects = parser->n_planes;
-	else
-		n_objects = parser->n_cylinders;
-
+	j = *i;
 	current = parser->head_obj;
-	while (n_objects)
+
+	while (current && n_obj)
 	{
-		while (current)
+		if (current->object.type == type)
 		{
-			// FIXME: refactor the next block into a separate function !!!
-			if (current->object.type == type)
-			{
-				// copy all data
-				info->obj[i].type = type;
-
-				info->obj[i].pos.x = current->object.pos.x;
-				info->obj[i].pos.y = current->object.pos.y;
-				info->obj[i].pos.z = current->object.pos.z;
-
-				info->obj[i].color.r = current->object.color.r;
-				info->obj[i].color.g = current->object.color.g;
-				info->obj[i].color.b = current->object.color.b;
-
-				if (type != PLANE)
-					info->obj[i].r = current->object.r;
-
-				if (type != SPHERE)
-				{
-					info->obj[i].normal.x = current->object.normal.x;
-					info->obj[i].normal.y = current->object.normal.y;
-					info->obj[i].normal.z = current->object.normal.z;
-				}
-
-				if (type == CYLINDER)
-					info->obj[i].h = current->object.h;
-
-				i++;
-				n_objects--;
-			}
-			current = current->next;
+			// copy whole object struct data
+			info->obj[j] = current->object;
+			j++;
+			n_obj--;
 		}
+		current = current->next;
 	}
-	return (i);
+	*i = j;
 }
