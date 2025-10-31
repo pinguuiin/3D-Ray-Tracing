@@ -67,9 +67,16 @@ typedef struct s_node_obj
 typedef struct s_parser
 {
 	int				fd;
-	t_node_light	*head; // head of 'lights' list
-	t_node_light	*current; // NOTE: am I really using this one???
 
+	// light linked list
+	t_node_light	*head;
+	t_node_light	*current;
+
+	// objects linked list
+	// 'curr_obj' allows creation of nodes to happen faster, without walking
+	// through the list on each iteration, since it always points at the 'hole'
+	// for the node to be created (except at the very first iteration, but in
+	// that case 'head' is already pointing there).
 	t_node_obj		*head_obj;
 	t_node_obj		*curr_obj;
 
