@@ -13,7 +13,7 @@
 #include "minirt.h"
 
 // static int	create_new_object_node(t_parser *parser); // NOTE: put this back if ever the complicated version create_new_node() does not work (or you decide to not go with it!!)
-static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num);
+static bool	is_valid_n_objects(t_parser *parser);
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
@@ -76,11 +76,11 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	if (!is_valid_end_of_line(str))
 		return (INVALID_INPUT);
 
-	parser->n_spheres++; // validate sphere
-
-	// check that not too many objects were provided by the user.
-	if (!is_valid_n_objects(parser, line_num))
+	// check that not too many objects were provided by the user, before
+	// incrementing their counter.
+	if (!is_valid_n_objects(parser))
 		return (INVALID_INPUT);
+	parser->n_spheres++; // validate sphere
 
 	return (NO_ERROR);
 }
@@ -142,11 +142,12 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (!is_valid_end_of_line(str))
 		return (INVALID_INPUT);
 
-	parser->n_planes++; // validate plane
-
-	// check that not too many objects were provided by the user.
-	if (!is_valid_n_objects(parser, line_num))
+	// check that not too many objects were provided by the user, before
+	// incrementing their counter; otherwise overflow would occur and memory
+	// would leak
+	if (!is_valid_n_objects(parser))
 		return (INVALID_INPUT);
+	parser->n_planes++; // validate plane
 
 	return (NO_ERROR);
 }
@@ -244,16 +245,18 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	if (!is_valid_end_of_line(str))
 		return (INVALID_INPUT);
 
-	parser->n_cylinders++; // validate cylinder
-
-	// check that not too many objects were provided by the user.
-	if (!is_valid_n_objects(parser, line_num))
+	// check that not too many objects were provided by the user, before
+	// incrementing their counter; otherwise overflow would occur and memory
+	// would leak
+	if (!is_valid_n_objects(parser))
 		return (INVALID_INPUT);
+	parser->n_cylinders++; // validate cylinder
 
 	return (NO_ERROR);
 }
 
 /*
+ * WARN: delete if unused.
 static int	create_new_object_node(t_parser *parser)
 {
 	t_node_obj	*new_node;
@@ -270,6 +273,14 @@ static int	create_new_object_node(t_parser *parser)
 }
 */
 
+/*
+* WARN: this caps the maximal amount of objects to 30.
+* If you come back to using this function or a similar one:
+* Remember to check if you also change the data type to uint8_t in:
+* - all places concerning the number of objects
+* - also the counters i and j in copy_obj()
+* - in both info struct (n_obj) and parser struct (n_spheres, n_planes,
+*   n_cylinders)
 static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num)
 {
 	uint8_t	n_objects;
@@ -280,4 +291,19 @@ static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num)
 	display_parsing_error("miniRT only accepts up to 30 objects. 31st object "
 		"is on line number", line_num);
 	return (0);
+}
+*/
+
+static bool	is_valid_n_objects(t_parser *parser)
+{
+	uint32_t	n_objects;
+
+	n_objects = parser->n_spheres + parser->n_planes + parser->cylinders;
+	if (n_objects == UINT32_MAX)
+	{
+		ft_putstr_fd("Error\nToo many objects provided by input file. "
+			"Only up to 4294967295 objects are accepted.\n", 2);
+		return (0);
+	}
+	return (1);
 }

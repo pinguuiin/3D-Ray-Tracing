@@ -103,7 +103,7 @@ typedef struct s_info
 	t_light		*light;	// array of lights
 	t_object	*obj;  	// array of objects
 	uint32_t	n_light;
-	uint8_t		n_obj;
+	uint32_t	n_obj;
 	bool		is_inside;
 
 }	t_info;

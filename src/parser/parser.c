@@ -16,7 +16,7 @@ static int	parse_line(t_parser *parser, char *line);
 static int	check_validity_of_scene(t_parser *parser);
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
 static void	copy_light(t_parser *parser, t_info *info);
-static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj);
+static void	copy_obj(t_type id, t_parser *parser, uint32_t *i, uint32_t n_obj);
 
 void	parse_scene(t_info *info, char *filename)
 {
@@ -120,7 +120,7 @@ static int	parse_line(t_parser *parser, char *line)
 
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
-	uint8_t	i;
+	uint32_t	i;
 
 	// update n_light in 'info'
 	info->n_light = parser->n_lights;
@@ -174,10 +174,10 @@ static void	copy_light(t_parser *parser, t_info *info)
 	}
 }
 
-static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj)
+static void	copy_obj(t_type id, t_parser *parser, uint32_t *i, uint32_t n_obj)
 {
 	t_info		*info;
-	uint8_t		j;
+	uint32_t	j;
 	t_node_obj	*current;
 
 	info = get_info();
@@ -186,7 +186,7 @@ static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj)
 
 	while (current && n_obj)
 	{
-		if (current->object.type == type)
+		if (current->object.type == id)
 		{
 			// copy whole object struct data
 			info->obj[j] = current->object;

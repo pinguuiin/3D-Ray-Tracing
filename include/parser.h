@@ -87,11 +87,11 @@ typedef struct s_parser
 
 	uint32_t		line_num;
 	uint32_t		n_lights;
+	uint32_t		n_spheres;
+	uint32_t		n_planes;
+	uint32_t		n_cylinders;
 	uint8_t			n_ambs;
 	uint8_t			n_cams;
-	uint8_t			n_spheres;
-	uint8_t			n_planes;
-	uint8_t			n_cylinders;
 
 }	t_parser;
 
