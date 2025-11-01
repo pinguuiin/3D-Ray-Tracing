@@ -14,7 +14,7 @@
 
 void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
-	int	i;
+	uint32_t	i;
 
 	i = 0;
 	if (keydata.key == MLX_KEY_RIGHT)
@@ -29,7 +29,7 @@ void	move_camera(mlx_key_data_t keydata, t_info *info)
 		info->cam.pos.z += 1;
 	else if (keydata.key == MLX_KEY_Z)
 		info->cam.pos.z -= 1;
-	while (i < info->num)
+	while (i < info->n_obj)
 	{
 		info->obj[i].oc = subtract(info->cam.pos, info->obj[i].pos);
 		if (info->obj[i].type == PLANE &&

@@ -32,16 +32,16 @@ typedef struct s_discrim
 /* Parameters used for the reflection model when ray intersects with the object */
 typedef struct s_hit
 {
-	int		obj_id;  // hit object id
-	t_vec	pos;  // coordinates of the hit point
-	t_vec	op;  // vector from object center to intersection point
-	t_vec	incoming;  // normalized ray direction from hit point to light source
-	t_vec	normal;  // normal at the hit point
-	t_vec	ray;  // normalized ray direction from hit point to camera
-	t_vec	outgoing; // normalized specular reflected ray direction
-	t_vec	diffuse;  // diffuse reflection intensity
-	t_vec	specular;  // specular reflection intensity
-	t_vec	intensity;  // intensity = diffuse + specular
+	uint32_t	obj_id;  // hit object id
+	t_vec		pos;  // coordinates of the hit point
+	t_vec		op;  // vector from object center to intersection point
+	t_vec		incoming;  // normalized ray direction from hit point to light source
+	t_vec		normal;  // normal at the hit point
+	t_vec		ray;  // normalized ray direction from hit point to camera
+	t_vec		outgoing; // normalized specular reflected ray direction
+	t_vec		diffuse;  // diffuse reflection intensity
+	t_vec		specular;  // specular reflection intensity
+	t_vec		intensity;  // intensity = diffuse + specular
 
 }	t_hit;
 

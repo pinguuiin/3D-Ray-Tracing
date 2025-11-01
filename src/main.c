@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+// #include "minirt.h"
+#include "parser.h"
 #include "minirt.h"
 
 t_info	*get_info(void)
@@ -89,10 +91,10 @@ int	main(int argc, char *argv[])
 	parse_scene(info, argv[1]);
 
 	// graphic rendering
-	initialize_mlx(&info);
-	mlx_key_hook(info.mlx, &key_handler, &info);
-	mlx_loop_hook(info.mlx, draw, &info);
-	mlx_loop(info.mlx);
+	initialize_mlx(info);
+	mlx_key_hook(info->mlx, &key_handler, &info);
+	mlx_loop_hook(info->mlx, renderer, &info);
+	mlx_loop(info->mlx);
 
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);

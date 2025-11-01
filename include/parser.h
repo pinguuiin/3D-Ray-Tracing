@@ -15,9 +15,11 @@
 
 // WARN: only add these libraries here if they are not on minirt.h - or perhaps
 // leave them still here as they are relevant to the parsing?
-// # include <fcntl.h>		// open(), close()
+// # include <fcntl.h>	// open(), close()
 // # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
+# include "minirt.h"
+# include "get_next_line_revised.h"
 
 typedef enum e_status
 {
@@ -117,9 +119,9 @@ typedef union u_vec
 		double	b;
 	};
 
-}	t_vec;
+}	t_color;
 
-typedef t_vec	t_color;
+typedef t_vec	t_vec;
 
 // scene and elements parsing
 void	parse_argument(int argc, char *argv[]);

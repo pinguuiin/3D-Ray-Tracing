@@ -14,11 +14,11 @@
 
 bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 {
-	int		id;
-	double	k;
+	uint32_t	id;
+	double		k;
 
 	id = 0;
-	while (id < info->num)
+	while (id < info->n_obj)
 	{
 		if (id == hit->obj_id)
 		{

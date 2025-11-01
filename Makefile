@@ -23,8 +23,8 @@ LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 
 INC_DIR = include
 
-HEADERS = $(INC_DIR)/minirt.h $(INC_DIR)/vector.h $(INC_DIR)/parser.h \
-		  $(INC_DIR)/get_next_line_revised.h
+HEADERS = $(INC_DIR)/minirt.h $(INC_DIR)/vector.h $(INC_DIR)/hit.h \
+		  $(INC_DIR)/get_next_line_revised.h $(INC_DIR)/parser.h
 HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
