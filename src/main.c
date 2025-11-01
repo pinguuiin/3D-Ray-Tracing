@@ -14,6 +14,11 @@
 #include "parser.h"
 #include "minirt.h"
 
+
+// WARN: debugging function to check validity of parsing, delete when ready.
+static void	print_whole_execution_data(t_info *info);
+
+
 t_info	*get_info(void)
 {
 	static t_info	info;
@@ -90,12 +95,72 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
+	/*
 	// graphic rendering
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, &info);
 	mlx_loop_hook(info->mlx, renderer, &info);
 	mlx_loop(info->mlx);
+	*/
 
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);
+}
+
+// WARN: debugging function to make sure parsing is done right.
+#include "stdio.h"
+static void	print_whole_execution_data(t_info *info)
+{
+	printf("AMBIENT LIGHT DATA:\n\t");
+	printf("ambient's color values:\n\t\t");
+	printf("info->amb.r:	<%.20f>\n\t\t", info->amb.r);
+	printf("info->amb.g:	<%.20f>\n\t\t", info->amb.g);
+	printf("info->amb.b:	<%.20f>\n\n\n\n", info->amb.b);
+
+
+
+
+	printf("CAMERA DATA:\n\t");
+	printf("camera's FOV\n\t\t");
+	printf("FOV:	<%.20f>\n\n\t", info->cam.fov);
+	
+	printf("camera's position coordinates:\n\t\t");
+	printf("X coordinate:	<%.20f>\n\t\t", info->cam.pos.x);
+	printf("Y coordinate:	<%.20f>\n\t\t", info->cam.pos.y);
+	printf("Z coordinate:	<%.20f>\n\n\t", info->cam.pos.z);
+
+	printf("camera's orientation vector (direction):\n\t\t");
+	printf("X axis:	<%.20f>\n\t\t", info->cam.direction.x);
+	printf("Y axis:	<%.20f>\n\t\t", info->cam.direction.y);
+	printf("Z axis:	<%.20f>\n\n\n\n", info->cam.direction.z);
+
+
+
+	printf("LIGHT SOURCE DATA (ARRAY):\n\t");
+
+	uint32_t	i;
+
+	i = 0;
+	while (i < info->n_light)
+	{
+		printf("Light source's POSITION coordinates\n\t\t");
+
+		printf("X coordinate:	<%.20f>\n\t\t", info->light[i].pos.x);
+		printf("Y coordinate:	<%.20f>\n\t\t", info->light[i].pos.y);
+		printf("Z coordinate:	<%.20f>\n\n\t", info->light[i].pos.z);
+
+		printf("Light source's COLOR (RGB channels)\n\t");
+		printf("R channel:	<%.20f>\n\t\t", info->light[i].color.r);
+		printf("G channel:	<%.20f>\n\t\t", info->light[i].color.g);
+		printf("B channel:	<%.20f>\n\n\n", info->light[i].color.b);
+
+		i++;
+	}
+	printf("\n\n\n");
+
+	// TODO: print objects array
+
+
+
+
 }
