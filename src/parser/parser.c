@@ -13,6 +13,7 @@
 #include "minirt.h"
 
 static int	parse_line(t_parser *parser, char *line);
+static int	check_validity_of_scene(t_parser *parser);
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
 static void	copy_light(t_parser *parser, t_info *info);
 static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj);
@@ -52,20 +53,11 @@ void	parse_scene(t_info *info, char *filename)
 			}
 			else	// file has been fully read.
 			{
-				// TODO: check here (or right after the call to this function):
-				// Do we have all the elements needed to render a scene, even though
-				// parsing might have seemed successful? Do we have a light? Do
-				// we have ambient lighting? Do we have a camera? Do we have sufficient
-				// objects (what is the minimum required - should we accept a
-				// scene with 0 objects?)
-
-
-				// check that we have all data we need in order to execute rendering.
-				// Else: set status to INVALID_INPUT, display an error message (display_parsing_error()).
-				// so that the program would exit
+				status = check_validity_of_scene(&parser);
 
 				// transfer the lights and all objects linked lists into their respective arrays;
-				status = transfer_lists_to_arrays(info, &parser);
+				if (status == NO_ERROR)
+					status = transfer_lists_to_arrays(info, &parser);
 
 				// destroy the lists and return (unless malloc() failure has occured,
 				// in which case status is ALLOCATION_FAILURE, which will be handled after the loop.
@@ -126,7 +118,6 @@ static int	parse_line(t_parser *parser, char *line)
 	return (NO_ERROR);
 }
 
-// FIXME: can we safely remove parser->current? Do I really need it?? have to review allocation in parse_light() first, it has to be refactored for us to know...
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
 	uint8_t	i;
@@ -205,4 +196,25 @@ static void	copy_obj(t_type type, t_parser *parser, uint8_t *i, uint8_t n_obj)
 		current = current->next;
 	}
 	*i = j;
+}
+
+static int	check_validity_of_scene(t_parser *parser)
+{
+	if (!parser->n_lights)
+	{
+		ft_putstr_fd("Error\nScene description file has no light source.\n", 2);
+		return (INVALID_INPUT);
+	}
+	if (!parser->n_cams)
+	{
+		ft_putstr_fd("Error\nIncomplete file provided: no camera found.\n", 2);
+		return (INVALID_INPUT);
+	}
+	if (!(parser->n_spheres + parser->n_planes + parser->n_cylinders))
+	{
+		ft_putstr_fd("Error\nProvided scene has no objects. At least one "
+			"object should be proposed for the scene to be rendered\n", 2);
+		return (INVALID_INPUT);
+	}
+	return (NO_ERROR);
 }

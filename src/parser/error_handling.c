@@ -61,7 +61,7 @@ void	display_parsing_error(const char *msg, uint32_t line_num)
 {
 	write(2, "Error\n", 6);
 	ft_putstr_fd(msg, 2);
-	write(fd, " ", 1);
+	write(2, " ", 1);
 	put_pos_nbr_endl_fd(line_num, 2);
 }
 
@@ -75,7 +75,7 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	uint64_t	x;
 	int			len;
 	int			temp_len;
-	char		str[11];	// max length for UINT_MAX is 10 digits.
+	char		str[11];	// max length for UINT32_MAX is 10 digits.
 
 	// only non-negative numbers shall be passed to this function,
 	// so there is no need to check for overflow of the negative value
