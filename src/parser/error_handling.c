@@ -14,21 +14,20 @@
 
 static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 
-// FIXME: review notes if you go through with the STATUS and t_status changes (from error_code)!
 /*
-* 'error_code' with the value 1 signifies that there has been a misconfiguration
-* in the input file, and that an error message has already been displayed on the
-* standard error by other functions. That message always begins with "Error",
-* followed by a newline and by a more specific message attempting to describe
-* the error (and displaying the number of line on which it occured).
-* All other cases are rather fatal system errors, and their error messages are
-* not preceded by the string "Error\n".
+* 'error_code' with the value INVALID_INPUT signifies that a misconfiguration
+* in the input file was detected, in which case an error message has already
+* been displayed on the standard error, by the point this function is called.
+* That message always begins with "Error", followed by a newline and by a more
+* specific message attempting to describe the error, and displaying the number
+* of line on which it occured, when appropriate.
+* All other cases are rather fatal system errors, and their error messages do
+* not start by the string "Error\n", in order to differentiate them with user
+* input errors.
 * This function can serve in providing the exit status for the program, by
-* passing its call as an argument to exit(). Invalid input returns 2, while
-* a system error returns 3.
+* passing its call as an argument to exit(). Invalid input returns the macro
+* INVALID_INPUT, while a system error returns SYSTEM_FAILURE.
 */
-// FIXME: write macros for each error_code : INVALID_INPUT, OPEN_FAILURE,
-// CLOSE_FAILURE, READ_FAILURE, EMPTY_BUFFER_SIZE, ALLOCATION_FAILURE
 int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
