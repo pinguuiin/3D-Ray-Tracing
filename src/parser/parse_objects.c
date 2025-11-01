@@ -122,6 +122,9 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
 		return (INVALID_INPUT);
 
+	if (!is_within_range_vector(&plane->normal))
+		return (INVALID_INPUT);
+
 	if (fabs(plane->normal.x) < EPSILON && fabs(plane->normal.y) < EPSILON
 		&& fabs(plane->normal.y < EPSILON))
 	{
@@ -187,6 +190,8 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	// parse three dimensional normalized vector of the cylinder's axis (t_vec 'normal')
 	// it is not an actual normal, but the direction of the central axis of the cylinder.
 	if (parse_3d_vector(&str, &cylinder->normal, line_num) == -1)
+		return (INVALID_INPUT);
+	if (!is_within_range_vector(&cylinder->normal, line_num))
 		return (INVALID_INPUT);
 	if (fabs(cylinder->normal.x) < EPSILON && fabs(cylinder->normal.y) < EPSILON
 		&& fabs(cylinder->normal.z) < EPSILON)

@@ -16,7 +16,7 @@
 * returns true if the character is: space, newline ('\n'), form-feed ('\f'),
 * horizontal tab ('\t'), vertical tab ('\v')  or carriage return ('\r')
 */
-int	ft_isspace(int c)
+bool	ft_isspace(int c)
 {
 	if (c == ' ' || (c >= '\t' && c <= '\r'))
 		return (1);
@@ -27,7 +27,7 @@ int	ft_isspace(int c)
 * returns true if the character is one of the following: space, form-feed
 * ('\f'), horizontal tab ('\t'), vertical tab ('\v') or carriage return ('\r')
 */
-int	isspace_but_not_newline(int c)
+bool	isspace_but_not_newline(int c)
 {
 	if (c == ' ' || c == '\t' || (c >= '\v' && c <= '\r'))
 		return (1);
@@ -194,3 +194,29 @@ static int	create_new_node(void **head, void **current, t_list_id list_id)
 
 }
 */
+
+bool	is_within_range_vector(t_vec *vec, uint32_t line_num)
+{
+	if (vec->x < -1.0 || vec->x > +1.0)
+	{
+		display_parsing_error("x axis of vector has to be within range "
+			"[-1,+1] for miniRT to accept this file.\n"
+			"This invalid input was detected on line number:", line_num);
+		return (0);
+	}
+	if (vec->y < -1.0 || vec->y > +1.0)
+	{
+		display_parsing_error("y axis of vector has to be within range "
+			"[-1,+1] for miniRT to accept this file.\n"
+			"This invalid input was detected on line number:", line_num);
+		return (0);
+	}
+	if (vec->z < -1.0 || vec->z > +1.0)
+	{
+		display_parsing_error("z axis of vector has to be within range "
+			"[-1,+1] for miniRT to accept this file.\n"
+			"This invalid input was detected on line number:", line_num);
+		return (0);
+	}
+	return (1);
+}

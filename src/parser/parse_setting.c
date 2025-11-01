@@ -80,6 +80,9 @@ int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 	if (parse_3d_vector(&str, &cam->direction, parser->line_num) == -1)
 		return (INVALID_INPUT);
 
+	if (!is_within_range_vector(&cam->direction))
+		return (INVALID_INPUT);
+
 	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
 	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
 		&& fabs(cam->direction->z) < EPSILON)
@@ -190,11 +193,6 @@ int	parse_light(t_parser *parser, char *str)
 	return (INVALID_INPUT);
 }
 
-/*
-* Note for users: If M_PI does not compile, you may need to modify the header:
-* 1. add before '#include <math.h>': #define _USE_MATH_DEFINES, or
-* 2. add an 'ifndef' sequence with: PI 3.14159265358979323846
-*/
 static inline double	str_degrees_to_radians(char **str, uint32_t line_num)
 {
 	uint32_t	angle;

@@ -132,8 +132,8 @@ int		parse_plane(t_parser *parser, char *str, uint32_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, uint32_t line_num);
 
 // parsing utilities
-int		ft_isspace(int c);
-int		isspace_but_not_newline(int c);
+bool	ft_isspace(int c);
+bool	isspace_but_not_newline(int c);
 void	skip_whitespace(char **str);
 void	skip_whitespace_but_not_newline(char **str);
 int		ft_strtod(char **str, double *result, uint32_t line_num);
@@ -144,6 +144,7 @@ bool	is_valid_separator(char	**str, uint32_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
 bool	is_valid_end_of_line(char *s);
 int		create_new_node(void *head, void *current, t_list_id id, size_t size);
+bool	is_within_range_vector(t_vec *vec, uint32_t line_num);
 
 // error messaging and memory management
 int		handle_parsing_error(t_status status, char *line, t_parser *parser);
