@@ -41,15 +41,15 @@ SRC_FILES = main.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
-			# hooks/camera_hooks.c \
-			# raytracer/reflection.c \
-			# raytracer/renderer.c \
-			# shapes/cylinder.c \
-			# shapes/plane.c \
-			# shapes/sphere.c \
-			# utils/color.c \
-			# vector/operations.c \
-			# vector/rotation.c \
+			hooks/camera_hooks.c \
+			raytracer/reflection.c \
+			raytracer/renderer.c \
+			shapes/cylinder.c \
+			shapes/plane.c \
+			shapes/sphere.c \
+			utils/color.c \
+			vector/operations.c \
+			vector/rotation.c \
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
