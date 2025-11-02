@@ -15,7 +15,7 @@
 
 
 // WARN: debugging function to check validity of parsing, delete when ready.
-static void	print_whole_execution_data(t_info *info);
+// static void	print_whole_execution_data(t_info *info);
 
 
 t_info	*get_info(void)
@@ -96,20 +96,16 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
-	// WARN: debugging only
-	print_whole_execution_data(info);
-	/*
-	// graphic rendering
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, &info);
 	mlx_loop_hook(info->mlx, renderer, &info);
 	mlx_loop(info->mlx);
-	*/
 
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);
 }
 
+/*
 // WARN: debugging function to make sure parsing is done right.
 #include "stdio.h"
 static void	print_whole_execution_data(t_info *info)
@@ -237,3 +233,4 @@ static void	print_whole_execution_data(t_info *info)
 	}
 	printf("\n\n");
 }
+*/
