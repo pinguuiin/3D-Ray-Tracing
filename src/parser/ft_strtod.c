@@ -19,7 +19,7 @@ static inline double	extract_fraction(char **ptr, size_t n_digits);
 static inline int		extract_exponent_and_update_result(char **ptr,
 						size_t n_digits, double *result);
 
-int	ft_strtod(char **str, double *result, uint32_t line_num)
+int	ft_strtod(char **str, double *result, size_t line_num)
 {
 	char	*ptr;
 	int		sign;

@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
+static inline void	put_pos_nbr_endl_fd(size_t n, int fd);
 
 /*
 * 'error_code' with the value INVALID_INPUT signifies that a misconfiguration
@@ -56,7 +56,7 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	return (SYSTEM_FAILURE);
 }
 
-void	display_parsing_error(char *msg, uint32_t line_num)
+void	display_parsing_error(char *msg, size_t line_num)
 {
 	write(2, "Error\n", 6);
 	ft_putstr_fd(msg, 2);
@@ -69,24 +69,24 @@ void	display_parsing_error(char *msg, uint32_t line_num)
 * a newline character.
 * 'n' should only be a non-negative value.
 */
-static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
+static inline void	put_pos_nbr_endl_fd(size_t n, int fd)
 {
-	uint64_t	x;
-	int			len;
-	int			temp_len;
-	char		str[11];	// max length for UINT32_MAX is 10 digits.
+	size_t	x;
+	int		len;
+	int		temp_len;
+	char	str[21];	// max length for SIZE_MAX is 20 digits.
 
 	// only non-negative numbers shall be passed to this function,
 	// so there is no need to check for overflow of the negative value
 
-	x = 10;
+	x = n / 10;
 	len = 1;
 
 	// calculate number of digits ('len')
-	while (x <= n)
+	while (x > 0)
 	{
 		len++;
-		x *= 10;
+		x /= 10;
 	}
 	temp_len = len;
 
@@ -94,9 +94,9 @@ static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd)
 	// from the last digit to the first.
 	while (temp_len)
 	{
-		str[temp_len - 1] = n % 10 + '0';
-		n /= 10;
 		temp_len--;
+		str[temp_len] = n % 10 + '0';
+		n /= 10;
 	}
 
 	// put: the converted string -> a dot and a newline charactaer

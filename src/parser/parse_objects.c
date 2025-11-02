@@ -19,7 +19,7 @@ static bool	is_valid_n_objects(t_parser *parser);
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it!
-int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
+int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 {
 	t_object	*sphere;
 
@@ -85,7 +85,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	return (NO_ERROR);
 }
 
-int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
+int	parse_plane(t_parser *parser, char *str, size_t line_num)
 {
 	t_object	*plane;
 
@@ -155,7 +155,7 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	return (NO_ERROR);
 }
 
-int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
+int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 {
 	t_object	*cylinder;
 
@@ -286,7 +286,7 @@ static int	create_new_object_node(t_parser *parser)
 * - also the counters i and j in copy_obj()
 * - in both info struct (n_obj) and parser struct (n_spheres, n_planes,
 *   n_cylinders)
-static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num)
+static bool	is_valid_n_objects(t_parser *parser, size_t line_num)
 {
 	uint8_t	n_objects;
 
@@ -301,13 +301,13 @@ static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num)
 
 static bool	is_valid_n_objects(t_parser *parser)
 {
-	uint32_t	n_objects;
+	int	n_objects;
 
 	n_objects = parser->n_spheres + parser->n_planes + parser->n_cylinders;
-	if (n_objects == UINT32_MAX)
+	if (n_objects == INT_MAX)
 	{
 		ft_putstr_fd("Error\nToo many objects provided by input file. "
-			"Only up to 4294967295 objects are accepted.\n", 2);
+			"Only up to INT_MAX objects are accepted.\n", 2);
 		return (0);
 	}
 	return (1);

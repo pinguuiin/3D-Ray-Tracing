@@ -16,7 +16,7 @@ static int	parse_line(t_parser *parser, char *line);
 static int	check_validity_of_scene(t_parser *parser);
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
 static void	copy_light(t_parser *parser, t_info *info);
-static void	copy_obj(t_type id, t_parser *parser, uint32_t *i, uint32_t n_obj);
+static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
 
 void	parse_scene(t_info *info, char *filename)
 {
@@ -47,7 +47,7 @@ void	parse_scene(t_info *info, char *filename)
 				{
 					free(line);
 					line = NULL;
-					if (parser.line_num < UINT32_MAX) // just to avoid a 'potential' segfault
+					if (parser.line_num < SIZE_MAX) // just to avoid overflow
 						parser.line_num++;
 				}
 			}
@@ -120,7 +120,7 @@ static int	parse_line(t_parser *parser, char *line)
 
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
-	uint32_t	i;
+	int	i;
 
 	// update n_light in 'info'
 	info->n_light = parser->n_lights;
@@ -162,7 +162,7 @@ static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 static void	copy_light(t_parser *parser, t_info *info)
 {
 	t_node_light	*current;
-	uint32_t		i;
+	int				i;
 
 	current = parser->head;
 	i = 0;
@@ -174,11 +174,11 @@ static void	copy_light(t_parser *parser, t_info *info)
 	}
 }
 
-static void	copy_obj(t_type id, t_parser *parser, uint32_t *i, uint32_t n_obj)
+static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj)
 {
-	t_info		*info;
-	uint32_t	j;
 	t_node_obj	*current;
+	t_info		*info;
+	int			j;
 
 	info = get_info();
 	j = *i;

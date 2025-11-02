@@ -54,7 +54,7 @@ void	skip_whitespace_but_not_newline(char **str)
 	*str = s;
 }
 
-bool	is_valid_separator(char	**str, uint32_t line_num)
+bool	is_valid_separator(char	**str, size_t line_num)
 {
 	if (**str == ',')
 		(*str)++;
@@ -75,7 +75,7 @@ bool	is_valid_separator(char	**str, uint32_t line_num)
 // The use case for this function should respect both of the following aspects:
 // - right after a call to ft_strtod(), parse_color() or parse_3d_vector()
 // - when miniRT expects yet more data after the last value that has been parsed
-bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
+bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num)
 {
 	if (isspace_but_not_newline(**str))
 	{
@@ -101,7 +101,7 @@ bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 * not, in case it is the last line of the file, and that line does not have a
 * newline character at all).
 */
-bool	is_valid_end_of_line(char *s, uint32_t line_num)
+bool	is_valid_end_of_line(char *s, size_t line_num)
 {
 	skip_whitespace(&s);
 	if (*s)
@@ -195,7 +195,7 @@ static int	create_new_node(void **head, void **current, t_list_id list_id)
 }
 */
 
-bool	is_within_range_vector(t_vec *vec, uint32_t line_num)
+bool	is_within_range_vector(t_vec *vec, size_t line_num)
 {
 	if (vec->x < -1.0 || vec->x > +1.0)
 	{

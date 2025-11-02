@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
+static inline double	str_degrees_to_radians(char **str, size_t line_num);
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
@@ -193,7 +193,7 @@ int	parse_light(t_parser *parser, char *str)
 	return (INVALID_INPUT);
 }
 
-static inline double	str_degrees_to_radians(char **str, uint32_t line_num)
+static inline double	str_degrees_to_radians(char **str, size_t line_num)
 {
 	uint32_t	angle;
 	char		*s;

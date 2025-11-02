@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-static int	str_to_linear_color(char **str, double *result, uint32_t line_num);
+static int	str_to_linear_color(char **str, double *result, size_t line_num);
 
 /*
 * This function expects three color values in range 0 to 255, separated by
@@ -27,7 +27,7 @@ static int	str_to_linear_color(char **str, double *result, uint32_t line_num);
 * After returning from this function, the caller's 'str' points one character
 * past the last digit of the third value.
 */
-int	parse_color(char **str, t_color *color, double *ratio, uint32_t line_num)
+int	parse_color(char **str, t_color *color, double *ratio, size_t line_num)
 {
 	if (str_to_linear_color(str, &color->r, line_num) == -1)
 		return (-1);
@@ -44,7 +44,7 @@ int	parse_color(char **str, t_color *color, double *ratio, uint32_t line_num)
 	return (0);
 }
 
-static int	str_to_linear_color(char **str, double *result, uint32_t line_num)
+static int	str_to_linear_color(char **str, double *result, size_t line_num)
 {
 	char		*s;
 	uint16_t	conversion;
@@ -101,7 +101,7 @@ inline void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided)
 	}
 }
 
-int	parse_3d_vector(char **str, t_vec *vector, uint32_t line_num)
+int	parse_3d_vector(char **str, t_vec *vector, size_t line_num)
 {
 	if (ft_strtod(str, &vector->x, line_num) == -1)
 		return (-1);

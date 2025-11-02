@@ -100,8 +100,8 @@ typedef struct s_info
 	t_cam		cam;
 	t_light		*light;	// array of lights
 	t_object	*obj;  	// array of objects
-	uint32_t	n_light;
-	uint32_t	n_obj;
+	int			n_light;
+	int			n_obj;
 	bool		is_inside;
 
 }	t_info;

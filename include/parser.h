@@ -13,17 +13,10 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-
 # include "minirt.h"
 # include "get_next_line_revised.h"
 
-// WARN: only add these libraries here if they are not on minirt.h - or perhaps
-// leave them still here as they are relevant to the parsing?
 # include <fcntl.h>	// open(), close()
-// # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
-
-// WARN: this is only used for debugging, delete when project is ready.
-// # include <inttypes.h> // allows portable way of printing fixed width data types
 
 typedef enum e_status
 {
@@ -91,13 +84,13 @@ typedef struct s_parser
 	t_node_obj		*head_obj;
 	t_node_obj		*curr_obj;
 
-	uint32_t		line_num;
-	uint32_t		n_lights;
-	uint32_t		n_spheres;
-	uint32_t		n_planes;
-	uint32_t		n_cylinders;
-	uint8_t			n_ambs;
-	uint8_t			n_cams;
+	size_t		line_num;
+	int			n_lights;
+	int			n_spheres;
+	int			n_planes;
+	int			n_cylinders;
+	int			n_ambs;
+	int			n_cams;
 
 }	t_parser;
 
@@ -107,28 +100,28 @@ void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
 int		parse_camera(t_cam *cam, char *str, t_parser *parser);
 int		parse_light(t_parser *parser, char *str);
-int		parse_sphere(t_parser *parser, char *str, uint32_t line_num);
-int		parse_plane(t_parser *parser, char *str, uint32_t line_num);
-int		parse_cylinder(t_parser *parser, char *str, uint32_t line_num);
+int		parse_sphere(t_parser *parser, char *str, size_t line_num);
+int		parse_plane(t_parser *parser, char *str, size_t line_num);
+int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
 
 // parsing utilities
 bool	ft_isspace(int c);
 bool	isspace_but_not_newline(int c);
 void	skip_whitespace(char **str);
 void	skip_whitespace_but_not_newline(char **str);
-int		ft_strtod(char **str, double *result, uint32_t line_num);
-int		parse_color(char **str, t_color *color, double *ratio, uint32_t line_num);
+int		ft_strtod(char **str, double *result, size_t line_num);
+int		parse_color(char **str, t_color *color, double *ratio, size_t line_num);
 void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
-int		parse_3d_vector(char **str, t_vec *vector, uint32_t line_num);
-bool	is_valid_separator(char	**str, uint32_t line_num);
-bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
-bool	is_valid_end_of_line(char *s, uint32_t line_num);
+int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
+bool	is_valid_separator(char	**str, size_t line_num);
+bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
+bool	is_valid_end_of_line(char *s, size_t line_num);
 int		create_new_node(void *head, void *current, t_list_id id, size_t size);
-bool	is_within_range_vector(t_vec *vec, uint32_t line_num);
+bool	is_within_range_vector(t_vec *vec, size_t line_num);
 
 // error messaging and memory management
 int		handle_parsing_error(t_status status, char *line, t_parser *parser);
-void	display_parsing_error(char *msg, uint32_t line_num);
+void	display_parsing_error(char *msg, size_t line_num);
 int		clean_up_parser(t_parser *parser, char *line);
 
 #endif

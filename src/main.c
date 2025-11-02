@@ -15,7 +15,7 @@
 
 
 // WARN: debugging function to check validity of parsing, delete when ready.
-// static void	print_whole_execution_data(t_info *info);
+static void	print_whole_execution_data(t_info *info);
 
 
 t_info	*get_info(void)
@@ -96,16 +96,19 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
+	// WARN: only for debugging.
+	print_whole_execution_data(info);
+	/*
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, &info);
 	mlx_loop_hook(info->mlx, renderer, &info);
 	mlx_loop(info->mlx);
+	*/
 
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);
 }
 
-/*
 // WARN: debugging function to make sure parsing is done right.
 #include "stdio.h"
 static void	print_whole_execution_data(t_info *info)
@@ -115,8 +118,6 @@ static void	print_whole_execution_data(t_info *info)
 	printf("info->amb.r:	<%.20f>\n\t\t", info->amb.r);
 	printf("info->amb.g:	<%.20f>\n\t\t", info->amb.g);
 	printf("info->amb.b:	<%.20f>\n\n\n\n", info->amb.b);
-
-
 
 
 	printf("CAMERA DATA:\n\t");
@@ -134,15 +135,15 @@ static void	print_whole_execution_data(t_info *info)
 	printf("Z axis:	<%.20f>\n\n\n\n", info->cam.direction.z);
 
 
-
 	printf("LIGHT SOURCE DATA (ARRAY):\n\t");
 
-	uint32_t	i;
+	int	i;
 
 	i = 0;
 	while (i < info->n_light)
 	{
-		printf("Light source's POSITION coordinates\n\t\t");
+		printf("LIGHT[%d] DATA:\n\t", i);
+		printf("Light[%d]'s POSITION coordinates\n\t\t", i);
 
 		printf("X coordinate:	<%.20f>\n\t\t", info->light[i].pos.x);
 		printf("Y coordinate:	<%.20f>\n\t\t", info->light[i].pos.y);
@@ -162,16 +163,16 @@ static void	print_whole_execution_data(t_info *info)
 	printf("ALL SPHERES DATA:\n\t");
 	while (i < info->n_obj && info->obj[i].type == SPHERE)
 	{
-		printf("SPHERE[%"PRId32"]:\n\t\t", i + 1);
-		printf("Sphere[%"PRId32"]'s POSITION coordinates:\n\t\t", i + 1);
+		printf("SPHERE[%d]:\n\t\t", i + 1);
+		printf("Sphere[%d]'s POSITION coordinates:\n\t\t", i + 1);
 		printf("X coordinate:	<%.20f>\n\t\t", info->obj[i].pos.x);
 		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
 		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
 
-		printf("Sphere[%"PRId32"]'s RADIUS:\n\t\t", i + 1);
+		printf("Sphere[%d]'s RADIUS:\n\t\t", i + 1);
 		printf("radius is:	<%.20f>\n\n\t", info->obj[i].r);
 
-		printf("Sphere[%"PRId32"]'s COLOR (rgb channels):\n\t", i + 1);
+		printf("Sphere[%d]'s COLOR (rgb channels):\n\t", i + 1);
 		printf("R channel:	<%.20f>\n\t\t", info->obj[i].color.r);
 		printf("G channel:	<%.20f>\n\t\t", info->obj[i].color.g);
 		printf("B channel:	<%.20f>\n\n\n\n", info->obj[i].color.b);
@@ -183,18 +184,18 @@ static void	print_whole_execution_data(t_info *info)
 	printf("ALL PLANES DATA:\n\t");
 	while (i < info->n_obj && info->obj[i].type == PLANE)
 	{
-		printf("PLANE[%"PRId32"]:\n\t\t", i + 1);
-		printf("Plane[%"PRId32"]'s POSITION coordinates:\n\t\t", i + 1);
+		printf("PLANE[%d]:\n\t\t", i + 1);
+		printf("Plane[%d]'s POSITION coordinates:\n\t\t", i + 1);
 		printf("X coordinate:	<%.20f>\n\t\t", info->obj[i].pos.x);
 		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
 		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
 
-		printf("Plane[%"PRId32"]'s NORMAL VECTOR:\n\t", i + 1);
+		printf("Plane[%d]'s NORMAL VECTOR:\n\t", i + 1);
 		printf("X axis:	<%.20f>\n\t\t", info->obj[i].normal.x);
 		printf("Y axis:	<%.20f>\n\t\t", info->obj[i].normal.y);
 		printf("Z axis:	<%.20f>\n\n\t", info->obj[i].normal.z);
 
-		printf("Plane[%"PRId32"]'s COLOR (rgb channels):\n\t", i + 1);
+		printf("Plane[%d]'s COLOR (rgb channels):\n\t", i + 1);
 		printf("R channel:	<%.20f>\n\t\t", info->obj[i].color.r);
 		printf("G channel:	<%.20f>\n\t\t", info->obj[i].color.g);
 		printf("B channel:	<%.20f>\n\n\n\n", info->obj[i].color.b);
@@ -207,24 +208,24 @@ static void	print_whole_execution_data(t_info *info)
 	printf("ALL CYLINDERS DATA:\n\t");
 	while (i < info->n_obj && info->obj[i].type == PLANE)
 	{
-		printf("CYLINDER[%"PRId32"]:\n\t\t", i + 1);
-		printf("Cylinder[%"PRId32"]'s POSITION coordinates:\n\t\t", i + 1);
+		printf("CYLINDER[%d]:\n\t\t", i + 1);
+		printf("Cylinder[%d]'s POSITION coordinates:\n\t\t", i + 1);
 		printf("X coordinate:	<%.20f>\n\t\t", info->obj[i].pos.x);
 		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
 		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
 
-		printf("Cylinder[%"PRId32"]'s VECTOR OF CENTRAL AXIS:\n\t", i + 1);
+		printf("Cylinder[%d]'s VECTOR OF CENTRAL AXIS:\n\t", i + 1);
 		printf("X axis:	<%.20f>\n\t\t", info->obj[i].normal.x);
 		printf("Y axis:	<%.20f>\n\t\t", info->obj[i].normal.y);
 		printf("Z axis:	<%.20f>\n\n\t", info->obj[i].normal.z);
 
-		printf("Cylinder[%"PRId32"]'s RADIUS:\n\t\t", i + 1);
+		printf("Cylinder[%d]'s RADIUS:\n\t\t", i + 1);
 		printf("radius is:	<%.20f>\n\n\t", info->obj[i].r);
 
-		printf("Cylinder[%"PRId32"]'s HEIGHT:\n\t\t", i + 1);
+		printf("Cylinder[%d]'s HEIGHT:\n\t\t", i + 1);
 		printf("radius is:	<%.20f>\n\n\t", info->obj[i].h);
 
-		printf("Cylinder[%"PRId32"]'s COLOR (rgb channels):\n\t", i + 1);
+		printf("Cylinder[%d]'s COLOR (rgb channels):\n\t", i + 1);
 		printf("R channel:	<%.20f>\n\t\t", info->obj[i].color.r);
 		printf("G channel:	<%.20f>\n\t\t", info->obj[i].color.g);
 		printf("B channel:	<%.20f>\n\n\n\n", info->obj[i].color.b);
@@ -233,4 +234,3 @@ static void	print_whole_execution_data(t_info *info)
 	}
 	printf("\n\n");
 }
-*/
