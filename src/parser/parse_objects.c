@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 // static int	create_new_object_node(t_parser *parser); // NOTE: put this back if ever the complicated version create_new_node() does not work (or you decide to not go with it!!)
 static bool	is_valid_n_objects(t_parser *parser);
@@ -27,7 +27,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 
 	// initialize sphere
 
-	if (create_new_node(&parser->head_obj, &parser->curr->obj, OBJECT, sizeof (t_node_obj)) == -1)
+	if (create_new_node(&parser->head_obj, &parser->curr_obj, OBJECT, sizeof (t_node_obj)) == -1)
 		return (ALLOCATION_FAILURE);
 
 
@@ -73,7 +73,7 @@ int	parse_sphere(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_valid_end_of_line(str))
+	if (!is_valid_end_of_line(str, line_num))
 		return (INVALID_INPUT);
 
 	// check that not too many objects were provided by the user, before
@@ -92,7 +92,7 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	plane = NULL;
 
 	// initialize plane
-	if (create_new_node(&parser->head_obj, &parser->curr->obj, OBJECT, sizeof (t_node_obj)) == -1)
+	if (create_new_node(&parser->head_obj, &parser->curr_obj, OBJECT, sizeof (t_node_obj)) == -1)
 		return (ALLOCATION_FAILURE);
 
 
@@ -122,11 +122,11 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_within_range_vector(&plane->normal))
+	if (!is_within_range_vector(&plane->normal, line_num))
 		return (INVALID_INPUT);
 
 	if (fabs(plane->normal.x) < EPSILON && fabs(plane->normal.y) < EPSILON
-		&& fabs(plane->normal.y < EPSILON))
+		&& fabs(plane->normal.y) < EPSILON)
 	{
 		display_parsing_error("Provided normal vector for plane has a "
 			"magnitude of zero; Unable to render object. See line:", line_num);
@@ -142,7 +142,7 @@ int	parse_plane(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_color(&str, &plane->color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_valid_end_of_line(str))
+	if (!is_valid_end_of_line(str, line_num))
 		return (INVALID_INPUT);
 
 	// check that not too many objects were provided by the user, before
@@ -162,7 +162,7 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	cylinder = NULL;
 
 	// initialize cylinder
-	if (create_new_node(&parser->head_obj, &parser->curr->obj, OBJECT, sizeof (t_node_obj)) == -1)
+	if (create_new_node(&parser->head_obj, &parser->curr_obj, OBJECT, sizeof (t_node_obj)) == -1)
 		return (ALLOCATION_FAILURE);
 
 	/*
@@ -247,7 +247,7 @@ int	parse_cylinder(t_parser *parser, char *str, uint32_t line_num)
 	if (parse_color(&str, &cylinder->color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_valid_end_of_line(str))
+	if (!is_valid_end_of_line(str, line_num))
 		return (INVALID_INPUT);
 
 	// check that not too many objects were provided by the user, before
@@ -290,7 +290,7 @@ static bool	is_valid_n_objects(t_parser *parser, uint32_t line_num)
 {
 	uint8_t	n_objects;
 
-	n_objects = parser->n_spheres + parser->n_planes + parser->cylinders;
+	n_objects = parser->n_spheres + parser->n_planes + parser->n_cylinders;
 	if (n_objects <= 30)
 		return (1);
 	display_parsing_error("miniRT only accepts up to 30 objects. 31st object "
@@ -303,7 +303,7 @@ static bool	is_valid_n_objects(t_parser *parser)
 {
 	uint32_t	n_objects;
 
-	n_objects = parser->n_spheres + parser->n_planes + parser->cylinders;
+	n_objects = parser->n_spheres + parser->n_planes + parser->n_cylinders;
 	if (n_objects == UINT32_MAX)
 	{
 		ft_putstr_fd("Error\nToo many objects provided by input file. "

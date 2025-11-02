@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static void		handle_unexpected_arg_count(int argc);
 static bool		is_valid_file_extension(char *arg);

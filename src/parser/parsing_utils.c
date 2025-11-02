@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 /*
 * returns true if the character is: space, newline ('\n'), form-feed ('\f'),
@@ -101,7 +101,7 @@ bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num)
 * not, in case it is the last line of the file, and that line does not have a
 * newline character at all).
 */
-bool	is_valid_end_of_line(char *s)
+bool	is_valid_end_of_line(char *s, uint32_t line_num)
 {
 	skip_whitespace(&s);
 	if (*s)

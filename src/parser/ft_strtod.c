@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static int				parse_plus_or_minus_sign(char **ptr);
 static bool				is_start_of_string_valid(const char *s);

@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "minirt.h"
 #include "parser.h"
 #include "minirt.h"
 
@@ -45,6 +44,7 @@ int	free_exit(char *s)
 	return (1);
 }
 
+/*
 static void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -76,6 +76,7 @@ void	initialize_mlx(t_info *info)
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
 		exit(free_exit("Pushing image to window failed"));
 }
+*/
 
 /*
 * Return Values:
@@ -95,6 +96,8 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
+	// WARN: debugging only
+	print_whole_execution_data(info);
 	/*
 	// graphic rendering
 	initialize_mlx(info);

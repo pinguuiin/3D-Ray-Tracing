@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static char	*review_line_and_clean_buffer(char *line, char *buffer, size_t *i);
 static int	read_and_manage_output(int fd, char *buffer, char **line);
@@ -64,7 +64,7 @@ int	get_next_line_revised(int fd, char **output)
 		if (!line)
 			return (ALLOCATION_FAILURE);
 	}
-	line_status = read_and_manage_output(fd, buffer, &line)
+	line_status = read_and_manage_output(fd, buffer, &line);
 	if (line_status < 0)
 	{
 		free(line);

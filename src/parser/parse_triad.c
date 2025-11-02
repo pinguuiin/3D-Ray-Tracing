@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static int	str_to_linear_color(char **str, double *result, uint32_t line_num);
 
@@ -58,7 +58,7 @@ static int	str_to_linear_color(char **str, double *result, uint32_t line_num)
 		display_parsing_error("Invalid input provided for color value. "
 			"Please use integers between 0 and 255. See line", line_num);
 		return (-1);
-	{
+	}
 	while (ft_isdigit(*s))
 	{
 		conversion = conversion * 10 + *s - '0';
@@ -85,7 +85,7 @@ static int	str_to_linear_color(char **str, double *result, uint32_t line_num)
 * multiplying by 1.0 is redundant, this function simply assigns the ratio itself
 * to each channel.
 */
-void inline	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
+inline void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided)
 {
 	if (is_provided)
 	{

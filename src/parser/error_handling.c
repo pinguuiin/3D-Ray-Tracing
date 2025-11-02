@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static inline void	put_pos_nbr_endl_fd(uint32_t n, int fd);
 
@@ -56,7 +56,7 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	return (SYSTEM_FAILURE);
 }
 
-void	display_parsing_error(const char *msg, uint32_t line_num)
+void	display_parsing_error(char *msg, uint32_t line_num)
 {
 	write(2, "Error\n", 6);
 	ft_putstr_fd(msg, 2);

@@ -13,13 +13,17 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-// WARN: only add these libraries here if they are not on minirt.h - or perhaps
-// leave them still here as they are relevant to the parsing?
-// # include <fcntl.h>	// open(), close()
-// # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
 
 # include "minirt.h"
 # include "get_next_line_revised.h"
+
+// WARN: only add these libraries here if they are not on minirt.h - or perhaps
+// leave them still here as they are relevant to the parsing?
+# include <fcntl.h>	// open(), close()
+// # include <stdint.h>	// fixed-width data types (such as uint32_t, uint64_t)
+
+// WARN: this is only used for debugging, delete when project is ready.
+// # include <inttypes.h> // allows portable way of printing fixed width data types
 
 typedef enum e_status
 {
@@ -97,32 +101,6 @@ typedef struct s_parser
 
 }	t_parser;
 
-/*
-* 3d vector which can be used interchangeably for:
-*	- x, y, z coordinates
-*	- RGB color channel
-*	- UVW mapping (for textures)
-*/
-typedef union u_vec
-{
-	struct
-	{
-		double	x;
-		double	y;
-		double	z;
-	};
-
-	struct
-	{
-		double	r;
-		double	g;
-		double	b;
-	};
-
-}	t_color;
-
-typedef t_vec	t_vec;
-
 // scene and elements parsing
 void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
@@ -144,13 +122,13 @@ void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
 int		parse_3d_vector(char **str, t_vec *vector, uint32_t line_num);
 bool	is_valid_separator(char	**str, uint32_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, uint32_t line_num);
-bool	is_valid_end_of_line(char *s);
+bool	is_valid_end_of_line(char *s, uint32_t line_num);
 int		create_new_node(void *head, void *current, t_list_id id, size_t size);
 bool	is_within_range_vector(t_vec *vec, uint32_t line_num);
 
 // error messaging and memory management
 int		handle_parsing_error(t_status status, char *line, t_parser *parser);
-void	display_parsing_error(const char *msg, uint32_t line_num);
+void	display_parsing_error(char *msg, uint32_t line_num);
 int		clean_up_parser(t_parser *parser, char *line);
 
 #endif

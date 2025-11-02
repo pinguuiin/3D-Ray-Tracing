@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static int	parse_line(t_parser *parser, char *line);
 static int	check_validity_of_scene(t_parser *parser);
@@ -29,7 +29,7 @@ void	parse_scene(t_info *info, char *filename)
 
 	// initialize parser struct
 	ft_bzero(&parser, sizeof (t_parser));
-	parser->line_num = 1;
+	parser.line_num = 1;
 
 	parser.fd = open(filename, O_RDONLY);
 	if (parser.fd == -1)
@@ -47,8 +47,8 @@ void	parse_scene(t_info *info, char *filename)
 				{
 					free(line);
 					line = NULL;
-					if (parser->line_num < UINT32_MAX) // just to avoid a 'potential' segfault
-						parser->line_num++;
+					if (parser.line_num < UINT32_MAX) // just to avoid a 'potential' segfault
+						parser.line_num++;
 				}
 			}
 			else	// file has been fully read.
@@ -57,14 +57,14 @@ void	parse_scene(t_info *info, char *filename)
 
 				// transfer the lights and all objects linked lists into their respective arrays;
 				if (status == NO_ERROR)
-					status = transfer_lists_to_arrays(info, &parser);
+					status = transfer_lists_to_arrays(&parser, info);
 
 				// destroy the lists and return (unless malloc() failure has occured,
 				// in which case status is ALLOCATION_FAILURE, which will be handled after the loop.
 				if (status == NO_ERROR)
 				{
 					// destroy both linked lists, and close the file descriptor
-					if (clean_up_parser(parser, NULL) == CLOSE_FAILURE) // if true, close() failed, but memory has been freed. Time to exit.
+					if (clean_up_parser(&parser, NULL) == CLOSE_FAILURE) // if true, close() failed, but memory has been freed. Time to exit.
 						exit (SYSTEM_FAILURE);
 					return ;
 				}
@@ -95,16 +95,16 @@ static int	parse_line(t_parser *parser, char *line)
 	else if (*str == 'C' && isspace_but_not_newline(*(str + 1)))
 		return (parse_camera(&info->cam, str + 2, parser));
 	else if (*str == 'L' && isspace_but_not_newline(*(str + 1)))
-		return (parse_light(&parser, str + 2, parser));
+		return (parse_light(parser, str + 2));
 	else if (*str == 's' && *(str + 1) == 'p'
 		&& isspace_but_not_newline(*(str + 2)))
-		return (parse_sphere(str + 3, parser->line_num));
+		return (parse_sphere(parser, str + 3, parser->line_num));
 	else if (*str == 'p' && *(str + 1) == 'l'
 		&& isspace_but_not_newline(*(str + 2)))
-		return (parse_plane(str + 3, parser->line_num));
+		return (parse_plane(parser, str + 3, parser->line_num));
 	else if (*str == 'c' && *(str + 1) == 'y'
 		&& isspace_but_not_newline(*(str + 2)))
-		return (parse_cylinder(str + 3, parser->line_num));
+		return (parse_cylinder(parser, str + 3, parser->line_num));
 	// The next boolean check is important, because if it returns false, we have
 	// an empty whitespace line ending with the EOF, which might simply be the
 	// input file's very last line. That should not be considered as a parsing
@@ -136,7 +136,7 @@ static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 	copy_light(parser, info);
 
 	// update n_obj in 'info'
-	info->n_obj = parser->spheres + parser->planes + parser->cylinders;
+	info->n_obj = parser->n_spheres + parser->n_planes + parser->n_cylinders;
 
 	// allocate array of objects. make ft_calloc() failure check!
 	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
@@ -168,7 +168,7 @@ static void	copy_light(t_parser *parser, t_info *info)
 	i = 0;
 	while (current)
 	{
-		info->light = current->object->light;
+		info->light[i] = current->light;
 		i++;
 		current = current->next;
 	}

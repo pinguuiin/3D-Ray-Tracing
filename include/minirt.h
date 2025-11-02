@@ -34,8 +34,6 @@
 
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"
-// # include "parser.h"
-// # include "get_next_line_revised.h"
 # include "vector.h"
 # include "hit.h"
 # include <stdlib.h>
@@ -55,7 +53,7 @@ typedef enum e_type
 typedef struct s_light
 {
 	t_vec	pos;
-	t_vec	color;
+	t_color	color;
 
 }	t_light;
 
@@ -74,7 +72,7 @@ typedef struct s_object
 	// general attributes
 	t_type	type;
 	t_vec	pos;
-	t_vec	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
+	t_color	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
 	t_vec	oc;  // vector from object to camera
 
 	// sphere and cylinder
@@ -98,7 +96,7 @@ typedef struct s_info
 	double		viewport_height;
 	double		rot[3][3];
 	double		px;
-	t_vec		amb;
+	t_color		amb;
 	t_cam		cam;
 	t_light		*light;	// array of lights
 	t_object	*obj;  	// array of objects

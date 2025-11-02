@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static inline double	str_degrees_to_radians(char **str, uint32_t line_num);
 
@@ -51,7 +51,7 @@ int	parse_ambient_lighting(t_color *amb, char *str, t_parser *parser)
 	if (parse_color(&str, amb, &ratio, parser->line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_valid_end_of_line(str))
+	if (!is_valid_end_of_line(str, parser->line_num))
 		return (INVALID_INPUT);
 	parser->n_ambs++;	// validate the ambient lighting
 	return (NO_ERROR);
@@ -80,12 +80,12 @@ int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 	if (parse_3d_vector(&str, &cam->direction, parser->line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_within_range_vector(&cam->direction))
+	if (!is_within_range_vector(&cam->direction, parser->line_num))
 		return (INVALID_INPUT);
 
 	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
 	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
-		&& fabs(cam->direction->z) < EPSILON)
+		&& fabs(cam->direction.z) < EPSILON)
 		cam->direction.z = 1.0;
 	cam->direction = normalize(cam->direction); // normalize
 	
@@ -98,7 +98,7 @@ int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 	if (cam->fov < 0.0)
 		return (INVALID_INPUT);
 
-	if (!is_valid_end_of_line(str))
+	if (!is_valid_end_of_line(str, parser->line_num))
 		return (INVALID_INPUT);
 	parser->n_cams++;	// validate the camera
 	return (NO_ERROR);
@@ -131,7 +131,7 @@ int	parse_light(t_parser *parser, char *str)
 	*/
 
 	// allocate new light node, check for malloc() failure
-	if (create_new_node(&parser->head, &parser->current, LIGHT, sizeof (t_light_node)) == -1)
+	if (create_new_node(&parser->head, &parser->current, LIGHT, sizeof (t_node_light)) == -1)
 		return (ALLOCATION_FAILURE);
 
 	/*
@@ -180,7 +180,7 @@ int	parse_light(t_parser *parser, char *str)
 		{
 			if (parse_color(&str, &light->color, &ratio, parser->line_num) == -1)
 				return (INVALID_INPUT);
-			if (!is_valid_end_of_line(str))
+			if (!is_valid_end_of_line(str, parser->line_num))
 				return (INVALID_INPUT);
 		}
 		else	// no color provided by input for 'light', so set it to white

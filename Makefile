@@ -31,15 +31,6 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 
 SRC_FILES = main.c \
-			hooks/camera_hooks.c \
-			raytracer/reflection.c \
-			raytracer/renderer.c \
-			shapes/cylinder.c \
-			shapes/plane.c \
-			shapes/sphere.c \
-			utils/color.c \
-			vector/operations.c \
-			vector/rotation.c \
 			parser/handle_argv.c \
 			parser/parser.c \
 			parser/parse_setting.c \
@@ -49,7 +40,16 @@ SRC_FILES = main.c \
 			parser/ft_strtod.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
-			parser/get_next_line_utils.c
+			parser/get_next_line_utils.c \
+			# hooks/camera_hooks.c \
+			# raytracer/reflection.c \
+			# raytracer/renderer.c \
+			# shapes/cylinder.c \
+			# shapes/plane.c \
+			# shapes/sphere.c \
+			# utils/color.c \
+			# vector/operations.c \
+			# vector/rotation.c \
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
