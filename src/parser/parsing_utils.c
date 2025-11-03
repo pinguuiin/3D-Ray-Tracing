@@ -62,7 +62,7 @@ bool	is_valid_separator(char	**str, size_t line_num)
 	{
 		display_parsing_error("Invalid input when expecting a comma to "
 			"separate between elements of a triad of values.\n"
-			"See line number:", line_num);
+			"See line number", line_num);
 		return (0);
 	}
 	if (**str == ' ')
