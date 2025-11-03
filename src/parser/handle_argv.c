@@ -24,8 +24,8 @@ void	parse_argument(int argc, char *argv[])
 	}
 	if (!is_valid_file_extension(argv[1]))
 	{
-		ft_putstr_fd("Unsupported file type detected; "
-			"please provide a valid .rt file.\n", 2);
+		ft_putstr_fd("Error\nUnsupported file type detected; "
+			"only files with the \".rt\" extension are accepted.\n", 2);
 		exit (2);
 	}
 }

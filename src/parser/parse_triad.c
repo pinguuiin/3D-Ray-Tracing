@@ -55,8 +55,8 @@ static int	str_to_linear_color(char **str, double *result, size_t line_num)
 		s++;
 	if (!ft_isdigit(*s))
 	{
-		display_parsing_error("Invalid input provided for color value. "
-			"Please use integers between 0 and 255. See line", line_num);
+		display_parsing_error("Invalid input provided for color value; "
+			"Only integers between 0 and 255 are accepted. See line", line_num);
 		return (-1);
 	}
 	while (ft_isdigit(*s))

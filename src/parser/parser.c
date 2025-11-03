@@ -213,7 +213,7 @@ static int	check_validity_of_scene(t_parser *parser)
 	if (!(parser->n_spheres + parser->n_planes + parser->n_cylinders))
 	{
 		ft_putstr_fd("Error\nProvided scene has no objects. At least one "
-			"object should be proposed for the scene to be rendered\n", 2);
+			"object should be proposed for the scene to be rendered.\n", 2);
 		return (INVALID_INPUT);
 	}
 	return (NO_ERROR);

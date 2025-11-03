@@ -32,9 +32,10 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
 	{
-		// status -4 means that open() failed. No need to call close(),
-		// and nothing has been allocated yet, so no need to clean_up_parser().
-		ft_putstr_fd("Failed to open input file. Aborting miniRT.\n", 2);
+		// open() failed: No need to call close(), and nothing has been
+		// dynamically allocated yet, so no need to clean_up_parser().
+		ft_putstr_fd("Failed to open input file. Please make sure the file "
+			"exists and that the correct path is provided.\n", 2);
 		return (SYSTEM_FAILURE);
 	}
 
