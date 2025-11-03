@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 05:29:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 09:36:45 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,33 @@ void	get_hit_normal(t_object *obj, t_hit *hit)
 		else if (hit_h + obj->h < EPSILON)
 			hit->normal = scale(obj->normal, -1);
 		else
-			hit->normal = normalize(subtract(hit->op, scale(obj->normal, hit_h)));
+			hit->normal = normalize(subtract(hit->op,
+				scale(obj->normal, hit_h)));
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->normal;
 }
 
-int	get_hit_attributes(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
+void	add_diffuse_and_specular(t_reflect *ref, t_hit *hit,
+		t_light *light, t_object *obj)
 {
-	hit->pos = add(info->cam.pos, ray);
-	hit->ray = normalize(scale(ray, -1));
-	hit->op = subtract(hit->pos, obj->pos);
-	hit->incoming = normalize(subtract(info->light.pos, hit->pos));
-	if (is_shadow(info, hit->incoming, hit->pos, hit))
-		return (1);
-	get_hit_normal(obj, hit);
-	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
-	hit->outgoing = subtract(hit->outgoing, hit->incoming);
-	return (0);
+	double	flux;
+	double	spec;
+
+	flux = dot(ref->incoming, hit->normal);
+	if (flux > EPSILON)
+	{
+		flux *= KD;
+		ref->diffuse = scale(dot_elem(light->color, obj->color), flux);
+		hit->intensity = add(hit->intensity, ref->diffuse);
+		spec = dot(ref->outgoing, hit->ray);
+		if (spec > EPSILON)
+		{
+			spec = KS * pow(spec, SHININESS);
+			ref->specular = scale(light->color, spec);
+			hit->intensity = add(hit->intensity, ref->specular);
+		}
+	}
 }
 
 /* Implement Phong reflection model:
@@ -83,25 +92,29 @@ Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 */
 t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
-	double	flux;
-	double	spec;
+	int			i;
+	t_reflect	ref;
+	t_light		*light;
 
+	i = 0;
 	hit->intensity = vec3(0.0, 0.0, 0.0);
-	if (get_hit_attributes(info, obj, ray, hit))
-		return (hit->intensity);
-	flux = dot(hit->incoming, hit->normal);
-	if (flux > EPSILON)
+	hit->pos = add(info->cam.pos, ray);
+	hit->ray = normalize(scale(ray, -1));
+	hit->op = subtract(hit->pos, obj->pos);
+	while (i < info->n_light)
 	{
-		flux *= KD;
-		hit->diffuse = scale(dot_elem(info->light.color, obj->color), flux);
-		hit->intensity = add(hit->intensity, hit->diffuse);
-		spec = dot(hit->outgoing, hit->ray);
-		if (spec > EPSILON)
+		light = &info->light[i];
+		ref.incoming = normalize(subtract(light->pos, hit->pos));
+		if (is_shadow(info, ref.incoming, hit->pos, hit))
 		{
-			spec = KS * pow(spec, SHININESS);
-			hit->specular = scale(info->light.color, spec);
-			hit->intensity = add(hit->intensity, hit->specular);
+			i++;
+			continue ;
 		}
+		get_hit_normal(obj, hit);
+		ref.outgoing = scale(hit->normal, 2 * dot(ref.incoming, hit->normal));
+		ref.outgoing = subtract(ref.outgoing, ref.incoming);
+		add_diffuse_and_specular(&ref, hit, light, obj);
+		i++;
 	}
 	return (hit->intensity);
 }
