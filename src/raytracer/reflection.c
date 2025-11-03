@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 03:22:59 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 03:05:46 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 {
-	uint32_t	id;
-	double		k;
+	int		id;
+	double	k;
 
 	id = 0;
 	while (id < info->n_obj)

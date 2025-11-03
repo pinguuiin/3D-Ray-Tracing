@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 01:52:40 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 03:04:21 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
-	uint32_t	i;
+	int	i;
 
 	i = 0;
 	if (keydata.key == MLX_KEY_RIGHT)
