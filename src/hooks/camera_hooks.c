@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 01:52:40 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:15:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
-	uint32_t	i;
-
-	i = 0;
 	if (keydata.key == MLX_KEY_RIGHT)
 		info->cam.pos.x += 1;
 	else if (keydata.key == MLX_KEY_LEFT)
@@ -29,14 +26,7 @@ void	move_camera(mlx_key_data_t keydata, t_info *info)
 		info->cam.pos.z += 1;
 	else if (keydata.key == MLX_KEY_Z)
 		info->cam.pos.z -= 1;
-	while (i < info->n_obj)
-	{
-		info->obj[i].oc = subtract(info->cam.pos, info->obj[i].pos);
-		if (info->obj[i].type == PLANE &&
-			dot(info->obj[i].normal, info->obj[i].oc) < 0)
-			info->obj[i].normal = scale(info->obj[i].normal, -1);
-		i++;
-	}
+	update_oc_and_plane_normal(info);
 }
 
 void	rotate_camera(mlx_key_data_t keydata, t_info *info)

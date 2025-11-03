@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 02:56:49 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:54:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,11 @@ int			free_exit(char *s);
 
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
-t_vec		color_to_vec(int r, int g, int b);
+// t_vec		color_to_vec(int r, int g, int b);
 
-double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec pos);
-double		ray_hit_plane(t_vec ray, t_object *plane, t_vec pos);
-double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec pos);
+double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
+double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
+double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
@@ -128,5 +128,8 @@ void		rotate(double rot[3][3], t_vec *v1);
 
 void		move_camera(mlx_key_data_t keydata, t_info *info);
 void		rotate_camera(mlx_key_data_t keydata, t_info *info);
+
+void		update_oc_and_plane_normal(t_info *info);
+void		preprocessor(t_info *info);
 
 #endif

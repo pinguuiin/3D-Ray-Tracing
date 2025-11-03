@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/20 01:44:36 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:07:21 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	get_rotation_matrix(t_info *info, t_vec v)
 	t_vec	u;
 
 	up = vec3(0, 1, 0);
-	f = normalize(v);
+	f = v;
 	// Avoid zero vector when f and up are on the same or opposite directions
 	if (fabs(dot(f, up)) > 1 - EPSILON)
 		up = vec3(0, 0, -1);
