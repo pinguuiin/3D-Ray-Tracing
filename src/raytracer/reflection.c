@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 03:05:46 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:29:42 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 {
-	int		id;
-	double	k;
+	int			id;
+	double		k;
+	t_object	*obj;
 
 	id = 0;
 	while (id < info->n_obj)
@@ -25,12 +26,13 @@ bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 			id++;
 			continue ;
 		}
-		if (info->obj[id].type == SPHERE)
-			k = ray_hit_sphere(info, ray, &info->obj[id], pos);
-		else if (info->obj[id].type == PLANE)
-			k = ray_hit_plane(ray, &info->obj[id], pos);
+		obj = &info->obj[id];
+		if (obj->type == SPHERE)
+			k = ray_hit_sphere(info, ray, obj, subtract(pos, obj->pos));
+		else if (obj->type == PLANE)
+			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
 		else
-			k = ray_hit_cylinder(info, ray, &info->obj[id], pos);
+			k = ray_hit_cylinder(info, ray, obj, subtract(pos, obj->pos));
 		if (k > EPSILON)
 			return (true);
 		id++;

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 02:55:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:34:36 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,10 @@ double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
 	return (-1.0);
 }
 
-double	ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec pos)
+double	ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc)
 {
-	t_vec		oc;
 	t_discrim	f;
 
-	oc = subtract(pos, cy->pos);
 	f.oc_n = dot(oc, cy->normal);
 	f.ray_n = dot(ray, cy->normal);
 	f.a = 1.0 - f.ray_n * f.ray_n;

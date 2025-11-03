@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/01 19:01:12 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/11/03 06:16:27 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ int	main(int argc, char *argv[])
 
 	// WARN: only for debugging.
 	print_whole_execution_data(info);
+	preprocessor(info);
 	/*
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, &info);

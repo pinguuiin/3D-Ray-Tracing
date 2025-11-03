@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 02:57:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 06:04:33 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
+double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
 {
 	double	k;
 	double	k_min;
@@ -21,14 +21,15 @@ double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 	k = -1.0;
 	k_min = -1.0;
 	id = 0;
-	while (id < info->num)
+	while (id < info->n_obj)
 	{
-		if (info->obj[id].type == SPHERE)
-			k = ray_hit_sphere(info, ray, &info->obj[id], info->cam.pos);
-		else if (info->obj[id].type == PLANE)
-			k = ray_hit_plane(ray, &info->obj[id], info->cam.pos);
+		obj = &info->obj[id];
+		if (obj->type == SPHERE)
+			k = ray_hit_sphere(info, ray, obj, obj->oc);
+		else if (obj->type == PLANE)
+			k = ray_hit_plane(ray, obj, obj->oc);
 		else
-			k = ray_hit_cylinder(info, ray, &info->obj[id], info->cam.pos);
+			k = ray_hit_cylinder(info, ray, obj, obj->oc);
 		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
 			k_min = k;
@@ -43,10 +44,10 @@ void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
 	double		k;
 	t_object	*obj;
-	t_vec		color;
+	t_color		color;
 	t_hit		hit;
 
-	k = nearest_ray_hit(info, ray, &hit);
+	k = nearest_ray_hit(info, ray, &hit, obj);
 	if (k == -1) // not hit
 	{
 		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
