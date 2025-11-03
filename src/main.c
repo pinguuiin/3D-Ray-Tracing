@@ -195,7 +195,7 @@ static void	print_whole_execution_data(t_info *info)
 		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
 		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
 
-		printf("Plane[%d]'s NORMAL VECTOR:\n\t\t", i);
+		printf("Plane[%d]'s NORMAL VECTOR (NORMALIZED):\n\t\t", i);
 		printf("X axis:	<%.20f>\n\t\t", info->obj[i].normal.x);
 		printf("Y axis:	<%.20f>\n\t\t", info->obj[i].normal.y);
 		printf("Z axis:	<%.20f>\n\n\t", info->obj[i].normal.z);
@@ -221,7 +221,7 @@ static void	print_whole_execution_data(t_info *info)
 		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
 		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
 
-		printf("Cylinder[%d]'s VECTOR OF CENTRAL AXIS:\n\t\t", i);
+		printf("Cylinder[%d]'s VECTOR OF CENTRAL AXIS (NORMALIZED):\n\t\t", i);
 		printf("X axis:	<%.20f>\n\t\t", info->obj[i].normal.x);
 		printf("Y axis:	<%.20f>\n\t\t", info->obj[i].normal.y);
 		printf("Z axis:	<%.20f>\n\n\t", info->obj[i].normal.z);
