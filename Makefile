@@ -70,7 +70,7 @@ $(LIBFT):
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	$(CC) $(FLAGS) $(HEADER_DIR) -c $< -o $@
-	@echo "$(BGREEN) Compiled $^ $(RESET_COLOR)"
+	@echo "$(BGREEN) Compiled $(notdir $<) $(RESET_COLOR)"
 
 $(NAME): $(LIBMLX) $(LIBFT) $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) $(LIBMLX) $(LIBFT) $(LIBS) -o $(NAME)
