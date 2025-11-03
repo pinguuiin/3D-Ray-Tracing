@@ -125,7 +125,7 @@ int	create_new_node(void *head, void *current, t_list_id id, size_t size)
 	if (!result)
 		return (-1);
 
-	if (!head)
+	if (!(*(t_node_light **)head))
 	{
 		if (id == LIGHT)
 		{
