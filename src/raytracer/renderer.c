@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 06:04:33 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 10:05:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	t_color		color;
 	t_hit		hit;
 
+	obj = NULL;
 	k = nearest_ray_hit(info, ray, &hit, obj);
 	if (k == -1) // not hit
 	{

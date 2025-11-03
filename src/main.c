@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/03 06:16:27 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 10:10:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	free_exit(char *s)
 	return (1);
 }
 
-/*
+
 static void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -76,7 +76,7 @@ void	initialize_mlx(t_info *info)
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
 		exit(free_exit("Pushing image to window failed"));
 }
-*/
+
 
 /*
 * Return Values:
@@ -99,12 +99,12 @@ int	main(int argc, char *argv[])
 	// WARN: only for debugging.
 	print_whole_execution_data(info);
 	preprocessor(info);
-	/*
+
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, &info);
 	mlx_loop_hook(info->mlx, renderer, &info);
 	mlx_loop(info->mlx);
-	*/
+
 
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);
