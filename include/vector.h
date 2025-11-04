@@ -14,13 +14,24 @@
 # define VECTOR_H
 
 /* 3d vector coordinates */
-typedef struct s_vec
+typedef union u_vec
 {
-	double	x;
-	double	y;
-	double	z;
+	struct
+	{
+		double	x;
+		double	y;
+		double	z;
+	};
 
+	struct
+	{
+		double	r;
+		double	g;
+		double	b;
+	};
 }	t_vec;
+
+typedef t_vec	t_color;
 
 t_vec	vec3(double x, double y, double z);
 t_vec	scale(t_vec a, double k);

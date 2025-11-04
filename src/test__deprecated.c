@@ -24,6 +24,8 @@ int	free_exit(char *s)
 	t_info	*info;
 
 	info = get_info();
+	free(info->light);
+	free(info->obj);
 	if (info->img)
 		mlx_delete_image(info->mlx, info->img);
 	if (info->mlx)

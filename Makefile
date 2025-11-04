@@ -21,14 +21,28 @@ LIBFT_DIR = ./src/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 
-HEADERS = include/minirt.h include/vector.h
-HEADER_DIR = -I./include -I$(LIBMLX_DIR)/include -I$(LIBFT_DIR)
+INC_DIR = include
+
+HEADERS = $(INC_DIR)/minirt.h $(INC_DIR)/vector.h $(INC_DIR)/hit.h \
+		  $(INC_DIR)/get_next_line_revised.h $(INC_DIR)/parser.h
+HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 
-SRC_FILES = test.c \
+SRC_FILES = main.c \
+			parser/handle_argv.c \
+			parser/parser.c \
+			parser/parse_setting.c \
+			parser/parse_objects.c \
+			parser/parsing_utils.c \
+			parser/error_handling.c \
+			parser/ft_strtod.c \
+			parser/parse_triad.c \
+			parser/get_next_line_revised.c \
+			parser/get_next_line_utils.c \
 			hooks/camera_hooks.c \
+			raytracer/preprocessor.c \
 			raytracer/reflection.c \
 			raytracer/renderer.c \
 			shapes/cylinder.c \
@@ -56,7 +70,7 @@ $(LIBFT):
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	$(CC) $(FLAGS) $(HEADER_DIR) -c $< -o $@
-	@echo "$(BGREEN) Compiled $^ $(RESET_COLOR)"
+	@echo "$(BGREEN) Compiled $(notdir $<) $(RESET_COLOR)"
 
 $(NAME): $(LIBMLX) $(LIBFT) $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) $(LIBMLX) $(LIBFT) $(LIBS) -o $(NAME)

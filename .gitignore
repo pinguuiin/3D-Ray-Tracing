@@ -3,3 +3,4 @@ miniRT
 obj/
 src/MLX42/
 src/libft/
+mac_Makefile

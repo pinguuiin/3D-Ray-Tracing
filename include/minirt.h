@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 02:56:49 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:54:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,14 @@ typedef enum e_type
 typedef struct s_light
 {
 	t_vec	pos;
-	t_vec	color;
+	t_color	color;
 
 }	t_light;
 
 /* Camera specs */
 typedef struct s_cam
 {
-	double	fov; // converted to rad from degree  ==parsing==
+	double	fov; // converted to rad from degree  ==parsing== (multiply the provided angle by π / 180)
 	t_vec	pos;
 	t_vec	direction;
 
@@ -72,7 +72,7 @@ typedef struct s_object
 	// general attributes
 	t_type	type;
 	t_vec	pos;
-	t_vec	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
+	t_color	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
 	t_vec	oc;  // vector from object to camera
 
 	// sphere and cylinder
@@ -96,12 +96,12 @@ typedef struct s_info
 	double		viewport_height;
 	double		rot[3][3];
 	double		px;
-	t_vec		amb;
+	t_color		amb;
 	t_cam		cam;
-	t_light		light;
-	t_object	*obj;  // array of objects; saved as void pointer so that it can contain different structs
-	t_object	*obj_lst;  // list of objects; will be cleared up after parsing
-	int			num;  // number of objects
+	t_light		*light;	// array of lights
+	t_object	*obj;  	// array of objects
+	int			n_light;
+	int			n_obj;
 	bool		is_inside;
 
 }	t_info;
@@ -111,11 +111,11 @@ int			free_exit(char *s);
 
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
-t_vec		color_to_vec(int r, int g, int b);
+// t_vec		color_to_vec(int r, int g, int b);
 
-double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec pos);
-double		ray_hit_plane(t_vec ray, t_object *plane, t_vec pos);
-double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec pos);
+double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
+double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
+double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
@@ -128,5 +128,8 @@ void		rotate(double rot[3][3], t_vec *v1);
 
 void		move_camera(mlx_key_data_t keydata, t_info *info);
 void		rotate_camera(mlx_key_data_t keydata, t_info *info);
+
+void		update_oc_and_plane_normal(t_info *info);
+void		preprocessor(t_info *info);
 
 #endif

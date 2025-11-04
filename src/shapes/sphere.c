@@ -6,18 +6,16 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:05:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 02:45:05 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/03 05:33:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-double	ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec pos)
+double	ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc)
 {
-	t_vec		oc;
 	t_discrim	f;
 
-	oc = subtract(pos, sphere->pos);
 	f.a = 1.0;
 	f.b = 2 * dot(ray, oc);
 	f.c = dot(oc, oc) - sphere->r * sphere->r;
