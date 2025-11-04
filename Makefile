@@ -87,7 +87,7 @@ fclean:
 		if [ -d "$(OBJ_DIR)" ]; then rm -rf "$(OBJ_DIR)"; fi; \
 		if [ -d "$(LIBFT_DIR)" ]; then make -s fclean -C "$(LIBFT_DIR)"; rm -rf "$(LIBFT_DIR)"; fi; \
 		if [ -d "$(LIBMLX_DIR)" ]; then make -s clean -C "$(LIBMLX_DIR)/build"; rm -rf "$(LIBMLX_DIR)"; fi; \
-		rm -rf "$(NAME)"; \
+		if [ -f "$(NAME)" ]; then rm -rf "$(NAME)"; fi; \
 		echo "$(BBLUE) Cleaned all $(RESET_COLOR)"; \
 	else \
 		echo "$(BCYAN) Nothing to clean. Everything looks tidy. $(RESET_COLOR)"; \
