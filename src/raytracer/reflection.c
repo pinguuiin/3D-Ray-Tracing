@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 09:36:45 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/04 03:47:40 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,24 +61,23 @@ void	get_hit_normal(t_object *obj, t_hit *hit)
 		hit->normal = obj->normal;
 }
 
-void	add_diffuse_and_specular(t_reflect *ref, t_hit *hit,
-		t_light *light, t_object *obj)
+void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
 {
 	double	flux;
 	double	spec;
 
-	flux = dot(ref->incoming, hit->normal);
+	flux = dot(hit->incoming, hit->normal);
 	if (flux > EPSILON)
 	{
 		flux *= KD;
-		ref->diffuse = scale(dot_elem(light->color, obj->color), flux);
-		hit->intensity = add(hit->intensity, ref->diffuse);
-		spec = dot(ref->outgoing, hit->ray);
+		hit->diffuse = scale(dot_elem(light->color, obj->color), flux);
+		hit->intensity = add(hit->intensity, hit->diffuse);
+		spec = dot(hit->outgoing, hit->ray);
 		if (spec > EPSILON)
 		{
 			spec = KS * pow(spec, SHININESS);
-			ref->specular = scale(light->color, spec);
-			hit->intensity = add(hit->intensity, ref->specular);
+			hit->specular = scale(light->color, spec);
+			hit->intensity = add(hit->intensity, hit->specular);
 		}
 	}
 }
@@ -93,7 +92,6 @@ Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	int			i;
-	t_reflect	ref;
 	t_light		*light;
 
 	i = 0;
@@ -104,16 +102,16 @@ t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	while (i < info->n_light)
 	{
 		light = &info->light[i];
-		ref.incoming = normalize(subtract(light->pos, hit->pos));
-		if (is_shadow(info, ref.incoming, hit->pos, hit))
+		hit->incoming = normalize(subtract(light->pos, hit->pos));
+		if (is_shadow(info, hit->incoming, hit->pos, hit))
 		{
 			i++;
 			continue ;
 		}
 		get_hit_normal(obj, hit);
-		ref.outgoing = scale(hit->normal, 2 * dot(ref.incoming, hit->normal));
-		ref.outgoing = subtract(ref.outgoing, ref.incoming);
-		add_diffuse_and_specular(&ref, hit, light, obj);
+		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
+		hit->outgoing = subtract(hit->outgoing, hit->incoming);
+		add_diffuse_and_specular(hit, light, obj);
 		i++;
 	}
 	return (hit->intensity);
