@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/03 10:10:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/04 03:24:06 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 
 // WARN: debugging function to check validity of parsing, delete when ready.
-static void	print_whole_execution_data(t_info *info);
+// static void	print_whole_execution_data(t_info *info);
 
 
 t_info	*get_info(void)
@@ -97,19 +97,19 @@ int	main(int argc, char *argv[])
 	parse_scene(info, argv[1]);
 
 	// WARN: only for debugging.
-	print_whole_execution_data(info);
+	// print_whole_execution_data(info);
 	preprocessor(info);
 
 	initialize_mlx(info);
-	mlx_key_hook(info->mlx, &key_handler, &info);
-	mlx_loop_hook(info->mlx, renderer, &info);
+	mlx_key_hook(info->mlx, &key_handler, info);
+	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);
-
 
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);
 }
 
+/*
 // WARN: debugging function to make sure parsing is done right.
 #include "stdio.h"
 static void	print_whole_execution_data(t_info *info)
@@ -242,4 +242,4 @@ static void	print_whole_execution_data(t_info *info)
 			printf("\t");
 	}
 	printf("\n\n");
-}
+}*/
