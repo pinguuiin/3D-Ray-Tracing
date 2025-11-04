@@ -82,11 +82,16 @@ clean:
 	@if [ -d "$(LIBMLX_DIR)" ]; then make clean -C $(LIBMLX_DIR)/build; fi
 	@echo "$(BBLUE) Cleaned .o files $(RESET_COLOR)"
 
-fclean: clean
-	@make fclean -C $(LIBFT_DIR)
-	@rm -rf $(LIBMLX_DIR) $(LIBFT_DIR)
-	rm -rf $(NAME)
-	@echo "$(BBLUE) Cleaned all $(RESET_COLOR)"
+fclean:
+	@if [ -f "$(NAME)" ] || [ -d "$(OBJ_DIR)" ] || [ -d "$(LIBFT_DIR)" ] || [ -d "$(LIBMLX_DIR)" ]; then \
+		if [ -d "$(OBJ_DIR)" ]; then rm -rf "$(OBJ_DIR)"; fi; \
+		if [ -d "$(LIBFT_DIR)" ]; then make -s fclean -C "$(LIBFT_DIR)"; rm -rf "$(LIBFT_DIR)"; fi; \
+		if [ -d "$(LIBMLX_DIR)" ]; then make -s clean -C "$(LIBMLX_DIR)/build"; rm -rf "$(LIBMLX_DIR)"; fi; \
+		rm -rf "$(NAME)"; \
+		echo "$(BBLUE) Cleaned all $(RESET_COLOR)"; \
+	else \
+		echo "$(BCYAN) Nothing to clean. Everything looks tidy. $(RESET_COLOR)"; \
+	fi;
 
 re: fclean all
 
