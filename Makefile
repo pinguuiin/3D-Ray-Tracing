@@ -63,9 +63,9 @@ $(LIBMLX):
 	@if [ ! -d "$(LIBMLX_DIR)" ]; then git clone https://github.com/codam-coding-college/MLX42.git $(LIBMLX_DIR); fi
 	@cmake $(LIBMLX_DIR) -B $(LIBMLX_DIR)/build && make --no-print-directory -C $(LIBMLX_DIR)/build -j4
 
-$(LIBFT):
+$(LIBFT): phony
 	@if [ ! -d "$(LIBFT_DIR)" ]; then git clone $(LIBFT_GIT) $(LIBFT_DIR); fi
-	@make --no-print-directory -C $(LIBFT_DIR)
+	make --no-print-directory -C $(LIBFT_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
@@ -82,12 +82,17 @@ clean:
 	@if [ -d "$(LIBMLX_DIR)" ]; then make clean -C $(LIBMLX_DIR)/build; fi
 	@echo "$(BBLUE) Cleaned .o files $(RESET_COLOR)"
 
-fclean: clean
-	@make fclean -C $(LIBFT_DIR)
-	@rm -rf $(LIBMLX_DIR) $(LIBFT_DIR)
-	rm -rf $(NAME)
-	@echo "$(BBLUE) Cleaned all $(RESET_COLOR)"
+fclean:
+	@if [ -f "$(NAME)" ] || [ -d "$(OBJ_DIR)" ] || [ -d "$(LIBFT_DIR)" ] || [ -d "$(LIBMLX_DIR)" ]; then \
+		if [ -d "$(OBJ_DIR)" ]; then rm -rf "$(OBJ_DIR)"; fi; \
+		if [ -d "$(LIBFT_DIR)" ]; then make -s fclean -C "$(LIBFT_DIR)"; rm -rf "$(LIBFT_DIR)"; fi; \
+		if [ -d "$(LIBMLX_DIR)" ]; then make -s clean -C "$(LIBMLX_DIR)/build"; rm -rf "$(LIBMLX_DIR)"; fi; \
+		if [ -f "$(NAME)" ]; then rm -rf "$(NAME)"; fi; \
+		echo "$(BBLUE) Cleaned all $(RESET_COLOR)"; \
+	else \
+		echo "$(BCYAN) Nothing to clean. Everything looks tidy. $(RESET_COLOR)"; \
+	fi;
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re phony
