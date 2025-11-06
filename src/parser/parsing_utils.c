@@ -156,44 +156,42 @@ int	create_new_node(void *head, void *current, t_list_id id, size_t size)
 }
 
 /*
-// NOTE: alternate version with local double pointers
-// FIXME: delete this when not used anymore!
-static int	create_new_node(void **head, void **current, t_list_id list_id)
+ * deprecated? newer version is also good for maximum lights...
+static bool	is_valid_n_objects(t_parser *parser)
 {
-	t_node_light 	**light;
-	t_node_obj		**obj;
+	int	n_objects;
 
-	if (list_id == LIGHT)
+	n_objects = parser->n_spheres + parser->n_planes + parser->n_cylinders;
+	if (n_objects == INT_MAX)
 	{
-		*light = (t_node_obj *) ft_calloc(1, sizeof(t_node_light));
-		if (!*light)
-			return (-1);
-		
+		ft_putstr_fd("Error\nToo many objects provided by input file. "
+			"Only up to INT_MAX objects are accepted.\n", 2);
+		return (0);
 	}
-	else
-	{
-		*obj = (t_node_obj *) ft_calloc(1, sizeof(t_node_obj));
-		if (!*obj)
-			return (-1);
-	}
-
-
-
-
-	if (list_id == LIGHT)
-		*current = (t_node_light *) *current;
-	else
-		*current = (t_node_obj *) *current;
-
-	if (!*head)
-	{
-
-
-	}
-
-
+	return (1);
 }
 */
+
+bool	is_valid_n_elements(t_parser *parser, t_list_id id)
+{
+	int	n_elements;
+
+	if (id == OBJECT)
+		n_elements = parser->n_spheres + parser->n_planes + parser->n_cylinders;
+	else
+		n_elements = parser->n_lights;
+	if (n_elements == INT_MAX)
+	{
+		if (id == OBJECT)
+			ft_putstr_fd("Error\nToo many objects provided by input file. "
+				"Only up to INT_MAX objects are accepted.\n", 2);
+		else
+			ft_putstr_fd("Error\nToo many light sources provided by input "
+				"file. Only up to INT_MAX lights are accepted.\n", 2);
+		return (0);
+	}
+	return (1);
+}
 
 bool	is_within_range_vector(t_vec *vec, size_t line_num)
 {

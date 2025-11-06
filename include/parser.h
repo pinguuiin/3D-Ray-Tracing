@@ -117,6 +117,7 @@ bool	is_valid_separator(char	**str, size_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
 int		create_new_node(void *head, void *current, t_list_id id, size_t size);
+bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 
 // error messaging and memory management
