@@ -10,7 +10,7 @@ RESET_COLOR=\033[0m
 
 NAME = miniRT
 CC = cc
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS = -Wall -Wextra -Werror -g -O3 -ffast-math -march=native -flto
 
 LIBS = -ldl -lglfw -pthread -lm
 

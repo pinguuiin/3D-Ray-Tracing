@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-t_vec	vec3(double x, double y, double z)
+inline t_vec	vec3(double x, double y, double z)
 {
 	t_vec	v;
 
@@ -22,7 +22,7 @@ t_vec	vec3(double x, double y, double z)
 	return (v);
 }
 
-t_vec	scale(t_vec a, double k)
+inline t_vec	scale(t_vec a, double k)
 {
 	t_vec	v;
 
@@ -32,12 +32,12 @@ t_vec	scale(t_vec a, double k)
 	return (v);
 }
 
-double	norm(t_vec a)
+inline double	norm(t_vec a)
 {
 	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
 }
 
-t_vec	normalize(t_vec a)
+inline t_vec	normalize(t_vec a)
 {
 	double	len;
 
@@ -47,7 +47,7 @@ t_vec	normalize(t_vec a)
 	return (scale(a, 1.0 / len));
 }
 
-t_vec	add(t_vec a, t_vec b)
+inline t_vec	add(t_vec a, t_vec b)
 {
 	t_vec	v;
 
@@ -57,7 +57,7 @@ t_vec	add(t_vec a, t_vec b)
 	return (v);
 }
 
-t_vec	subtract(t_vec a, t_vec b)
+inline t_vec	subtract(t_vec a, t_vec b)
 {
 	t_vec	v;
 
@@ -67,7 +67,7 @@ t_vec	subtract(t_vec a, t_vec b)
 	return (v);
 }
 
-double	dot(t_vec a, t_vec b)
+inline double	dot(t_vec a, t_vec b)
 {
 	double	product;
 
@@ -75,7 +75,7 @@ double	dot(t_vec a, t_vec b)
 	return (product);
 }
 
-t_vec	cross(t_vec a, t_vec b)
+inline t_vec	cross(t_vec a, t_vec b)
 {
 	t_vec	v;
 
@@ -85,7 +85,7 @@ t_vec	cross(t_vec a, t_vec b)
 	return (v);
 }
 
-// t_vec	divide(t_vec a, t_vec b)
+// inline t_vec	divide(t_vec a, t_vec b)
 // {
 // 	t_vec	v;
 
@@ -96,7 +96,7 @@ t_vec	cross(t_vec a, t_vec b)
 // 	return (v);
 // }
 
-t_vec	dot_elem(t_vec a, t_vec b)
+inline t_vec	dot_elem(t_vec a, t_vec b)
 {
 	t_vec	v;
 

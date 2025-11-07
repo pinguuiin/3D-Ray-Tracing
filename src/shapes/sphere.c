@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-double	ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc)
+inline double	ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc)
 {
 	t_discrim	f;
 

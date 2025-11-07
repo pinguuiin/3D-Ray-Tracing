@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, double h)
+inline double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, double h)
 {
 	if (is_upper_disk > 0.0)
 		oc_n -= h;
@@ -22,7 +22,7 @@ double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, double h)
 }
 
 /* ray shooting from outside the infinite cylinder */
-double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
+inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 {
 	double	hit_h[2];
 
@@ -39,7 +39,7 @@ double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 }
 
 /* ray shooting from inside the infinite cylinder */
-double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
+inline double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 {
 	double	hit_h;
 
@@ -58,7 +58,7 @@ double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 	return (hit_flat_disk(f.oc_n, f.oc_n, f.ray_n, cy->h));
 }
 
-double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
+inline double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
 {
 	if (f.c > -EPSILON)  // shooting outside
 		return (-1.0);
@@ -76,7 +76,7 @@ double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
 	return (-1.0);
 }
 
-double	ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc)
+inline double	ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc)
 {
 	t_discrim	f;
 

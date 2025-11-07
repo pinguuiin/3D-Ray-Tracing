@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
+static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 {
 	int			id;
 	double		k;
@@ -36,7 +36,7 @@ bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 	return (false);
 }
 
-void	get_hit_normal(t_object *obj, t_hit *hit)
+static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
@@ -57,7 +57,7 @@ void	get_hit_normal(t_object *obj, t_hit *hit)
 		hit->normal = obj->normal;
 }
 
-void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
+inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
 {
 	double	flux;
 	double	spec;
@@ -85,7 +85,7 @@ Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 => Specular term is counted when both terms' dot products greater than 0;
 Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 */
-t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
+inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	int			i;
 	t_light		*light;

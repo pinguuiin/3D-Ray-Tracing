@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
 {
 	double	k;
 	double	k_min;
@@ -40,7 +40,7 @@ double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
 	return (k_min);
 }
 
-void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+static void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
 	double		k;
 	t_object	*obj;
