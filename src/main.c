@@ -49,6 +49,7 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
 
+	// FIXME: 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
 		mlx_close_window(info->mlx);
