@@ -200,20 +200,28 @@ static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj)
 
 static int	check_validity_of_scene(t_parser *parser)
 {
-	if (!parser->n_lights)
+	int	n_objects;
+
+	n_objects = parser->n_spheres + parser->n_planes + parser->n_cylinders;
+	if (!parser->n_lights || !parser->n_cams || !n_objects)
 	{
-		ft_putstr_fd("Error\nScene description file has no light source.\n", 2);
-		return (INVALID_INPUT);
-	}
-	if (!parser->n_cams)
-	{
-		ft_putstr_fd("Error\nIncomplete file provided: no camera found.\n", 2);
-		return (INVALID_INPUT);
-	}
-	if (!(parser->n_spheres + parser->n_planes + parser->n_cylinders))
-	{
-		ft_putstr_fd("Error\nProvided scene has no objects. At least one "
-			"object should be proposed for the scene to be rendered.\n", 2);
+		if (!parser->n_lights && !parser->n_cams && !n_objects)
+			ft_putstr_fd("Error\nAll crucial elements are missing from scene - "
+				"no camera, no light source and no object found!\n", 2);
+		else if (!parser->n_lights && !parser->n_cams)
+			ft_putstr_fd("Error\n"
+				"Scene description file has no light source nor camera.\n", 2);
+		else if (!parser->n_cams && !n_objects)
+			ft_putstr_fd("Error\nInput file has no camera nor object.\n", 2);
+		else if (!parser->n_lights && !n_objects)
+			ft_putstr_fd("Error\nNo object nor light source detected.\n", 2);
+		else if (!parser->n_lights)
+			ft_putstr_fd("Error\nInput .rt file has no light source.\n", 2);
+		else if (!parser->n_cams)
+			ft_putstr_fd("Error\nIncomplete file: no camera found.\n", 2);
+		else if (!n_objects)
+			ft_putstr_fd("Error\nProvided scene has no objects. At least one "
+				"object should be proposed for the scene to be rendered.\n", 2);
 		return (INVALID_INPUT);
 	}
 	return (NO_ERROR);

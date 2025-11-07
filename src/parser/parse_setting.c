@@ -185,6 +185,8 @@ int	parse_light(t_parser *parser, char *str)
 		}
 		else	// no color provided by input for 'light', so set it to white
 			apply_ratio_to_color(&light->color, ratio, 0);
+		if (!is_valid_n_elements(parser, LIGHT))
+			return (INVALID_INPUT);
 		parser->n_lights++; // keep count of valid lights
 		return (NO_ERROR);
 	}

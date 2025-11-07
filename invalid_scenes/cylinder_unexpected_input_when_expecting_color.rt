@@ -1,0 +1,78 @@
+
+# CAMERA:
+
+#camera				camera's location					camera's direction			Field of View
+C					-50,82.5,-50						0.5,-0.8,0.5				30
+
+
+
+
+
+
+
+
+# LIGHTS:
+
+#ambient light		ratio (brightness)					color (RGB)
+A					0.2									255,255,255
+
+
+
+
+
+
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					0,15,15								1                    							255,0,0
+
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					-12.99,15,-7.5						1												0,255,0
+
+
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					12.99,15,-7.5						1												0,0,255
+
+
+
+
+
+
+
+
+
+
+
+
+# OBJECTS:
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					0,2.5,0								5												128,128,128
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					14.7,8.7,9							10												10,10,89
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					15,3.13,-10.111						5												230,33,20
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-8,3.13,-20.111						7												200,33,200
+
+
+
+
+#plane				location of a point on the plane	normal to the plane (perpendicular vector)		color (RGB)
+ pl					0,0,0								0,1,0											200,200,200
+
+
+
+
+#cylinder			cylinder's center location			axis vector		diameter		height			color (RGB)
+ cy					5.0,0.4,20.6						0.0,0.0,1.0		14.2			21.42			10,0,255
+
+#cylinder			cylinder's center location			axis vector		diameter		height			color (RGB)
+ cy					25.0,4.3,19							0.7,-.990,-.5	8.2				8.42			255,100,255
+
+#cylinder			cylinder's center location			axis vector		diameter		height			color (RGB)
+ cy					-33,32.13,-17.111					0.7,-.3,-.9		6.2				5.42			&103,100,210

@@ -1,0 +1,5 @@
+# this light does not have a color value: 
+# This is accepted by the mandatory part, since it is not supposed to use
+# the color values, so it is OK not to have any.
+# Camera and object are missing from the file, however!
+	 L    	 -40.0, +3,-0.2143         +0.199 
