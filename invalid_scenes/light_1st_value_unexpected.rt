@@ -1,0 +1,27 @@
+# this camera input might look odd, but it is valid.
+# When expecting a series of 3 values, such as vector values, coordinates or
+# RGB color channels, miniRT accepts a comma between them - but also a comma
+# followed by a space.
+C        -234.243,0.1341, 44.133412 0.9342, 0.343,-1.0 0
+
+
+sp 	.0,0.0,20.6		12.6	 10,0,255
+
+
+
+A 				0.9        232, 211, 100
+
+
+
+
+
+pl	 0.0,0.0,-10.0		0.0,1.0,0.0		0,0,225
+
+
+
+
+
+
+# invalid 1st argument
+L	~  -40.0,50.0,0.0		0.6 	 	10,0,255
+
