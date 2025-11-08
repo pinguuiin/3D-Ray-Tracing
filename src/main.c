@@ -49,16 +49,15 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
 
-	// FIXME: 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
 		mlx_close_window(info->mlx);
-	else if (keydata.key == MLX_KEY_LEFT || keydata.key == MLX_KEY_RIGHT
-		|| keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
-		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z)
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
+		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
 		move_camera(keydata, info);
-	else if (keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S
-		|| keydata.key == MLX_KEY_A || keydata.key == MLX_KEY_D)
+	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
 		rotate_camera(keydata, info);
 }
 

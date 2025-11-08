@@ -40,7 +40,7 @@ inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj
 	return (k_min);
 }
 
-static void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
 	double		k;
 	t_object	*obj;

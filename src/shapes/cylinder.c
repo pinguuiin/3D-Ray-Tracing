@@ -22,7 +22,7 @@ inline double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, dou
 }
 
 /* ray shooting from outside the infinite cylinder */
-inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
+static inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 {
 	double	hit_h[2];
 
@@ -39,7 +39,7 @@ inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 }
 
 /* ray shooting from inside the infinite cylinder */
-inline double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
+static inline double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec oc)
 {
 	double	hit_h;
 

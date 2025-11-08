@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-void	move_camera(mlx_key_data_t keydata, t_info *info)
+inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
 	if (keydata.key == MLX_KEY_D)
 		info->cam.pos.x += 0.2;

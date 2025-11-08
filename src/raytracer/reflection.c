@@ -57,7 +57,7 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 		hit->normal = obj->normal;
 }
 
-inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
+static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
 {
 	double	flux;
 	double	spec;
