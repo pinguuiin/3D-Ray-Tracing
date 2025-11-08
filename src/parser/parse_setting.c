@@ -37,7 +37,7 @@ int	parse_ambient_lighting(t_color *amb, char *str, t_parser *parser)
 		return (INVALID_INPUT);
 	if (ratio < 0.0 || ratio > 1.0)
 	{
-		display_parsing_error("Value provided for light source's brightness "
+		display_parsing_error("Value provided for ambient lighting's brightness "
 			"is out of range. Allowed range: 0.0 to 1.0. See line", parser->line_num);
 		return (INVALID_INPUT);
 	}
@@ -215,8 +215,8 @@ static inline double	str_degrees_to_radians(char **str, size_t line_num)
 		angle = angle * 10 + *s - '0';
 		if (angle > 180)
 		{
-			display_parsing_error("Unknown input when expecting an angle value "
-				"between 0 and 180, on line number", line_num);
+			display_parsing_error("Camera's field of view is beyond accepted "
+				"range [0,180], on line", line_num);
 			return (-1.0);
 		}
 		s++;
