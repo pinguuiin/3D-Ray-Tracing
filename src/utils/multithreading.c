@@ -82,7 +82,6 @@ void	render_routine(void *ptr)
 	painter->is_done = 1;
 	// TODO: outer layer of loop should go all the way here.
 }
-	// TODO: add a joining of threads function.
 
 
 
