@@ -71,6 +71,11 @@ void	renderer(void *param)
 
 	info = (t_info *)param;
 	info->is_inside = false;
+
+
+	create_threads();
+
+
 	x = 0;
 	while (x < info->img->width)
 	{

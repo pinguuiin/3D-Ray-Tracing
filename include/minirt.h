@@ -92,11 +92,13 @@ typedef struct s_info
 	int			n_obj;
 	bool		is_inside;
 
+	pthread_t	threads[5];
+
 }	t_info;
 
 t_info		*get_info(void);
-int			free_exit(char *s);
 void		resize(int32_t width, int32_t height, void *param);
+int			free_exit(char *s, int exit_code);
 
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
