@@ -228,7 +228,7 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 		return (INVALID_INPUT);
 	if (cylinder->h < EPSILON)
 	{
-		display_parsing_error("Height of cylinder is nonexistent or negative; "
+		display_parsing_error("Height of cylinder is practically nonexistent; "
 			"Unable to render object. See line:", line_num);
 		return (INVALID_INPUT);
 	}
