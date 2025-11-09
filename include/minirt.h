@@ -20,6 +20,8 @@
 # define KD 0.5
 # define SHININESS 30
 
+# define N_THREADS 5
+
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"
 # include "vector.h"
@@ -74,6 +76,16 @@ typedef struct s_object
 
 }	t_object;
 
+typedef struct s_painter
+{
+	p_thread	painter;
+	t_info		*p_info;
+	int			x;
+	int			border_x;
+	bool		is_done;
+
+}	t_painter;
+
 /* Struct that includes everything */
 typedef struct s_info
 {
@@ -92,7 +104,8 @@ typedef struct s_info
 	int			n_obj;
 	bool		is_inside;
 
-	pthread_t	threads[5];
+	t_painter	threads[N_THREADS];
+	atomic_bool	should_render;
 
 }	t_info;
 

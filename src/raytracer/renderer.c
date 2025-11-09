@@ -64,18 +64,20 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 void	renderer(void *param)
 {
 	t_info		*info;
-	int			x;
-	int			y;
 	t_vec		ray;
+	// int			x;
+	// int			y;
 
 
 	info = (t_info *)param;
 	info->is_inside = false;
 
 
-	create_threads();
+	init_threads(info);
 
+	// TODO: check that all threads are done (by combining their "is_done" variables?)
 
+	/*
 	x = 0;
 	while (x < info->img->width)
 	{
@@ -91,4 +93,7 @@ void	renderer(void *param)
 		}
 		x++;
 	}
+	*/
+
+	// TODO: add a joining of threads function.
 }
