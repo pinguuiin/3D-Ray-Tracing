@@ -30,6 +30,16 @@
 # include <math.h>
 # include <stdbool.h>
 
+
+enum e_exit_code
+{
+	SUCCESS			=	0,
+	MLX_FAILURE		=	1,
+	INPUT_ERROR		=	2,
+	SYSTEM_FAILURE	=	3
+
+};
+
 /* Type of object */
 typedef enum e_type
 {
@@ -78,7 +88,7 @@ typedef struct s_object
 
 typedef struct s_painter
 {
-	p_thread	painter;
+	pthread_t	painter;
 	t_info		*p_info;
 	int			x;
 	int			border_x;

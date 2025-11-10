@@ -63,17 +63,48 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 
 void	renderer(void *param)
 {
-	t_info		*info;
+	t_info		info;
 	t_vec		ray;
-	// int			x;
-	// int			y;
+	int			n_tasks_done;
+	int			i;
+	p_thread_t
+	// int		x;
+	// int		y;
 
 
 	info = (t_info *)param;
 	info->is_inside = false;
 
+	
 
 	init_threads(info);
+
+	// tell the threads to start rendering (first time.)
+	info->should_render = 1;
+
+
+	// WARN: need to ask someone about this:
+	// should I rather use a mutex, so that I am certain of a controlled framework
+	// for my threads' synchornicity? Or would that impede on the efficiency and synchornicity?
+
+	// Allow the threads enough time to notice that should_render is 1,
+	// but not too much so that they (or some of them) would end their assigned chunk of the frame
+	// before should_render is reset to 0 ????
+	usleep(20);
+	info->should_render = 0;
+
+	n_tasks_done = 0;
+	i = 0
+	while (n_tasks_done < N_THREADS)
+	{
+		while (i < N_THREADS)
+		{
+			if (info->threads[i].is_done)
+				n_tasks_done++;
+			i++;
+		}
+		i = 0;
+	}
 
 	// TODO: check that all threads are done (by combining their "is_done" variables?)
 

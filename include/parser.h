@@ -30,15 +30,6 @@ typedef enum e_status
 
 }	t_status;
 
-enum e_exit_code
-{
-	SUCCESS			=	0,
-	MLX_FAILURE		=	1,
-	INPUT_ERROR		=	2,
-	SYSTEM_FAILURE	=	3
-
-};
-
 // FIXME: delete this when sure not to use it (only used in order to create_new_node()
 // using the very same function for both linked lists (LIGHT and OBJECT),
 // but I am probably going to abandon that idea, the function is soooo complicated
