@@ -13,6 +13,10 @@
 #include "minirt.h"
 
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
+
+/*
+* NOTE: this was copied to multithreading.c, since called from the routine.
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
 {
 	double	k;
 	double	k_min;
@@ -40,6 +44,7 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_obje
 	return (k_min);
 }
 
+* NOTE: this was copied to multithreading.c, since called from the routine.
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
 	double		k;
@@ -60,50 +65,46 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
+*/
 
 void	renderer(void *param)
 {
-	t_info		info;
-	t_vec		ray;
-	int			n_tasks_done;
-	int			i;
-	p_thread_t
-	// int		x;
-	// int		y;
-
+	t_info		*info;
 
 	info = (t_info *)param;
 	info->is_inside = false;
 
-	
 
-	init_threads(info);
+	// not necessary on the first go around, but maybe useful if everything is within a loop?
+	// atomic_store(&info->n_done_painters, 0);
 
-	// tell the threads to start rendering (first time.)
-	info->should_render = 1;
-
-
-	// WARN: need to ask someone about this:
-	// should I rather use a mutex, so that I am certain of a controlled framework
-	// for my threads' synchornicity? Or would that impede on the efficiency and synchornicity?
-
-	// Allow the threads enough time to notice that should_render is 1,
-	// but not too much so that they (or some of them) would end their assigned chunk of the frame
-	// before should_render is reset to 0 ????
-	usleep(20);
-	info->should_render = 0;
-
-	n_tasks_done = 0;
-	i = 0
-	while (n_tasks_done < N_THREADS)
+	while (!info->exit_flag)
 	{
-		while (i < N_THREADS)
+		// let the threads start rendering
+		if (pthread_mutex_unlock(&info->should_render))
 		{
-			if (info->threads[i].is_done)
-				n_tasks_done++;
-			i++;
+			// TODO: write a message, and set some error flag, but do not exit right away?
+
+
 		}
-		i = 0;
+
+		while (atomic_load(&info->n_done_painters) < N_THREADS)
+		{
+			if (usleep(200) == -1)
+			{
+				// TODO: handle the error!
+
+			}
+		}
+
+		if (pthread_mutex_lock(&info->should_render))
+		{
+			// TODO: handle the error.
+			// remember to unlock
+
+		}
+
+		atomic_store(&info->n_done_painters, 0);
 	}
 
 	// TODO: check that all threads are done (by combining their "is_done" variables?)
@@ -125,6 +126,13 @@ void	renderer(void *param)
 		x++;
 	}
 	*/
+	if (pthread_mutex_unlock(&info->should_render))
+	{
+		// TODO: handle the error.
 
-	// TODO: add a joining of threads function.
+	}
+
+	destroy_threads(info, N_THREADS);
+	mlx_close_window(info->mlx);
+	(void)pthread_mutex_destroy(&info->should_render);
 }

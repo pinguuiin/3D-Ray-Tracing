@@ -10,13 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// WARN: include these headers from the main header, and remove from here.
-#include <pthread.h>
-#include <stdatomic.h>
+#include "minirt.h"
 
-static void	destroy_threads(t_info *info, int i);
-static void	render_routine(void *ptr);
-
+static void	*rendering_routine(void *ptr);
 
 void	init_threads(t_info *info)
 {
@@ -25,10 +21,10 @@ void	init_threads(t_info *info)
 	i = 0;
 	while (i < N_THREADS)
 	{
-		if (pthread_create(&info->threads[i].painter, NULL, &render_routine, info)
+		if (pthread_create(&info->threads[i].painter, NULL, &rendering_routine, info))
 		{
 			destroy_threads(info, i);
-			exit (free_exit("Failed to create a thread; Aborting miniRT", SYSTEM_FAILURE);
+			exit (free_exit("Failed to create a thread; Aborting miniRT.", SYSTEM_FAILURE));
 		}
 		info->threads[i].p_info = info;
 		info->threads[i].x = WIDTH / N_THREADS * i;
@@ -40,22 +36,83 @@ void	init_threads(t_info *info)
 	}
 }
 
+void	init_and_lock_mutual_exclusion_lock(t_info *info)
+{
+	if (pthread_mutex_init(&info->should_render, NULL))
+	{
+		destroy_threads(info, N_THREADS);
+		exit (free_exit("Failed to initialize mutual exclusion object, crucial "
+			"for the threads' safe synchronicity.", SYSTEM_FAILURE));
+	}
+	if (pthread_mutex_lock(&info->should_render))
+	{
+		(void)pthread_mutex_destroy(&info->should_render);
+		destroy_threads(info, N_THREADS);
+		exit (free_exit("Failed to lock mutual exclusion object, crucial "
+			"for the threads' safe synchronicity.", SYSTEM_FAILURE));
+	}
+}
 
-// FIXME: does this function have to be called from within free_exit()?
-// Be mindful of that as the code develops.
-// WARN: could the join_thread() call be combined into the main loop?
-// since it is a cleaning function anyways....
-static void	destroy_threads(t_info *info, int i)
+void	destroy_threads(t_info *info, int i)
 {
 	int	j;
 
 	j = 0;
 	while (j < i)
 	{
-		// WARN: can pthread_join() fail? handle the error if yes.
-		pthread_join(info->threads[j].painter, NULL);
+		if (pthread_join(info->threads[j].painter, NULL))
+			// TODO: at least write some error message....
 		j++;
 	}
+}
+
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
+{
+	double	k;
+	double	k_min;
+	int		id;
+
+	k = -1.0;
+	k_min = -1.0;
+	id = 0;
+	while (id < info->n_obj)
+	{
+		obj = &info->obj[id];
+		if (obj->type == SPHERE)
+			k = ray_hit_sphere(info, ray, obj, obj->oc);
+		else if (obj->type == PLANE)
+			k = ray_hit_plane(ray, obj, obj->oc);
+		else
+			k = ray_hit_cylinder(info, ray, obj, obj->oc);
+		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
+		{
+			k_min = k;
+			hit->obj_id = id;
+		}
+		id++;
+	}
+	return (k_min);
+}
+
+static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+{
+	double		k;
+	t_object	*obj;
+	t_color		color;
+	t_hit		hit;
+
+	obj = NULL;
+	k = nearest_ray_hit(info, ray, &hit, obj);
+	if (k == -1) // not hit
+	{
+		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		return ;
+	}
+	obj = &info->obj[hit.obj_id];
+	color = dot_elem(info->amb, obj->color);
+	if (!info->is_inside)
+		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
+	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
 
@@ -63,11 +120,11 @@ static void	destroy_threads(t_info *info, int i)
 // - how do I organize the threads' routine, so that they know when a frame has ended? use a flag?
 // - how is the renderer() going to quit if something fails / if ESC or the x button has been pressed by the user?
 // - how does each thread know which thread they are from the array?
-static void	render_routine(void *ptr)
+static void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
 	t_info		*info;
-	t_vec		*ray;
+	t_vec		ray;
 	int			temp;
 	int			y;
 
@@ -76,36 +133,51 @@ static void	render_routine(void *ptr)
 	temp = painter->x;
 
 
-	// TODO: add another outer layer of a loop, allowing each painter to restart
-	// from zero once it is time to render a new frame. But this requires an extra
-	// flag from the main process (renderer()).
-	// TODO: the painter will check that flag from time to time, in order to
-	// be able to 'know' if it needs to abort!! I guess this flag should be
-	// set by the key_hooks - ESC && `X` button of the MLX window....
-	
-	while (1) OR while (ESC is not pressd && 'x' button is not pressed) OR while (!exit_flag) ????
-
-	while (!info->should_render)
-		usleep(50);
-	painter->is_done = 0;
-	painter->x = temp;
-	while (painter->x < painter->border_x)
+	while (!info->exit_flag)
 	{
-		y = 0;
-		while (y < HEIGHT)
+		if (pthread_mutex_lock(&info->should_render))  // these lock/unlocks are probably not necessary!
 		{
-			ray = vec3(painter->x * info->px - info->viewport_width / 2.0,
-			-(y * info->px - info->viewport_height / 2.0), 0);
-			rotate(info->rot, &ray);
-			ray = normalize(add(info->cam.direction, ray));
-			draw_pixel(info, ray, painter->x, y);
-			y++;
+			// TODO: handle the error!
+
 		}
-		painter->x++;
+
+
+		if (pthread_mutex_unlock(&info->should_render))
+		{
+			// TODO: handle the error!
+
+		}
+		while (atomic_load(&info->n_done_painters))
+		{
+			if (usleep(200) == -1)
+			{
+				// TODO: handle the error
+
+			}
+		}
+
+		painter->x = temp;
+		while (painter->x < painter->border_x)
+		{
+			y = 0;
+			while (y < HEIGHT)
+			{
+				ray = vec3(painter->x * info->px - info->viewport_width / 2.0,
+				-(y * info->px - info->viewport_height / 2.0), 0);
+				rotate(info->rot, &ray);
+				ray = normalize(add(info->cam.direction, ray));
+				draw_pixel(info, ray, painter->x, y);
+				y++;
+			}
+			painter->x++;
+		}
+
+		atomic_fetch_add(&info->n_done_painters, 1);
+
 	}
-	painter->is_done = 1;
-	// TODO: outer layer of loop should go all the way here.
+	return (NULL);
 }
+
 
 
 

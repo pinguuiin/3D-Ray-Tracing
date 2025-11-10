@@ -39,6 +39,32 @@ int	free_exit(char *s, int exit_code)
 	return (exit_code);
 }
 
+static void	key_handler(mlx_key_data_t keydata, void *param)
+{
+	t_info	*info;
+
+	info = (t_info *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+	{
+		info->exit_flag = 1;
+		// WARN: perhaps these are better off done from renderer(),
+		// now that we have threads to join, a mutex to destroy..... and we
+		// probably do not want the threads still working AFTER the window has
+		// closed... First let them finish, then destroy the mutex, and only
+		// then close the window....
+		//
+		// destroy_threads(info, N_THREADS);
+		// mlx_close_window(info->mlx);
+	}
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
+		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
+		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
+		rotate_camera(keydata, info);
+}
+
 void	initialize_mlx(t_info *info)
 {
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
@@ -72,6 +98,8 @@ int	main(int argc, char *argv[])
 	parse_scene(info, argv[1]);
 
 	preprocessor(info);
+
+	init_threads(info);
 
 	initialize_mlx(info);
 	mlx_resize_hook(info->mlx, &resize, info);

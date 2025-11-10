@@ -31,6 +31,12 @@
 # include <stdbool.h>
 
 
+// multithreading headers
+# include <pthread.h>
+# include <stdatomic.h>
+
+
+
 enum e_exit_code
 {
 	SUCCESS			=	0,
@@ -88,11 +94,10 @@ typedef struct s_object
 
 typedef struct s_painter
 {
-	pthread_t	painter;
-	t_info		*p_info;
-	int			x;
-	int			border_x;
-	bool		is_done;
+	pthread_t		painter;
+	struct s_info	*p_info;
+	int				x;
+	int				border_x;
 
 }	t_painter;
 
@@ -114,8 +119,10 @@ typedef struct s_info
 	int			n_obj;
 	bool		is_inside;
 
-	t_painter	threads[N_THREADS];
-	atomic_bool	should_render;
+	t_painter			threads[N_THREADS];
+	pthread_mutex_t		should_render;
+	atomic_int_fast32_t	n_done_painters;
+	atomic_bool			exit_flag;
 
 }	t_info;
 
@@ -145,5 +152,10 @@ void		key_handler(mlx_key_data_t keydata, void *param);
 void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
+
+// multithreading
+void		init_threads(t_info *info);
+void		destroy_threads(t_info *info, int i);
+void		init_and_lock_mutual_exclusion_lock(t_info *info);
 
 #endif
