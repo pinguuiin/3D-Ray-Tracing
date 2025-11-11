@@ -74,14 +74,13 @@ void	renderer(void *param)
 	info = (t_info *)param;
 	info->is_inside = false;
 
-
-	// not necessary on the first go around, but maybe useful if everything is within a loop?
-	// atomic_store(&info->n_done_painters, 0);
-
-	while (!info->exit_flag)
+	while (!atomic_load(&info->exit_flag))
 	{
+		
+		atomic_store(&info->n_done_painters, 0);
+
 		// let the threads start rendering
-		if (pthread_mutex_unlock(&info->should_render))
+		if (pthread_mutex_unlock(&info->render_lock))
 		{
 			// TODO: write a message, and set some error flag, but do not exit right away?
 
@@ -95,16 +94,17 @@ void	renderer(void *param)
 				// TODO: handle the error!
 
 			}
+			if (!atomic_load(&info->exit_flag))
+				break ;
 		}
 
-		if (pthread_mutex_lock(&info->should_render))
+		if (pthread_mutex_lock(&info->render_lock))
 		{
 			// TODO: handle the error.
 			// remember to unlock
 
 		}
 
-		atomic_store(&info->n_done_painters, 0);
 	}
 
 	// TODO: check that all threads are done (by combining their "is_done" variables?)
@@ -126,13 +126,13 @@ void	renderer(void *param)
 		x++;
 	}
 	*/
-	if (pthread_mutex_unlock(&info->should_render))
+	if (pthread_mutex_unlock(&info->render_lock))
 	{
 		// TODO: handle the error.
 
 	}
 
-	destroy_threads(info, N_THREADS);
-	mlx_close_window(info->mlx);
-	(void)pthread_mutex_destroy(&info->should_render);
+	let_threads_finish(info, N_THREADS);
+	mlx_close_window(info->mlx); // WARN: should this be rather integrated into free_exit()?
+	unlock_mutex_if_locked_and_destroy(&info->render_lock, 0);
 }

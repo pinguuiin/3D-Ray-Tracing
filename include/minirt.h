@@ -36,7 +36,15 @@
 # include <stdatomic.h>
 
 
-
+/*
+* Exit codes:
+* 1: MLX function failures
+* 2: invalid input - unexpected argument or misconfigured .rt file
+* 3: fatal system error during parsing, such as failures of open(), malloc(),
+* 		read(), close() and pthread_create() functions, or buffer for
+* 		get_next_line_revised() is predefined as empty.
+* 0: If program runs smoothly
+*/
 enum e_exit_code
 {
 	SUCCESS			=	0,
@@ -96,7 +104,7 @@ typedef struct s_painter
 {
 	pthread_t		painter;
 	struct s_info	*p_info;
-	int				x;
+	int				start_x;
 	int				border_x;
 
 }	t_painter;
@@ -120,7 +128,7 @@ typedef struct s_info
 	bool		is_inside;
 
 	t_painter			threads[N_THREADS];
-	pthread_mutex_t		should_render;
+	pthread_mutex_t		render_lock;
 	atomic_int_fast32_t	n_done_painters;
 	atomic_bool			exit_flag;
 
@@ -154,8 +162,10 @@ void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
 
 // multithreading
+void		init_and_lock_mutual_exclusion_object(t_info *info);
 void		init_threads(t_info *info);
-void		destroy_threads(t_info *info, int i);
-void		init_and_lock_mutual_exclusion_lock(t_info *info);
+void		unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
+				 bool is_locked);
+void		let_threads_finish(t_info *info, int i);
 
 #endif

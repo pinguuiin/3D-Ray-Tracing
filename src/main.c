@@ -20,6 +20,8 @@ t_info	*get_info(void)
 	return (&info);
 }
 
+// WARN: do we need to close the window from here, before calling mlx_delete_image()
+// and mlx_terminate()?
 int	free_exit(char *s, int exit_code)
 {
 	t_info	*info;
@@ -46,7 +48,7 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
 	{
-		info->exit_flag = 1;
+		atomic_store(&info->exit_flag, 1);
 		// WARN: perhaps these are better off done from renderer(),
 		// now that we have threads to join, a mutex to destroy..... and we
 		// probably do not want the threads still working AFTER the window has
@@ -67,27 +69,39 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 
 void	initialize_mlx(t_info *info)
 {
+	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
+	{
+		/*
+		atomic_store(&info->exit_flag, 1);
+		unlock_mutex_if_locked_and_destroy(&info->render_lock, 1);
+		let_threads_finish(info, N_THREADS);
+		*/
 		exit(free_exit("Instance initialization failed", MLX_FAILURE));
-
+	}
 	info->img = mlx_new_image(info->mlx, WIDTH, HEIGHT);
 	if (!info->img)
+	{
+		/*
+		atomic_store(&info->exit_flag, 1);
+		unlock_mutex_if_locked_and_destroy(&info->render_lock, 1);
+		let_threads_finish(info, N_THREADS);
+		*/
 		exit(free_exit("Image buffer creation failed", MLX_FAILURE));
+	}
 	if (mlx_image_to_window(info->mlx, info->img, 0, 0) == -1)
+	{
+		/*
+		atomic_store(&info->exit_flag, 1);
+		unlock_mutex_if_locked_and_destroy(&info->render_lock, 1);
+		let_threads_finish(info, N_THREADS);
+		*/
 		exit(free_exit("Pushing image to window failed", MLX_FAILURE));
+	}
 }
 
 
-/*
-* Return Values:
-* 1: MLX function failures (WARN: not sure about this one!)
-* 2: invalid input - unexpected argument or misconfigured .rt file
-* 3: fatal system error during parsing, such as failures of open(), malloc(),
-* 		read(), close() and pthread_create() functions, or buffer for
-* 		get_next_line_revised() is predefined as empty.
-* 0: If program runs smoothly
-*/
 int	main(int argc, char *argv[])
 {
 	t_info	*info;
@@ -99,10 +113,12 @@ int	main(int argc, char *argv[])
 
 	preprocessor(info);
 
-	init_threads(info);
-
 	initialize_mlx(info);
 	mlx_resize_hook(info->mlx, &resize, info);
+
+	init_threads(info);
+
+
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);
