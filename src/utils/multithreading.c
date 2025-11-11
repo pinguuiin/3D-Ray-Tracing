@@ -13,6 +13,8 @@
 #include "minirt.h"
 
 static void	*rendering_routine(void *ptr);
+static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y);
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
 
 void	init_threads(t_info *info)
 {
@@ -64,55 +66,6 @@ void	destroy_threads(t_info *info, int i)
 			// TODO: at least write some error message....
 		j++;
 	}
-}
-
-inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
-{
-	double	k;
-	double	k_min;
-	int		id;
-
-	k = -1.0;
-	k_min = -1.0;
-	id = 0;
-	while (id < info->n_obj)
-	{
-		obj = &info->obj[id];
-		if (obj->type == SPHERE)
-			k = ray_hit_sphere(info, ray, obj, obj->oc);
-		else if (obj->type == PLANE)
-			k = ray_hit_plane(ray, obj, obj->oc);
-		else
-			k = ray_hit_cylinder(info, ray, obj, obj->oc);
-		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
-		{
-			k_min = k;
-			hit->obj_id = id;
-		}
-		id++;
-	}
-	return (k_min);
-}
-
-static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
-{
-	double		k;
-	t_object	*obj;
-	t_color		color;
-	t_hit		hit;
-
-	obj = NULL;
-	k = nearest_ray_hit(info, ray, &hit, obj);
-	if (k == -1) // not hit
-	{
-		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
-		return ;
-	}
-	obj = &info->obj[hit.obj_id];
-	color = dot_elem(info->amb, obj->color);
-	if (!info->is_inside)
-		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
-	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 
 
@@ -178,10 +131,52 @@ static void	*rendering_routine(void *ptr)
 	return (NULL);
 }
 
+static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+{
+	double		k;
+	t_object	*obj;
+	t_color		color;
+	t_hit		hit;
 
+	obj = NULL;
+	k = nearest_ray_hit(info, ray, &hit, obj);
+	if (k == -1) // not hit
+	{
+		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		return ;
+	}
+	obj = &info->obj[hit.obj_id];
+	color = dot_elem(info->amb, obj->color);
+	if (!info->is_inside)
+		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
+	mlx_put_pixel(info->img, x, y, vec_to_color(color));
+}
 
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
+{
+	double	k;
+	double	k_min;
+	int		id;
 
-
-
-
+	k = -1.0;
+	k_min = -1.0;
+	id = 0;
+	while (id < info->n_obj)
+	{
+		obj = &info->obj[id];
+		if (obj->type == SPHERE)
+			k = ray_hit_sphere(info, ray, obj, obj->oc);
+		else if (obj->type == PLANE)
+			k = ray_hit_plane(ray, obj, obj->oc);
+		else
+			k = ray_hit_cylinder(info, ray, obj, obj->oc);
+		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
+		{
+			k_min = k;
+			hit->obj_id = id;
+		}
+		id++;
+	}
+	return (k_min);
+}
 
