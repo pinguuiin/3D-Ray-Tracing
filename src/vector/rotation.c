@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-void	rotate_x(t_vec *vec, double theta)
+inline void	rotate_x(t_vec *vec, double theta)
 {
 	double	temp;
 
@@ -21,7 +21,7 @@ void	rotate_x(t_vec *vec, double theta)
 	vec->z = vec->z * cos(theta) + temp * sin(theta);
 }
 
-void	rotate_y(t_vec *vec, double theta)
+inline void	rotate_y(t_vec *vec, double theta)
 {
 	double	temp;
 
@@ -30,7 +30,7 @@ void	rotate_y(t_vec *vec, double theta)
 	vec->z = vec->z * cos(theta) - temp * sin(theta);
 }
 
-void	rotate_z(t_vec *vec, double theta)
+inline void	rotate_z(t_vec *vec, double theta)
 {
 	double	temp;
 
@@ -42,7 +42,7 @@ void	rotate_z(t_vec *vec, double theta)
 /* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
 new up (u) is the unit vector of r x f */
-void	get_rotation_matrix(t_info *info, t_vec v)
+inline void	get_rotation_matrix(t_info *info, t_vec v)
 {
 	t_vec	up;
 	t_vec	f;
@@ -72,7 +72,7 @@ void	get_rotation_matrix(t_info *info, t_vec v)
 	info->rot[2][2] = f.z;
 }
 
-void	rotate(double rot[3][3], t_vec *v1)
+inline void	rotate(double rot[3][3], t_vec *v1)
 {
 	t_vec	v2;
 

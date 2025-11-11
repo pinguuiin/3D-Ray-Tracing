@@ -22,7 +22,7 @@ uint8_t	clamp(double single_channel_color)
 		return ((uint8_t)single_channel_color);
 }
 
-uint32_t	vec_to_color(t_vec color)
+inline uint32_t	vec_to_color(t_vec color)
 {
 	uint8_t	r;
 	uint8_t	g;

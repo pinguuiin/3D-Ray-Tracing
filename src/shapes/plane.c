@@ -17,7 +17,7 @@ f.a = 0, camera on the plane, ray hit, k=0;
 f.a != 0, f.b = 0, ray parallel to the plane, not hit
 f.a != 0, f.b != 0, root > 0, ray hit
 */
-double	ray_hit_plane(t_vec ray, t_object *plane, t_vec oc)
+inline double	ray_hit_plane(t_vec ray, t_object *plane, t_vec oc)
 {
 	t_discrim	f;
 
