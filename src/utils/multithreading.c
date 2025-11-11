@@ -103,16 +103,6 @@ static void	*rendering_routine(void *ptr)
 			// TODO: handle the error!
 
 		}
-		while (atomic_load(&info->n_done_painters))
-		{
-			if (usleep(200) == -1)
-			{
-				// TODO: handle the error
-
-			}
-			if (atomic_load(&info->exit_flag))
-				return (NULL);
-		}
 
 		x = painter->start_x;
 		while (x < painter->border_x)
