@@ -58,8 +58,7 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	if (sphere->r < EPSILON)  // No need to use fabs() here, since a negative value does not make sense for the diameter.
 	{
 		display_parsing_error("Unable to render sphere: diameter provided "
-			"has to be a positive value, for it to be a valid sphere.\n"
-			"See line:", line_num);
+			"has to be a positive value, not too close to zero. See line:", line_num);
 		return (INVALID_INPUT);
 	}
 	sphere->r *= 0.5; // convert diameter to radius.
@@ -213,8 +212,7 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 	if (cylinder->r < EPSILON)
 	{
 		display_parsing_error("Unable to render cylinder: diameter provided "
-			"has to be a positive value, for it to be a valid cylinder.\n"
-			"See line:", line_num);
+			"has to be a positive value, not too close to zero. See line:", line_num);
 		return (INVALID_INPUT);
 	}
 	cylinder->r *= 0.5;
@@ -230,9 +228,8 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 		return (INVALID_INPUT);
 	if (cylinder->h < EPSILON)
 	{
-		display_parsing_error("Unable to render cylinder: height provided "
-			"has to be a positive value, for it to be a valid cylinder.\n"
-			"See line:", line_num);
+		display_parsing_error("Height of cylinder is practically nonexistent; "
+			"Unable to render object. See line:", line_num);
 		return (INVALID_INPUT);
 	}
 	cylinder->h *= 0.5;
