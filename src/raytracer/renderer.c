@@ -67,6 +67,42 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 }
 */
 
+
+/*
+ * TODO: # ifdef MANDATORY ? use this original single threaded function, else
+ * use the multithreaded one below...
+void	renderer(void *param)
+{
+	t_info		*info;
+	int			x;
+	int			y;
+	t_vec		ray;
+
+
+	info = (t_info *)param;
+	info->is_inside = false;
+	x = 0;
+	while (x < WIDTH)
+	{
+		y = 0;
+		while (y < HEIGHT)
+		{
+			ray = vec3(x * info->px - info->viewport_width / 2.0,
+			-(y * info->px - info->viewport_height / 2.0), 0);
+			rotate(info->rot, &ray);
+			ray = normalize(add(info->cam.direction, ray));
+			draw_pixel(info, ray, x, y);
+			y++;
+		}
+		x++;
+	}
+}
+*/
+
+//  TODO: # ifdef BONUS ???
+//
+//  TODO: remove the mutex. replace with pthread_barrier() or something like that.
+//  Use atomic variables and flags.
 void	renderer(void *param)
 {
 	t_info		*info;
