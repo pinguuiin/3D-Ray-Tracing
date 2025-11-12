@@ -16,6 +16,7 @@ static void			*rendering_routine(void *ptr);
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y);
 inline double		nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
 
+/*
 void	init_and_lock_mutual_exclusion_object(t_info *info)
 {
 	if (pthread_mutex_init(&info->render_lock, NULL))
@@ -28,7 +29,15 @@ void	init_and_lock_mutual_exclusion_object(t_info *info)
 			"for the threads' safe synchronicity.", SYSTEM_FAILURE));
 	}
 }
+*/
 
+void	init_barrier_for_threads(t_info *info)
+{
+	if (pthread_barrier_init(&info->frame_barrier, NULL, N_THREADS))
+		info->is_multithread = 0;
+	else
+		info->is_multithread = 1;
+}
 
 void	init_threads(t_info *info)
 {
@@ -37,16 +46,17 @@ void	init_threads(t_info *info)
 	i = 0;
 	while (i < N_THREADS)
 	{
-		if (pthread_create(&info->threads[i].painter, NULL, &rendering_routine, &info->threads[i]))
+		if (pthread_create(&info->threads[i].painter, NULL, &rendering_routine,
+				&info->threads[i]))
 		{
-			atomic_store(&info->exit_flag, 1);
-			if (pthread_mutex_unlock(&info->render_lock)) // have to do this first as the created threads will want a piece of the lock first! Should not destroy the lock to early, while some thread might be trying to lock it.
-			{
-				// TODO: handle the error
-			}
+			atomic_store(&info->exit_flag, 1); // signals to the other threads that they should return.
 			let_threads_finish(info, i);
-			unlock_mutex_if_locked_and_destroy(&info->render_lock, 0);
-			exit (free_exit("Failed to create a thread; Aborting miniRT.", SYSTEM_FAILURE));
+			ft_putstr_fd("Failed to create a thread, initiating fallback to "
+				"single-threaded rendering.\n", 2);
+			info->is_multithread = 0; // signals that we fallback to the single threaded rendering function, since multithreading has failed.
+			atomic_store(&info->exit_flag = 0); // avoids confusion, if ever this is used later on (only used when multiple threads are operating)
+			destruct_barrier(&info->frame_barrier);
+			return ;
 		}
 		info->threads[i].p_info = info;
 		info->threads[i].start_x = WIDTH / N_THREADS * i;
@@ -59,7 +69,6 @@ void	init_threads(t_info *info)
 	}
 }
 
-
 void	let_threads_finish(t_info *info, int i)
 {
 	int	j;
@@ -68,9 +77,16 @@ void	let_threads_finish(t_info *info, int i)
 	while (j < i)
 	{
 		if (pthread_join(info->threads[j].painter, NULL))
-			// TODO: at least write some error message....
+			ft_putstr_fd("Failed to join one of the threads.\n", 2);
 		j++;
 	}
+}
+
+void	destruct_barrier(pthread_barrier_t *frame_barrier)
+{
+	if (pthread_barrier_destroy(frame_barrier))
+		ft_putstr_fd("Failed to deallocate barrier used for multithreading "
+			"purposes.\n", 2);
 }
 
 
@@ -89,21 +105,25 @@ static void	*rendering_routine(void *ptr)
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
 
+	// FIXME: issue: the threads would start executing as soon as they all reach the barrier.
+	// You need some other communication from the main process, regarding when they can safely start their
+	// routine !!!
 	while (!atomic_load(&info->exit_flag))
 	{
-		if (pthread_mutex_lock(&info->render_lock))  // these lock/unlocks are probably not necessary!
+		if (pthread_barrier_wait(info->frame_barrier))
 		{
-			// TODO: handle the error!
-
+			ft_putstr_fd("A thread has failed to wait for the barrier which "
+				"ensures synchronisation with other threads;\n"
+				"Initiating fallback to single-threaded rendering.\n", 2); // WARN: is this message finally appropriate? Are we falling back finally?
+			// TODO: 
+			// 1. Fallback to single-threaded renderer - but how??? We already
+			// assigned one function to our loop_hook...
+			// 2. If NOT falling back, review the comment above.
+			// 3. ISSUE: This might not even work at all: one thread's failure
+			// to wait will probably result in a deadlock...
 		}
-
-
-		if (pthread_mutex_unlock(&info->render_lock))
-		{
-			// TODO: handle the error!
-
-		}
-
+		if (atomic_load(&info->exit_flag))
+			return (NULL);
 		x = painter->start_x;
 		while (x < painter->border_x)
 		{
@@ -122,6 +142,16 @@ static void	*rendering_routine(void *ptr)
 
 		atomic_fetch_add(&info->n_done_painters, 1);
 
+	}
+	// this extra barrier_wait call is added here to handle a scenario where:
+	// one fast thread would load a false value for exit_flag at the start of
+	// the previous while loop, and go on waiting at the barrier that follows -
+	// while a slower thread would, in the meanwhile, notice that exit_flag is
+	// set, and exit the loop - which would create a deadlock at the barrier!
+	if (pthread_barrier_wait(info->frame_barrier))
+	{
+		ft_putstr_fd("A thread has failed to wait for the barrier which "
+			"ensures synchronisation with other threads\n"
 	}
 	return (NULL);
 }
@@ -175,6 +205,7 @@ inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj
 	return (k_min);
 }
 
+/*
 // NOTE: this function should only be called just before exiting the program.
 // Multithreading rendering in this program depends on the mutex, so if you
 // destroy it, it means we are quiting anyways. Therefore, there is no need
@@ -199,3 +230,4 @@ void	unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
 
 	}
 }
+*/

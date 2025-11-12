@@ -127,8 +127,9 @@ typedef struct s_info
 	int			n_obj;
 	bool		is_inside;
 
+	bool				is_multithread;
 	t_painter			threads[N_THREADS];
-	pthread_mutex_t		render_lock;
+	pthread_barrier_t	frame_barrier;
 	atomic_int_fast32_t	n_done_painters;
 	atomic_bool			exit_flag;
 
@@ -162,10 +163,8 @@ void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
 
 // multithreading
-void		init_and_lock_mutual_exclusion_object(t_info *info);
 void		init_threads(t_info *info);
-void		unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
-				 bool is_locked);
 void		let_threads_finish(t_info *info, int i);
+void		multithreaded_renderer(void *param);
 
 #endif
