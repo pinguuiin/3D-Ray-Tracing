@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 10:05:11 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/12 17:48:04 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 
 	obj = NULL;
 	k = nearest_ray_hit(info, ray, &hit, obj);
-	if (k == -1) // not hit
+	if (k == -1.0) // not hit
 	{
 		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
 		return ;
