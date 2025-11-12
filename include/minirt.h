@@ -6,31 +6,19 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 05:54:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/12 18:18:13 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
 
-# ifndef WIDTH
-#  define WIDTH 1500
-# endif
-# ifndef HEIGHT
-#  define HEIGHT 1000
-# endif
-# ifndef EPSILON
-#  define EPSILON 1e-8
-# endif
-# ifndef KS
-#  define KS 0.5
-# endif
-# ifndef KD
-#  define KD 0.5
-# endif
-# ifndef SHININESS
-#  define SHININESS 30
-# endif
+# define WIDTH 1500
+# define HEIGHT 1000
+# define EPSILON 1e-8
+# define KS 0.5
+# define KD 0.5
+# define SHININESS 30
 
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"

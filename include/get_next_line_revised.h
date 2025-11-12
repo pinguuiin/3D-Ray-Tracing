@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_revised.h                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 11:32:35 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/30 18:06:38 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/11/12 18:28:24 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,12 @@
 # define GET_NEXT_LINE_REVISED_H
 
 /*
-* NOTE: We define buffer size if it hasn't been defined when compiling.
+* NOTE: We define buffer size as 1024 in the header file of libft.
 * Size 1024 is a well-established convention providing good balance between
 * performance, memory efficiency and portability with modern hardware; This is
 * why it has been chosen as the default size. But one can compile the function
 * with a different BUFFER_SIZE, using flag -D BUFFER_SIZE=<n>.
-*/
-
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
-# endif
-
-/*
-* NOTE: get_next_line_revised() is a variation of the get_next_line() function,
+* get_next_line_revised() is a variation of the get_next_line() function,
 * which is specifically designed for the miniRT program, but could be of great
 * use in many other ones. Instead of returning a pointer to the dynamically
 * allocated line (which is basically a copy of the line starting at the position
