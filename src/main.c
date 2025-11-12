@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/04 04:48:56 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/12 18:59:21 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,10 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
+	#ifdef B_MODE
+		ft_putendl_fd("bonus mode is ON!", 1);
+	#endif
+
 	// WARN: only for debugging.
 	// print_whole_execution_data(info);
 	preprocessor(info);
@@ -134,7 +138,7 @@ static void	print_whole_execution_data(t_info *info)
 
 	printf("camera's FOV\n\t\t");
 	printf("FOV:	<%.20f>\n\n\n\n", info->cam.fov);
-	
+
 
 	printf("LIGHT SOURCE DATA (ARRAY):\n\n\t");
 

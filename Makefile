@@ -29,6 +29,7 @@ HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
 OBJ_DIR = ./obj
+BONUS_OBJ_DIR = ./obj_bonus
 
 SRC_FILES = main.c \
 			parser/handle_argv.c \
@@ -78,6 +79,7 @@ $(NAME): $(LIBMLX) $(LIBFT) $(OBJS)
 
 clean:
 	if [ -d "$(OBJ_DIR)" ]; then rm -rf $(OBJ_DIR); fi
+	if [ -d "$(BONUS_OBJ_DIR)" ]; then rm -rf $(BONUS_OBJ_DIR); fi
 	@if [ -d "$(LIBFT_DIR)" ]; then make clean -C $(LIBFT_DIR); fi
 	@if [ -d "$(LIBMLX_DIR)" ]; then make clean -C $(LIBMLX_DIR)/build; fi
 	@echo "$(BBLUE) Cleaned .o files $(RESET_COLOR)"
@@ -95,4 +97,10 @@ fclean:
 
 re: fclean all
 
-.PHONY: all clean fclean re phony
+bonus: OBJ_DIR = $(BONUS_OBJ_DIR)
+bonus: OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
+bonus: FLAGS += -DB_MODE
+bonus: re
+	@echo "$(BYELLOW) Built with bonus rules $(RESET_COLOR)"
+
+.PHONY: all clean fclean re phony bonus
