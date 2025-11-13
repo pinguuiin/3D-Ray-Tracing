@@ -12,7 +12,9 @@
 
 #include "minirt.h"
 
-static void			*rendering_routine(void *ptr);
+static void			init_barrier(t_thread_system *thread_system);
+static void			init_threads(t_info *info);
+static inline void	*rendering_routine(void *ptr);
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y);
 inline double		nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
 
@@ -31,70 +33,95 @@ void	init_and_lock_mutual_exclusion_object(t_info *info)
 }
 */
 
-void	init_barrier_for_threads(t_info *info)
+void	initialize_multithreading(t_thread_system *thread_system)
 {
-	if (pthread_barrier_init(&info->frame_barrier, NULL, N_THREADS))
-		info->is_multithread = 0;
-	else
-		info->is_multithread = 1;
+	init_barrier_for_threads(thread_system);
+	if (thread_system->is_multithreaded)
+		init_threads(thread_system);
 }
 
-void	init_threads(t_info *info)
-{
-	int	i;
 
+// NOTE: do I want to merge init_threads into here?
+static void	init_barrier(t_thread_system *thread_system)
+{
+	if (pthread_barrier_init(&thread_system->barrier, NULL, N_THREADS))
+	{
+		ft_putstr_fd("Failed to initialize barrier for multithreaded execution;"
+			" initiating fallback to single-threaded rendering.\n",
+			2);
+		thread_system->is_multithreaded = 0;
+	}
+	else
+		thread_system->is_multithreaded = 1;
+}
+
+static void	init_threads(t_info *info)
+{
+	int				i;
+	t_thread_system	*thread_system;
+
+	thread_system = &info->thread_system;
+	thread_system->status = WAIT;
 	i = 0;
 	while (i < N_THREADS)
 	{
-		if (pthread_create(&info->threads[i].painter, NULL, &rendering_routine,
-				&info->threads[i]))
+		if (pthread_create(&thread_system->threads[i].painter, NULL,
+			&rendering_routine, &thread_system->threads[i]))
 		{
-			atomic_store(&info->exit_flag, 1); // signals to the other threads that they should return.
-			let_threads_finish(info, i);
-			ft_putstr_fd("Failed to create a thread, initiating fallback to "
+			atomic_store(&thread_system->status, ABORT); // signals to the other threads that they should return.
+			let_threads_finish(&thread_system->threads, i);
+			ft_putstr_fd("Failed to create a thread; initiating fallback to "
 				"single-threaded rendering.\n", 2);
-			info->is_multithread = 0; // signals that we fallback to the single threaded rendering function, since multithreading has failed.
-			atomic_store(&info->exit_flag = 0); // avoids confusion, if ever this is used later on (only used when multiple threads are operating)
-			destruct_barrier(&info->frame_barrier);
+			destruct_barrier(&thread_system->barrier);
+			info->is_multithreaded = 0; // signals that we fallback to the single threaded rendering function, since multithreading has failed.
 			return ;
 		}
-		info->threads[i].p_info = info;
-		info->threads[i].start_x = WIDTH / N_THREADS * i;
+		thread_system->threads[i].p_info = info;
+		thread_system->threads[i].start_x = WIDTH / N_THREADS * i;
 		if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
-			info->threads[i].border_x = WIDTH / N_THREADS * (i + 1);
+			thread_system->threads[i].border_x = WIDTH / N_THREADS * (i + 1);
 		else
-			info->threads[i].border_x = WIDTH; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
+			thread_system->threads[i].border_x = WIDTH; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
 
 		i++;
 	}
 }
 
-void	let_threads_finish(t_info *info, int i)
+void	let_threads_finish(t_painter *threads, int i)
 {
 	int	j;
 
 	j = 0;
 	while (j < i)
 	{
-		if (pthread_join(info->threads[j].painter, NULL))
+		if (pthread_join(threads[j].painter, NULL))
 			ft_putstr_fd("Failed to join one of the threads.\n", 2);
 		j++;
 	}
 }
 
-void	destruct_barrier(pthread_barrier_t *frame_barrier)
+void	destruct_barrier(pthread_barrier_t *barrier)
 {
-	if (pthread_barrier_destroy(frame_barrier))
+	if (pthread_barrier_destroy(barrier))
 		ft_putstr_fd("Failed to deallocate barrier used for multithreading "
 			"purposes.\n", 2);
 }
 
+/*
+  NOTE: meaning of status values:
+0 : EXIT thread, we need to exit program.
+1 : Green light! Start rendering image
+-1: Red light: Please wait until it is time to render image. The flag should
+	be set to -1 before the very first rendering loop, since the main process
+	might not be ready to process the order of frames' rendering.
+// TODO: create enums for those!
+*/
 
 // FIXME:
 // - how do I organize the threads' routine, so that they know when a frame has ended? use a flag?
 // - how is the renderer() going to quit if something fails / if ESC or the x button has been pressed by the user?
 // - how does each thread know which thread they are from the array?
-static void	*rendering_routine(void *ptr)
+static inline void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
 	t_info		*info;
@@ -105,24 +132,26 @@ static void	*rendering_routine(void *ptr)
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
 
-	// FIXME: issue: the threads would start executing as soon as they all reach the barrier.
-	// You need some other communication from the main process, regarding when they can safely start their
-	// routine !!!
-	while (!atomic_load(&info->exit_flag))
+	while (atomic_load(&info->thread_system->status == WAIT)
 	{
-		if (pthread_barrier_wait(info->frame_barrier))
+		if (usleep(500))
+			// TODO : handle the error!!!!
+			// fallback to other single-threaded version?
+	}
+	while (atomic_load(&info->thread_system->status) == RENDER) // || atomic_load(&info->thread_system->status) == WAIT) NOTE: add the wait in the main renderer process...
+	{
+		if (pthread_barrier_wait(info->thread_system->barrier))
 		{
 			ft_putstr_fd("A thread has failed to wait for the barrier which "
 				"ensures synchronisation with other threads;\n"
-				"Initiating fallback to single-threaded rendering.\n", 2); // WARN: is this message finally appropriate? Are we falling back finally?
-			// TODO: 
+				"Initiating fallback to single-threaded rendering.\n", 2);
+			// WARN: is this message finally appropriate? Are we falling back finally?
+			// TODO:
 			// 1. Fallback to single-threaded renderer - but how??? We already
 			// assigned one function to our loop_hook...
 			// 2. If NOT falling back, review the comment above.
-			// 3. ISSUE: This might not even work at all: one thread's failure
-			// to wait will probably result in a deadlock...
 		}
-		if (atomic_load(&info->exit_flag))
+		if (atomic_load(&info->thread_system->status) == ABORT)
 			return (NULL);
 		x = painter->start_x;
 		while (x < painter->border_x)
@@ -140,7 +169,78 @@ static void	*rendering_routine(void *ptr)
 			x++;
 		}
 
-		atomic_fetch_add(&info->n_done_painters, 1);
+		// atomic_fetch_add(&info->n_done_painters, 1);
+
+	}
+	// this extra barrier_wait call is added here to handle a scenario where:
+	// one fast thread would load a false value for exit_flag at the start of
+	// the previous while loop, and go on waiting at the barrier that follows -
+	// while a slower thread would, in the meanwhile, notice that exit_flag is
+	// set, and exit the loop - which would create a deadlock at the barrier!
+	if (pthread_barrier_wait(info->frame_barrier))
+	{
+		ft_putstr_fd("A thread has failed to wait for the barrier which "
+			"ensures synchronisation with other threads\n"
+	}
+	return (NULL);
+}
+
+
+// FIXME:
+// - how do I organize the threads' routine, so that they know when a frame has ended? use a flag?
+// - how is the renderer() going to quit if something fails / if ESC or the x button has been pressed by the user?
+// - how does each thread know which thread they are from the array?
+static inline void	*rendering_routine(void *ptr)
+{
+	t_painter	*painter;
+	t_info		*info;
+	t_vec		ray;
+	int			x;
+	int			y;
+
+	painter = (t_painter *)ptr;
+	info = painter->p_info;
+
+	while (atomic_load(&info->thread_system->status) != ABORT) // || atomic_load(&info->thread_system->status) == WAIT) NOTE: add the wait in the main renderer process...
+	{
+		while (atomic_load(&info->thread_system->status == WAIT)
+		{
+			if (usleep(500))
+			{
+				// TODO : handle the error!!!!
+				// fallback to other single-threaded version?
+			}
+		}
+		if (pthread_barrier_wait(info->thread_system->barrier))
+		{
+			ft_putstr_fd("A thread has failed to wait for the barrier which "
+				"ensures synchronisation with other threads;\n"
+				"Initiating fallback to single-threaded rendering.\n", 2);
+			// WARN: is this message finally appropriate? Are we falling back finally?
+			// TODO:
+			// 1. Fallback to single-threaded renderer - but how??? We already
+			// assigned one function to our loop_hook...
+			// 2. If NOT falling back, review the comment above.
+		}
+		if (atomic_load(&info->thread_system->status) == ABORT)
+			return (NULL);
+		x = painter->start_x;
+		while (x < painter->border_x)
+		{
+			y = 0;
+			while (y < HEIGHT)
+			{
+				ray = vec3(x * info->px - info->viewport_width / 2.0,
+				-(y * info->px - info->viewport_height / 2.0), 0);
+				rotate(info->rot, &ray);
+				ray = normalize(add(info->cam.direction, ray));
+				draw_pixel(info, ray, x, y);
+				y++;
+			}
+			x++;
+		}
+
+		// atomic_fetch_add(&info->n_done_painters, 1);
 
 	}
 	// this extra barrier_wait call is added here to handle a scenario where:

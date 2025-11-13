@@ -20,20 +20,17 @@
 # define KD 0.5
 # define SHININESS 30
 
-# define N_THREADS 5
-
 # include "../src/libft/libft.h"
 # include "../src/MLX42/include/MLX42/MLX42.h"
 # include "vector.h"
 # include "hit.h"
+
+// TODO: add #ifdef BONUS...
+# include "multithreading.h"
+
 # include <stdlib.h>
 # include <math.h>
 # include <stdbool.h>
-
-
-// multithreading headers
-# include <pthread.h>
-# include <stdatomic.h>
 
 
 /*
@@ -100,15 +97,6 @@ typedef struct s_object
 
 }	t_object;
 
-typedef struct s_painter
-{
-	pthread_t		painter;
-	struct s_info	*p_info;
-	int				start_x;
-	int				border_x;
-
-}	t_painter;
-
 /* Struct that includes everything */
 typedef struct s_info
 {
@@ -127,11 +115,7 @@ typedef struct s_info
 	int			n_obj;
 	bool		is_inside;
 
-	bool				is_multithread;
-	t_painter			threads[N_THREADS];
-	pthread_barrier_t	frame_barrier;
-	atomic_int_fast32_t	n_done_painters;
-	atomic_bool			exit_flag;
+	t_thread_system		thread_system;
 
 }	t_info;
 
@@ -161,10 +145,5 @@ void		key_handler(mlx_key_data_t keydata, void *param);
 void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
-
-// multithreading
-void		init_threads(t_info *info);
-void		let_threads_finish(t_info *info, int i);
-void		multithreaded_renderer(void *param);
 
 #endif

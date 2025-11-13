@@ -134,75 +134,48 @@ void	single_threaded_renderer(void *param)
 */
 
 //  TODO: # ifdef BONUS ???
-//
-//  TODO: remove the mutex. replace with pthread_barrier() or something like that.
-//  Use atomic variables and flags.
+//  FIXME: have to fix many things here!
 void	multithreaded_renderer(void *param)
 {
-	t_info		*info;
+	t_info			*info;
+	t_thread_system	*thread_system;
 
 	info = (t_info *)param;
+	thread_system = &info->thread_system;
 	info->is_inside = false;
 
-	while (!atomic_load(&info->exit_flag))
+	if (atomic_load(&thread_system->status) == ABORT)
 	{
-		
-		atomic_store(&info->n_done_painters, 0);
-
-		// let the threads start rendering
-		if (pthread_mutex_unlock(&info->render_lock))
-		{
-			// TODO: write a message, and set some error flag, but do not exit right away?
-
-
-		}
-
-		while (atomic_load(&info->n_done_painters) < N_THREADS)
-		{
-			if (usleep(200) == -1)
-			{
-				// TODO: handle the error!
-
-			}
-			if (!atomic_load(&info->exit_flag))
-				break ;
-		}
-
-		if (pthread_mutex_lock(&info->render_lock))
-		{
-			// TODO: handle the error.
-			// remember to unlock
-
-		}
-
+		let_threads_finish(info, N_THREADS);
+		destroy_barrier(&thread_system->barrier);
+		mlx_close_window(info->mlx);
+		return ;
 	}
 
-	// TODO: check that all threads are done (by combining their "is_done" variables?)
+	atomic_store(&thread_system->status, RENDER);
 
-	/*
-	x = 0;
-	while (x < info->img->width)
+
+	// WARN: is this good enough? Should I sleep more? or is it even too much?
+	// All threads should:
+	// 	- notice the new RENDER flag
+	// 	- go on to wait at the barrier (until all threads are there)
+	// 	- start rendering, finish rendering their chunk
+	// 	- by which time, the status flag HAS TO BE AGAIN == WAIT!!
+	if (usleep(400))
 	{
-		y = 0;
-		while (y < info->img->height)
+		// TODO: handle error?
+	}
+	if (atomic_load(&thread_system->status) != ABORT)
+		atomic_store(&thread_system->status, WAIT);
+
+	while (atomic_load(&info->n_done_painters) < N_THREADS)
+	{
+		if (usleep(200) == -1)
 		{
-			ray = vec3(x * info->px - info->viewport_w / 2.0,
-			-(y * info->px - info->viewport_h / 2.0), 0);
-			rotate(info->rot, &ray);
-			ray = normalize(add(info->cam.direction, ray));
-			draw_pixel(info, ray, x, y);
-			y++;
+			// TODO: handle the error!
+
 		}
-		x++;
 	}
-	*/
-	if (pthread_mutex_unlock(&info->render_lock))
-	{
-		// TODO: handle the error.
+	atomic_store(&thread_system->status, WAIT);
 
-	}
-
-	let_threads_finish(info, N_THREADS);
-	mlx_close_window(info->mlx); // WARN: should this be rather integrated into free_exit()?
-	unlock_mutex_if_locked_and_destroy(&info->render_lock, 0);
 }

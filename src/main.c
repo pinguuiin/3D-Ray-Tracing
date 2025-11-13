@@ -41,23 +41,16 @@ int	free_exit(char *s, int exit_code)
 	return (exit_code);
 }
 
+// TODO: add # define bonus here too (ESC handler uses atomic_store() for threads)
+// and mandatory version could simply close the window from here - or is it really
+// a good thing, shouldn't closing the window only happen after finishing a frame??
 static void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-	{
-		atomic_store(&info->exit_flag, 1);
-		// WARN: perhaps these are better off done from renderer(),
-		// now that we have threads to join, a mutex to destroy..... and we
-		// probably do not want the threads still working AFTER the window has
-		// closed... First let them finish, then destroy the mutex, and only
-		// then close the window....
-		//
-		// destroy_threads(info, N_THREADS);
-		// mlx_close_window(info->mlx);
-	}
+		atomic_store(&info->thread_system->status, ABORT);
 	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
 		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
 		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
@@ -97,15 +90,16 @@ int	main(int argc, char *argv[])
 	initialize_mlx(info);
 	mlx_resize_hook(info->mlx, &resize, info);
 
-	init_barrier_for_threads(info);
-	init_threads(info);
+	initialize_multithreading(&info->thread_system);
 
 
 	mlx_key_hook(info->mlx, &key_handler, info);
-	if (info->is_multithread)
-		mlx_loop_hook(info->mlx, single_threaded_renderer, info);
-	else
+	if (info->thread_system->is_multithread)
 		mlx_loop_hook(info->mlx, multithreaded_renderer, info);
+	/*
+	else
+		mlx_loop_hook(info->mlx, single_threaded_renderer, info);
+	*/
 
 	mlx_loop(info->mlx);
 
