@@ -161,14 +161,14 @@ void	multithreaded_renderer(void *param)
 	// 	- go on to wait at the barrier (until all threads are there)
 	// 	- start rendering, finish rendering their chunk
 	// 	- by which time, the status flag HAS TO BE AGAIN == WAIT!!
-	if (usleep(400))
+	if (usleep(400) == -1)
 	{
 		// TODO: handle error?
 	}
 	if (atomic_load(&thread_system->status) != ABORT)
 		atomic_store(&thread_system->status, WAIT);
 
-	while (atomic_load(&info->n_done_painters) < N_THREADS)
+	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
 	{
 		if (usleep(200) == -1)
 		{
@@ -176,6 +176,6 @@ void	multithreaded_renderer(void *param)
 
 		}
 	}
-	atomic_store(&thread_system->status, WAIT);
+	atomic_store(&thread_system->n_done_painters, 0);
 
 }

@@ -31,15 +31,14 @@ typedef struct s_painter
 	struct s_info	*p_info;
 	int				start_x;
 	int				border_x;
-
 }	t_painter;
 
 typedef struct s_thread_system
 {
 	t_painter			threads[N_THREADS];
 	pthread_barrier_t	barrier;
-	// atomic_int_fast32_t	n_done_painters; // WARN: remove if unused!
 	atomic_int_fast32_t	status;
+	atomic_int_fast32_t	n_done_painters;
 	bool				is_multithreaded;
 }	t_thread_system;
 

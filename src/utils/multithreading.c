@@ -126,7 +126,9 @@ static inline void	*rendering_routine(void *ptr)
 
 	while (atomic_load(&info->thread_system.status) != ABORT) // || atomic_load(&info->thread_system->status) == WAIT) NOTE: add the wait in the main renderer process...
 	{
-		while (atomic_load(&info->thread_system.status) == WAIT)
+		x = painter->start_x;
+		while (atomic_load(&info->thread_system.status) == WAIT
+			&& atomic_load(&info->thread_system.n_done_painters))
 		{
 			if (usleep(500))
 			{
@@ -148,7 +150,6 @@ static inline void	*rendering_routine(void *ptr)
 		}
 		if (atomic_load(&info->thread_system.status) == ABORT)
 			return (NULL);
-		x = painter->start_x;
 		while (x < painter->border_x)
 		{
 			y = 0;
@@ -164,7 +165,7 @@ static inline void	*rendering_routine(void *ptr)
 			x++;
 		}
 
-		// atomic_fetch_add(&info->n_done_painters, 1);
+		atomic_fetch_add(&info->thread_system.n_done_painters, 1);
 
 	}
 	// this extra barrier_wait call is added here to handle a scenario where:
