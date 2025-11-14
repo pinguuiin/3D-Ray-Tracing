@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MULTITHREADING_H
-# define MULTITHREADING_H
+#ifdef BONUS
+# ifndef MULTITHREADING_H
+#  define MULTITHREADING_H
 
 # include <pthread.h>
 # include <stdatomic.h>
@@ -47,4 +48,5 @@ void	let_threads_finish(t_painter *threads, int i);
 void	destruct_barrier(pthread_barrier_t *barrier);
 void	multithreaded_renderer(void *param);
 
+# endif
 #endif

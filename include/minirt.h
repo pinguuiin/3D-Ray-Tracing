@@ -25,22 +25,22 @@
 # include "vector.h"
 # include "hit.h"
 
-// TODO: add #ifdef BONUS...
-# include "multithreading.h"
-
 # include <stdlib.h>
 # include <math.h>
 # include <stdbool.h>
 
+# ifdef BONUS
+#  include "multithreading.h"
+# endif
 
 /*
 * Exit codes:
-* 1: MLX function failures
-* 2: invalid input - unexpected argument or misconfigured .rt file
-* 3: fatal system error during parsing, such as failures of open(), malloc(),
-* 		read(), close() and pthread_create() functions, or buffer for
-* 		get_next_line_revised() is predefined as empty.
-* 0: If program runs smoothly
+*	1: MLX function failures
+*	2: invalid input - unexpected argument or misconfigured .rt file
+*	3: fatal system error during parsing, such as failures of open(), malloc(),
+* 	   read(), close() and pthread_create() functions, or buffer for
+* 	   get_next_line_revised() is predefined as empty.
+*	0: If program runs smoothly
 */
 enum e_exit_code
 {
@@ -97,27 +97,52 @@ typedef struct s_object
 
 }	t_object;
 
-/* Struct that includes everything */
-typedef struct s_info
-{
-	mlx_t		*mlx;
-	mlx_image_t	*img;
-	double		focal_length;
-	double		viewport_w;
-	double		viewport_h;
-	double		rot[3][3];
-	double		px;
-	t_color		amb;
-	t_cam		cam;
-	t_light		*light;	// array of lights
-	t_object	*obj;  	// array of objects
-	int			n_light;
-	int			n_obj;
-	bool		is_inside;
+// FIXME: if we continue with the bonus stuff:
+//		review the light array, do you still want it here?
+//		Also, are there other things we need/ could remove?
+//		Ask partner!
+# ifndef BONUS
+	/* Struct that includes everything */
+	typedef struct s_info
+	{
+		mlx_t				*mlx;
+		mlx_image_t			*img;
+		double				focal_length;
+		double				viewport_width;
+		double				viewport_height;
+		double				rot[3][3];
+		double				px;
+		t_color				amb;
+		t_cam				cam;
+		t_light				*light;	// array of lights
+		t_object			*obj;  	// array of objects
+		int					n_light;
+		int					n_obj;
+		bool				is_inside;
 
-	t_thread_system		thread_system;
+	}	t_info;
+# else
+	/* Struct that includes everything, plus data for multithreading */
+	typedef struct s_info
+	{
+		mlx_t				*mlx;
+		mlx_image_t			*img;
+		double				focal_length;
+		double				viewport_width;
+		double				viewport_height;
+		double				rot[3][3];
+		double				px;
+		t_color				amb;
+		t_cam				cam;
+		t_light				*light;	// array of lights
+		t_object			*obj;  	// array of objects
+		int					n_light;
+		int					n_obj;
+		bool				is_inside;
+		t_thread_system		thread_system;
 
-}	t_info;
+	}	t_info;
+# endif
 
 t_info		*get_info(void);
 void		resize(int32_t width, int32_t height, void *param);

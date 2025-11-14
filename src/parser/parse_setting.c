@@ -112,6 +112,8 @@ int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 // NOTE: note the other important distinction beetween mandatory and bonus
 // parts: the color data is unused in the mandatory, but perhaps could still
 // be accepted -> while the bonus (or is it only some bonus parts) require/s it!
+
+#ifndef BONUS
 int	parse_light(t_parser *parser, char *str)
 {
 	double	ratio;
