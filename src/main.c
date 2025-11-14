@@ -90,7 +90,7 @@ int	main(int argc, char *argv[])
 	initialize_mlx(info);
 	mlx_resize_hook(info->mlx, &resize, info);
 
-	initialize_multithreading(&info->thread_system);
+	initialize_multithreading(info);
 
 
 	mlx_key_hook(info->mlx, &key_handler, info);

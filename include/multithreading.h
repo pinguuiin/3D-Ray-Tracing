@@ -43,7 +43,7 @@ typedef struct s_thread_system
 	bool				is_multithreaded;
 }	t_thread_system;
 
-void	initialize_multithreading(t_thread_system *thread_system);
+void	initialize_multithreading(struct s_info *info);
 void	let_threads_finish(t_painter *threads, int i);
 void	destruct_barrier(pthread_barrier_t *barrier);
 void	multithreaded_renderer(void *param);

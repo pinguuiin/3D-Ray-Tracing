@@ -13,7 +13,7 @@
 #include "minirt.h"
 
 static void			init_barrier(t_thread_system *thread_system);
-static void			init_threads(t_info *info);
+static void			init_threads(t_thread_system *thread_system);
 static inline void	*rendering_routine(void *ptr);
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y);
 inline double		nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
@@ -33,15 +33,17 @@ void	init_and_lock_mutual_exclusion_object(t_info *info)
 }
 */
 
-void	initialize_multithreading(t_thread_system *thread_system)
+void	initialize_multithreading(struct s_info *info)
 {
-	init_barrier_for_threads(thread_system);
-	if (thread_system->is_multithreaded)
-		init_threads(thread_system);
+	init_barrier(&info->thread_system);
+	if (info->thread_system.is_multithreaded)
+	{
+		info->thread_system.status = WAIT;
+		info->thread_system.threads[0].p_info = info;
+		init_threads(&info->thread_system);
+	}
 }
 
-
-// NOTE: do I want to merge init_threads into here?
 static void	init_barrier(t_thread_system *thread_system)
 {
 	if (pthread_barrier_init(&thread_system->barrier, NULL, N_THREADS))
@@ -55,13 +57,10 @@ static void	init_barrier(t_thread_system *thread_system)
 		thread_system->is_multithreaded = 1;
 }
 
-static void	init_threads(t_info *info)
+static void	init_threads(t_thread_system *thread_system)
 {
 	int				i;
-	t_thread_system	*thread_system;
 
-	thread_system = &info->thread_system;
-	thread_system->status = WAIT;
 	i = 0;
 	while (i < N_THREADS)
 	{
@@ -76,7 +75,7 @@ static void	init_threads(t_info *info)
 			info->is_multithreaded = 0; // signals that we fallback to the single threaded rendering function, since multithreading has failed.
 			return ;
 		}
-		thread_system->threads[i].p_info = info;
+		thread_system->threads[i].p_info = thread_system->threads[0].p_info;
 		thread_system->threads[i].start_x = WIDTH / N_THREADS * i;
 		if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
 			thread_system->threads[i].border_x = WIDTH / N_THREADS * (i + 1);
@@ -132,15 +131,15 @@ static inline void	*rendering_routine(void *ptr)
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
 
-	while (atomic_load(&info->thread_system->status == WAIT)
+	while (atomic_load(&info->thread_system.status == WAIT)
 	{
 		if (usleep(500))
 			// TODO : handle the error!!!!
 			// fallback to other single-threaded version?
 	}
-	while (atomic_load(&info->thread_system->status) == RENDER) // || atomic_load(&info->thread_system->status) == WAIT) NOTE: add the wait in the main renderer process...
+	while (atomic_load(&info->thread_system.status) == RENDER) // || atomic_load(&info->thread_system->status) == WAIT) NOTE: add the wait in the main renderer process...
 	{
-		if (pthread_barrier_wait(info->thread_system->barrier))
+		if (pthread_barrier_wait(info->thread_system.barrier))
 		{
 			ft_putstr_fd("A thread has failed to wait for the barrier which "
 				"ensures synchronisation with other threads;\n"
@@ -151,7 +150,7 @@ static inline void	*rendering_routine(void *ptr)
 			// assigned one function to our loop_hook...
 			// 2. If NOT falling back, review the comment above.
 		}
-		if (atomic_load(&info->thread_system->status) == ABORT)
+		if (atomic_load(&info->thread_system.status) == ABORT)
 			return (NULL);
 		x = painter->start_x;
 		while (x < painter->border_x)
@@ -177,10 +176,10 @@ static inline void	*rendering_routine(void *ptr)
 	// the previous while loop, and go on waiting at the barrier that follows -
 	// while a slower thread would, in the meanwhile, notice that exit_flag is
 	// set, and exit the loop - which would create a deadlock at the barrier!
-	if (pthread_barrier_wait(info->frame_barrier))
+	if (pthread_barrier_wait(info->thread_system.barrier))
 	{
 		ft_putstr_fd("A thread has failed to wait for the barrier which "
-			"ensures synchronisation with other threads\n"
+			"ensures synchronisation with other threads\n", 2);
 	}
 	return (NULL);
 }
