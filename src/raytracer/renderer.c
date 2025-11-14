@@ -146,9 +146,7 @@ void	multithreaded_renderer(void *param)
 
 	if (atomic_load(&thread_system->status) == ABORT)
 	{
-		// WARN: I am not sure about the syntax of 1st parameter in let_threads_finish(),
-		// it's an array, not a pointer... -> is it correct?? Seems like it is for the compiler...
-		let_threads_finish(&thread_system->threads[0], N_THREADS);
+		let_threads_finish(thread_system->threads, N_THREADS);
 		destruct_barrier(&thread_system->barrier);
 		mlx_close_window(info->mlx);
 		return ;
