@@ -50,7 +50,7 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-		atomic_store(&info->thread_system->status, ABORT);
+		atomic_store(&info->thread_system.status, ABORT);
 	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
 		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
 		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
@@ -94,7 +94,7 @@ int	main(int argc, char *argv[])
 
 
 	mlx_key_hook(info->mlx, &key_handler, info);
-	if (info->thread_system->is_multithread)
+	if (info->thread_system.is_multithreaded)
 		mlx_loop_hook(info->mlx, multithreaded_renderer, info);
 	/*
 	else
