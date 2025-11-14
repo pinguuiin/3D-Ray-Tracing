@@ -113,6 +113,13 @@ static inline void	*rendering_routine(void *ptr)
 	t_vec		ray;
 	int			x;
 	int			y;
+	int			retval;
+	// The purpose of 'retval' is to catch the return value of
+	// pthread_barrier_wait() because that function can return:
+	//	- 0 (if successful)
+	//	- the macro PTHREAD_BARRIER_SERIAL_THREAD (if successful, for one of the
+	//	- threads synchronised at the barrier)
+	//	- an error value in case of an error.
 
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
@@ -127,7 +134,8 @@ static inline void	*rendering_routine(void *ptr)
 				// fallback to other single-threaded version?
 			}
 		}
-		if (pthread_barrier_wait(&info->thread_system.barrier))
+		retval = pthread_barrier_wait(&info->thread_system.barrier);
+		if (retval && retval != PTHREAD_BARRIER_SERIAL_THREAD)
 		{
 			ft_putstr_fd("A thread has failed to wait for the barrier which "
 				"ensures synchronisation with other threads;\n"
@@ -164,7 +172,8 @@ static inline void	*rendering_routine(void *ptr)
 	// the previous while loop, and go on waiting at the barrier that follows -
 	// while a slower thread would, in the meanwhile, notice that exit_flag is
 	// set, and exit the loop - which would create a deadlock at the barrier!
-	if (pthread_barrier_wait(&info->thread_system.barrier))
+	retval = pthread_barrier_wait(&info->thread_system.barrier);
+	if (retval && retval != PTHREAD_BARRIER_SERIAL_THREAD)
 	{
 		ft_putstr_fd("A thread has failed to wait for the barrier which "
 			"ensures synchronisation with other threads\n", 2);
