@@ -168,8 +168,6 @@ int	parse_light(t_parser *parser, char *str, t_light *light)
 		}
 		else	// no color provided by input for 'light', so set it to white
 			apply_ratio_to_color(&light->color, ratio, 0);
-		if (!is_valid_n_elements(parser, LIGHT))
-			return (INVALID_INPUT);
 		parser->n_lights++; // keep count of valid lights
 		return (NO_ERROR);
 	}
@@ -185,18 +183,10 @@ int	parse_light(t_parser *parser, char *str)
 
 	light = NULL; // can be omitted
 
-	// allocate new light node, check for malloc() failure
-	if (create_new_node(&parser->head, &parser->current, LIGHT, sizeof (t_node_light)) == -1)
-		return (ALLOCATION_FAILURE);
-
-	/*
-	 * WARN: this is the alternate version, which I most probably am going to end
-	 * up using instead of the above !!!
 	if (create_new_light_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
-	*/
 
-	light = &parser->current->light;
+	light = &parser->curr_light->light;
 
 	// parse the string into the allocated 'light'
 	skip_whitespace_but_not_newline(&str);
@@ -273,7 +263,8 @@ static inline double	str_degrees_to_radians(char **str, size_t line_num)
 	return (angle * M_PI / 180.0);
 }
 
-/*
+#ifndef BONUS
+#else
 static int	create_new_light_node(t_parser *parser)
 {
 	t_node_light	*new_node;
@@ -281,11 +272,11 @@ static int	create_new_light_node(t_parser *parser)
 	new_node = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
 	if (!new_node)
 		return (-1);
-	if (!parser->head)
-		parser->head = new_node;
+	if (!parser->head_light)
+		parser->head_light = new_node;
 	else
-		parser->current->next = new_node;
-	parser->current = new_node;
+		parser->curr_light->next = new_node;
+	parser->curr_light = new_node;
 	return (0);
 }
-*/
+#endif

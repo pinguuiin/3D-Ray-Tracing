@@ -113,65 +113,6 @@ bool	is_valid_end_of_line(char *s, size_t line_num)
 	return (1);
 }
 
-// WARN: this is the crazily complicated looking function that merges create_
-// new_light_node() and create_new_obj_node(), using void pointers.
-// The separate functions are ready in parse_setting.c and parse_objects.c
-// Please delete this if it does not work, and delete also the enum t_list_id
-int	create_new_node(void *head, void *current, t_list_id id, size_t size)
-{
-	void	*result;
-
-	result = ft_calloc(1, size);
-	if (!result)
-		return (-1);
-
-	if (!(*(t_node_light **)head))
-	{
-		if (id == LIGHT)
-		{
-			*(t_node_light **)head = result;
-			*(t_node_light **)current = result;
-		}
-		else
-		{
-			*(t_node_obj **)head = result;
-			*(t_node_obj **)current = result;
-		}
-	}
-	else
-	{
-		if (id == LIGHT)
-		{
-			(*(t_node_light **)current)->next = result;
-			*(t_node_light **)current = (*(t_node_light **)current)->next;
-		}
-		else
-		{
-			(*(t_node_obj **)current)->next = result;
-			*(t_node_obj **)current = (*(t_node_obj **)current)->next;
-		}
-	}
-	// NOTE: remember assigning the local *light or *sphere/*plane/*cylinder to the newly allocated node, at the caller, just after this call :-)
-	return (0);
-}
-
-/*
- * deprecated? newer version is also good for maximum lights...
-static bool	is_valid_n_objects(t_parser *parser)
-{
-	int	n_objects;
-
-	n_objects = parser->n_spheres + parser->n_planes + parser->n_cylinders;
-	if (n_objects == INT_MAX)
-	{
-		ft_putstr_fd("Error\nToo many objects provided by input file. "
-			"Only up to INT_MAX objects are accepted.\n", 2);
-		return (0);
-	}
-	return (1);
-}
-*/
-
 bool	is_valid_n_elements(t_parser *parser, t_list_id id)
 {
 	int	n_elements;

@@ -233,6 +233,11 @@ void	single_threaded_renderer(void *param)
 	t_vec		ray;
 
 	info = (t_info *)param;
+	if (info->exit_flag)
+	{
+		mlx_close_window(info->mlx);
+		return ;
+	}
 	info->is_inside = false;
 	x = 0;
 	while (x < WIDTH)

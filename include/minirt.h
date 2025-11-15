@@ -131,6 +131,7 @@ typedef struct s_info
 	int				n_obj;
 	bool			is_inside;
 	# ifndef BONUS
+	bool			exit_flag;
 	# else
 	t_thread_system		thread_system;
 	# endif

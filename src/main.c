@@ -22,6 +22,25 @@ t_info	*get_info(void)
 
 // WARN: do we need to close the window from here, before calling mlx_delete_image()
 // and mlx_terminate()?
+#ifndef BONUS
+int	free_exit(char *s, int exit_code)
+{
+	t_info	*info;
+
+	info = get_info();
+	free(info->obj);
+	if (info->img)
+		mlx_delete_image(info->mlx, info->img);
+	if (info->mlx)
+		mlx_terminate(info->mlx);
+	if (s)
+	{
+		ft_putendl_fd("Error", 2);
+		ft_putendl_fd(s, 2);
+	}
+	return (exit_code);
+}
+#else
 int	free_exit(char *s, int exit_code)
 {
 	t_info	*info;
@@ -40,6 +59,7 @@ int	free_exit(char *s, int exit_code)
 	}
 	return (exit_code);
 }
+#endif
 
 //  FIXME:
 // TODO: add # define bonus here too (ESC handler uses atomic_store() for threads)
@@ -52,15 +72,7 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-	{
-		atomic_store(&info->thread_system.status, ABORT); // FIXME: change this line:
-		// you are not allowed to use atomic_store() in the mandatory.
-		// either close the window from here, as it used to be, or add an exit flag
-		// to your info struct, which will let single_threaded_renderer() to
-		// first finish its current frame, and, on the subsequent call to it
-		// (from within mlx_loop()), it will check for that flag, call mlx_close_window()
-		// by itself, and return.
-	}
+		info->exit_flag = 1;
 	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
 		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
 		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)

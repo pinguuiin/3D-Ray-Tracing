@@ -301,7 +301,7 @@ static void	copy_light(t_parser *parser, t_info *info)
 	t_node_light	*current;
 	int				i;
 
-	current = parser->head;
+	current = parser->head_light;
 	i = 0;
 	while (current)
 	{
@@ -320,7 +320,7 @@ static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj)
 
 	info = get_info();
 	j = *i;
-	current = parser->head_obj;
+	current = parser->head;
 
 	while (current && n_obj)
 	{

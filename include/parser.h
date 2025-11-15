@@ -30,12 +30,6 @@ typedef enum e_status
 
 }	t_status;
 
-// FIXME: delete this when sure not to use it (only used in order to create_new_node()
-// using the very same function for both linked lists (LIGHT and OBJECT),
-// but I am probably going to abandon that idea, the function is soooo complicated
-// and odd looking. Better revert back too the original split functions, create_new_light_node()
-// and creat_new_obj_node()
-// FIXME: I need an #ifdef BONUS, if I end up keeping this...
 typedef enum e_list_id
 {
 	LIGHT,
@@ -44,7 +38,7 @@ typedef enum e_list_id
 
 # ifndef BONUS
 # else
-// wrapper for each t_light node, only needed in parsing
+/* wrapper for each t_light node, only needed in parsing */
 typedef struct s_node_light
 {
 	t_light				light; // current 'light' element
@@ -75,24 +69,19 @@ typedef struct s_parser
 	int		n_ambs;
 	int		n_cams;
 
+	// objects linked list
+	// 'current' allows creation of nodes to happen faster, without walking
+	// through the list on each iteration, since it always points at the 'hole'
+	// for the node to be created (except at the very first iteration, but in
+	// that case 'head' is already pointing there).
+	t_node_obj		*head;
+	t_node_obj		*current;
+
 }	t_parser;
 # else
 typedef struct s_parser
 {
 	int				fd;
-
-	// light linked list
-	t_node_light	*head;
-	t_node_light	*current;
-
-	// objects linked list
-	// 'curr_obj' allows creation of nodes to happen faster, without walking
-	// through the list on each iteration, since it always points at the 'hole'
-	// for the node to be created (except at the very first iteration, but in
-	// that case 'head' is already pointing there).
-	t_node_obj		*head_obj;
-	t_node_obj		*curr_obj;
-
 	size_t			line_num;
 	int				n_lights;
 	int				n_spheres;
@@ -100,6 +89,18 @@ typedef struct s_parser
 	int				n_cylinders;
 	int				n_ambs;
 	int				n_cams;
+
+	// objects linked list
+	// 'current' allows creation of nodes to happen faster, without walking
+	// through the list on each iteration, since it always points at the 'hole'
+	// for the node to be created (except at the very first iteration, but in
+	// that case 'head' is already pointing there).
+	t_node_obj		*head;
+	t_node_obj		*current;
+
+	// light linked list
+	t_node_light	*head_light;
+	t_node_light	*curr_light;
 
 }	t_parser;
 # endif
@@ -130,7 +131,6 @@ int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
 bool	is_valid_separator(char	**str, size_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
-int		create_new_node(void *head, void *current, t_list_id id, size_t size);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 
