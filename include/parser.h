@@ -43,10 +43,6 @@ typedef struct s_node_light
 {
 	t_light				light; // current 'light' element
 	struct s_node_light	*next;
-	// FIXME: when compiling the project, try to see if replacing 'struct s_node_light'
-	// with 't_node_light' would work. I suppose it wouldn't compile since it is
-	// not yet declared in this scope!
-
 }	t_node_light;
 # endif
 
