@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifdef BONUS
+#ifndef BONUS
+#else
 # ifndef MULTITHREADING_H
 #  define MULTITHREADING_H
 

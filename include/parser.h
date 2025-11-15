@@ -35,12 +35,15 @@ typedef enum e_status
 // but I am probably going to abandon that idea, the function is soooo complicated
 // and odd looking. Better revert back too the original split functions, create_new_light_node()
 // and creat_new_obj_node()
+// FIXME: I need an #ifdef BONUS, if I end up keeping this...
 typedef enum e_list_id
 {
 	LIGHT,
 	OBJECT
 }	t_list_id;
 
+# ifndef BONUS
+# else
 // wrapper for each t_light node, only needed in parsing
 typedef struct s_node_light
 {
@@ -51,6 +54,7 @@ typedef struct s_node_light
 	// not yet declared in this scope!
 
 }	t_node_light;
+# endif
 
 typedef struct s_node_obj
 {
@@ -59,6 +63,20 @@ typedef struct s_node_obj
 
 }	t_node_obj;
 
+# ifndef BONUS
+typedef struct s_parser
+{
+	int		fd;
+	size_t	line_num;
+	int		n_lights;
+	int		n_spheres;
+	int		n_planes;
+	int		n_cylinders;
+	int		n_ambs;
+	int		n_cams;
+
+}	t_parser;
+# else
 typedef struct s_parser
 {
 	int				fd;
@@ -75,22 +93,27 @@ typedef struct s_parser
 	t_node_obj		*head_obj;
 	t_node_obj		*curr_obj;
 
-	size_t		line_num;
-	int			n_lights;
-	int			n_spheres;
-	int			n_planes;
-	int			n_cylinders;
-	int			n_ambs;
-	int			n_cams;
+	size_t			line_num;
+	int				n_lights;
+	int				n_spheres;
+	int				n_planes;
+	int				n_cylinders;
+	int				n_ambs;
+	int				n_cams;
 
 }	t_parser;
+# endif
 
 // scene and elements parsing
 void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
 int		parse_camera(t_cam *cam, char *str, t_parser *parser);
+# ifndef BONUS
+int	parse_light(t_parser *parser, char *str, t_light *light);
+# else
 int		parse_light(t_parser *parser, char *str);
+# endif
 int		parse_sphere(t_parser *parser, char *str, size_t line_num);
 int		parse_plane(t_parser *parser, char *str, size_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, size_t line_num);

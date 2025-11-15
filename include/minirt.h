@@ -29,7 +29,8 @@
 # include <math.h>
 # include <stdbool.h>
 
-# ifdef BONUS
+# ifndef BONUS
+# else
 #  include "multithreading.h"
 # endif
 
@@ -101,48 +102,88 @@ typedef struct s_object
 //		review the light array, do you still want it here?
 //		Also, are there other things we need/ could remove?
 //		Ask partner!
+//
+// FIXME: Is norminette happy with defining WITHIN the struct, instead of having
+// two separate, almost identical strcut typedefs? Try.
+
+/* Struct that includes everything */
+typedef struct s_info
+{
+	mlx_t			*mlx;
+	mlx_image_t		*img;
+	double			focal_length;
+	double			viewport_width;
+	double			viewport_height;
+	double			rot[3][3];
+	double			px;
+	t_color			amb;
+	t_cam			cam;
+	# ifndef BONUS
+	t_light			light; // one single light
+	# else
+	t_light			*light;	// array of lights
+	# endif
+	t_object		*obj;  	// array of objects
+	# ifndef BONUS
+	# else
+	int				n_light;
+	# endif
+	int				n_obj;
+	bool			is_inside;
+	# ifndef BONUS
+	# else
+	t_thread_system		thread_system;
+	# endif
+
+}	t_info;
+
+
+/*
+ * WARN: alternate version for the info struct, where the BONUS rule check
+ * happens outside the typedef - resulting in 2 separate versions of the struct.
+ * Might be preferred by NORMINETTE....
 # ifndef BONUS
-	/* Struct that includes everything */
+	// Struct that includes everything
 	typedef struct s_info
 	{
-		mlx_t				*mlx;
-		mlx_image_t			*img;
-		double				focal_length;
-		double				viewport_width;
-		double				viewport_height;
-		double				rot[3][3];
-		double				px;
-		t_color				amb;
-		t_cam				cam;
-		t_light				*light;	// array of lights
-		t_object			*obj;  	// array of objects
-		int					n_light;
-		int					n_obj;
-		bool				is_inside;
+		mlx_t		*mlx;
+		mlx_image_t	*img;
+		double		focal_length;
+		double		viewport_w;
+		double		viewport_h;
+		double		rot[3][3];
+		double		px;
+		t_color		amb;
+		t_cam		cam;
+		t_light		light; // one single light
+		t_object	*obj;  	// array of objects
+		int			n_obj;
+		bool		is_inside;
 
 	}	t_info;
 # else
-	/* Struct that includes everything, plus data for multithreading */
+	// Struct that includes everything, as well as data for multithreading
 	typedef struct s_info
 	{
-		mlx_t				*mlx;
-		mlx_image_t			*img;
-		double				focal_length;
-		double				viewport_width;
-		double				viewport_height;
-		double				rot[3][3];
-		double				px;
-		t_color				amb;
-		t_cam				cam;
-		t_light				*light;	// array of lights
-		t_object			*obj;  	// array of objects
-		int					n_light;
-		int					n_obj;
-		bool				is_inside;
-		t_thread_system		thread_system;
+		mlx_t			*mlx;
+		mlx_image_t		*img;
+		double			focal_length;
+		double			viewport_w;
+		double			viewport_h;
+		double			rot[3][3];
+		double			px;
+		t_color			amb;
+		t_cam			cam;
+		t_light			*light;	// array of lights
+		t_object		*obj;  	// array of objects
+		int				n_light;
+		int				n_obj;
+		bool			is_inside;
+		t_thread_system	thread_system;
 
 	}	t_info;
 # endif
+*/
 
 t_info		*get_info(void);
 void		resize(int32_t width, int32_t height, void *param);
@@ -170,5 +211,7 @@ void		key_handler(mlx_key_data_t keydata, void *param);
 void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
+
+void		single_threaded_renderer(void *param);
 
 #endif

@@ -12,6 +12,8 @@
 
 #include "minirt.h"
 
+#ifndef BONUS
+#else
 static void			init_barrier(t_thread_system *thread_system);
 static void			init_threads(t_thread_system *thread_system);
 static inline void	*rendering_routine(void *ptr);
@@ -19,6 +21,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y);
 inline double		nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
 
 /*
+ * WARN: is this even used???
 void	init_and_lock_mutual_exclusion_object(t_info *info)
 {
 	if (pthread_mutex_init(&info->render_lock, NULL))
@@ -230,6 +233,7 @@ inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj
 	}
 	return (k_min);
 }
+#endif
 
 /*
 // NOTE: this function should only be called just before exiting the program.
@@ -237,6 +241,7 @@ inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj
 // destroy it, it means we are quiting anyways. Therefore, there is no need
 // to add an extra quitting if something fails - but we can still acknowledge the
 // failure by writing a message.
+// WARN: is this even used?
 void	unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
 			bool is_locked)
 {

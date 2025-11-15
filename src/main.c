@@ -41,9 +41,35 @@ int	free_exit(char *s, int exit_code)
 	return (exit_code);
 }
 
+//  FIXME:
 // TODO: add # define bonus here too (ESC handler uses atomic_store() for threads)
 // and mandatory version could simply close the window from here - or is it really
 // a good thing, shouldn't closing the window only happen after finishing a frame??
+#ifndef BONUS
+static void	key_handler(mlx_key_data_t keydata, void *param)
+{
+	t_info	*info;
+
+	info = (t_info *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+	{
+		atomic_store(&info->thread_system.status, ABORT); // FIXME: change this line:
+		// you are not allowed to use atomic_store() in the mandatory.
+		// either close the window from here, as it used to be, or add an exit flag
+		// to your info struct, which will let single_threaded_renderer() to
+		// first finish its current frame, and, on the subsequent call to it
+		// (from within mlx_loop()), it will check for that flag, call mlx_close_window()
+		// by itself, and return.
+	}
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
+		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
+		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
+		rotate_camera(keydata, info);
+}
+#else
 static void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -59,6 +85,7 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
 		rotate_camera(keydata, info);
 }
+#endif
 
 void	initialize_mlx(t_info *info)
 {
@@ -76,6 +103,28 @@ void	initialize_mlx(t_info *info)
 // FIXME: Set bonus define here, for:
 // single cored version (mandatory) vs. multithreaded version (bonus)?
 // BUT IS IT POSSIBLE TO ACHIEVE WITH THE MAIN() function??
+#ifndef BONUS
+int	main(int argc, char *argv[])
+{
+	t_info	*info;
+
+	info = get_info();
+
+	parse_argument(argc, argv);
+	parse_scene(info, argv[1]);
+
+	preprocessor(info);
+
+	initialize_mlx(info);
+	mlx_key_hook(info->mlx, &key_handler, info);
+	mlx_loop_hook(info->mlx, single_threaded_renderer, info); // NOTE: maybe we just call it 'renderer' in both cases?
+
+	mlx_loop(info->mlx);
+
+	(void)free_exit(NULL, 0); // this does not actually exit the program, no worries
+	return (SUCCESS);
+}
+#else
 int	main(int argc, char *argv[])
 {
 	t_info	*info;
@@ -95,8 +144,10 @@ int	main(int argc, char *argv[])
 
 	mlx_key_hook(info->mlx, &key_handler, info);
 	if (info->thread_system.is_multithreaded)
-		mlx_loop_hook(info->mlx, multithreaded_renderer, info);
-	/*
+		mlx_loop_hook(info->mlx, multithreaded_renderer, info); // NOTE: maybe we just call it 'renderer' in both cases?
+	/* // WARN: uncomment when ready! Or do I finally just call
+	 * single_threaded_renderer from within the multithreaded_renderer(), which
+	 * could be rather more elegant?
 	else
 		mlx_loop_hook(info->mlx, single_threaded_renderer, info);
 	*/
@@ -106,3 +157,4 @@ int	main(int argc, char *argv[])
 	(void)free_exit(NULL, 0); // this does not actually exit the program, no worries
 	return (SUCCESS);
 }
+#endif
