@@ -29,6 +29,7 @@ HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
 OBJ_DIR = ./obj
+BONUS_OBJ_DIR = ./obj_bonus
 
 SRC_FILES = main.c \
 			parser/handle_argv.c \
@@ -54,8 +55,9 @@ SRC_FILES = main.c \
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
+BONUS_OBJS = $(addprefix $(BONUS_OBJ_DIR)/, $(SRC_FILES:.c=.o))
 
-.SECONDARY: $(OBJS) $(LIBMLX) $(LIBFT)
+.SECONDARY: $(OBJS) $(BONUS_OBJS) $(LIBMLX) $(LIBFT)
 
 all: $(NAME)
 
@@ -67,10 +69,15 @@ $(LIBFT): phony
 	@if [ ! -d "$(LIBFT_DIR)" ]; then git clone $(LIBFT_GIT) $(LIBFT_DIR); fi
 	@make --no-print-directory -C $(LIBFT_DIR)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(LIBMLX) $(LIBFT)
 	@mkdir -p $(dir $@)
 	$(CC) $(FLAGS) $(HEADER_DIR) -c $< -o $@
 	@echo "$(BGREEN) Compiled $(notdir $<) $(RESET_COLOR)"
+
+$(BONUS_OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(LIBMLX) $(LIBFT)
+	@mkdir -p $(dir $@)
+	$(CC) $(FLAGS) -D BONUS $(HEADER_DIR) -c $< -o $@
+	@echo "$(BYELLOW) Bonus compiled $(notdir $<) $(RESET_COLOR)"
 
 $(NAME): $(LIBMLX) $(LIBFT) $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) $(LIBMLX) $(LIBFT) $(LIBS) -o $(NAME)
@@ -78,16 +85,19 @@ $(NAME): $(LIBMLX) $(LIBFT) $(OBJS)
 
 clean:
 	if [ -d "$(OBJ_DIR)" ]; then rm -rf $(OBJ_DIR); fi
+	if [ -d "$(BONUS_OBJ_DIR)" ]; then rm -rf $(BONUS_OBJ_DIR); fi
 	@if [ -d "$(LIBFT_DIR)" ]; then make clean -C $(LIBFT_DIR); fi
 	@if [ -d "$(LIBMLX_DIR)" ]; then make clean -C $(LIBMLX_DIR)/build; fi
 	@echo "$(BBLUE) Cleaned .o files $(RESET_COLOR)"
 
 fclean:
-	@if [ -f "$(NAME)" ] || [ -d "$(OBJ_DIR)" ] || [ -d "$(LIBFT_DIR)" ] || [ -d "$(LIBMLX_DIR)" ]; then \
+	@if [ -f "$(NAME)" ] || [ -d "$(OBJ_DIR)" ] || [ -d "$(BONUS_OBJ_DIR)" ] || [ -d "$(LIBFT_DIR)" ] || [ -d "$(LIBMLX_DIR)" ]; then \
 		if [ -d "$(OBJ_DIR)" ]; then rm -rf "$(OBJ_DIR)"; fi; \
+		if [ -d "$(BONUS_OBJ_DIR)" ]; then rm -rf "$(BONUS_OBJ_DIR)"; fi; \
 		if [ -d "$(LIBFT_DIR)" ]; then make -s fclean -C "$(LIBFT_DIR)"; rm -rf "$(LIBFT_DIR)"; fi; \
 		if [ -d "$(LIBMLX_DIR)" ]; then make -s clean -C "$(LIBMLX_DIR)/build"; rm -rf "$(LIBMLX_DIR)"; fi; \
 		if [ -f "$(NAME)" ]; then rm -rf "$(NAME)"; fi; \
+		rm -f .bonus; \
 		echo "$(BBLUE) Cleaned all $(RESET_COLOR)"; \
 	else \
 		echo "$(BCYAN) Nothing to clean. Everything looks tidy. $(RESET_COLOR)"; \
@@ -95,4 +105,11 @@ fclean:
 
 re: fclean all
 
-.PHONY: all clean fclean re phony
+bonus: .bonus
+
+.bonus: $(LIBMLX) $(LIBFT) $(BONUS_OBJS)
+	@$(CC) $(FLAGS) -D BONUS $(BONUS_OBJS) $(LIBMLX) $(LIBFT) $(LIBS) -o $(NAME)
+	@echo "$(BYELLOW) Built with bonus rules $(RESET_COLOR)"
+	@touch .bonus
+
+.PHONY: all clean fclean re phony bonus

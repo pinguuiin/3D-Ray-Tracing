@@ -6,17 +6,12 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/04 04:48:56 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/16 22:23:24 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minirt.h"
-
-
-// WARN: debugging function to check validity of parsing, delete when ready.
-// static void	print_whole_execution_data(t_info *info);
-
 
 t_info	*get_info(void)
 {
@@ -96,8 +91,6 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
-	// WARN: only for debugging.
-	// print_whole_execution_data(info);
 	preprocessor(info);
 
 	initialize_mlx(info);
@@ -108,138 +101,3 @@ int	main(int argc, char *argv[])
 	free_exit(NULL); // this does not actually exit the program, no worries
 	return (SUCCESS);
 }
-
-/*
-// WARN: debugging function to make sure parsing is done right.
-#include "stdio.h"
-static void	print_whole_execution_data(t_info *info)
-{
-	printf("AMBIENT LIGHT DATA:\n\t");
-	printf("ambient's color values:\n\t\t");
-	printf("info->amb.r:	<%.20f>\n\t\t", info->amb.r);
-	printf("info->amb.g:	<%.20f>\n\t\t", info->amb.g);
-	printf("info->amb.b:	<%.20f>\n\n\n\n", info->amb.b);
-
-
-	printf("CAMERA DATA:\n\t");
-	printf("camera's position coordinates:\n\t\t");
-	printf("X coordinate:	<%.20f>\n\t\t", info->cam.pos.x);
-	printf("Y coordinate:	<%.20f>\n\t\t", info->cam.pos.y);
-	printf("Z coordinate:	<%.20f>\n\n\t", info->cam.pos.z);
-
-	printf("camera's orientation vector (direction):\n\t\t");
-	printf("X axis:	<%.20f>\n\t\t", info->cam.direction.x);
-	printf("Y axis:	<%.20f>\n\t\t", info->cam.direction.y);
-	printf("Z axis:	<%.20f>\n\n\t", info->cam.direction.z);
-
-	printf("camera's FOV\n\t\t");
-	printf("FOV:	<%.20f>\n\n\n\n", info->cam.fov);
-	
-
-	printf("LIGHT SOURCE DATA (ARRAY):\n\n\t");
-
-	int	i;
-
-	i = 0;
-	while (i < info->n_light)
-	{
-		printf("LIGHT[%d] DATA:\n\t", i);
-		printf("Light[%d]'s POSITION coordinates\n\t\t", i);
-
-		printf("X coordinate:	<%.20f>\n\t\t", info->light[i].pos.x);
-		printf("Y coordinate:	<%.20f>\n\t\t", info->light[i].pos.y);
-		printf("Z coordinate:	<%.20f>\n\n\t", info->light[i].pos.z);
-
-		printf("Light source's COLOR (RGB channels)\n\t\t");
-		printf("R channel:	<%.20f>\n\t\t", info->light[i].color.r);
-		printf("G channel:	<%.20f>\n\t\t", info->light[i].color.g);
-		printf("B channel:	<%.20f>\n\n\n", info->light[i].color.b);
-
-		i++;
-		if (i < info->n_light)
-			printf("\t");
-	}
-	printf("\n\n\n");
-
-	// print objects array
-	i = 0;
-	printf("ALL SPHERES DATA:\n\n\t");
-	while (i < info->n_obj && info->obj[i].type == SPHERE)
-	{
-		printf("SPHERE[%d]:\n\t", i);
-		printf("Sphere[%d]'s POSITION coordinates:\n\t\t", i);
-		printf("X coordinate:	<%.20f>\n\t\t", info->obj[i].pos.x);
-		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
-		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
-
-		printf("Sphere[%d]'s RADIUS:\n\t\t", i);
-		printf("radius is:	<%.20f>\n\n\t", info->obj[i].r);
-
-		printf("Sphere[%d]'s COLOR (rgb channels):\n\t\t", i);
-		printf("R channel:	<%.20f>\n\t\t", info->obj[i].color.r);
-		printf("G channel:	<%.20f>\n\t\t", info->obj[i].color.g);
-		printf("B channel:	<%.20f>\n\n\n", info->obj[i].color.b);
-
-		i++;
-		if (i < info->n_obj && info->obj[i].type == SPHERE)
-			printf("\t");
-	}
-	printf("\n\n");
-
-	printf("ALL PLANES DATA:\n\n\t");
-	while (i < info->n_obj && info->obj[i].type == PLANE)
-	{
-		printf("PLANE[%d]:\n\t", i);
-		printf("Plane[%d]'s POSITION coordinates:\n\t\t", i);
-		printf("X coordinate:	<%.20f>\n\t\t", info->obj[i].pos.x);
-		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
-		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
-
-		printf("Plane[%d]'s NORMAL VECTOR (NORMALIZED):\n\t\t", i);
-		printf("X axis:	<%.20f>\n\t\t", info->obj[i].normal.x);
-		printf("Y axis:	<%.20f>\n\t\t", info->obj[i].normal.y);
-		printf("Z axis:	<%.20f>\n\n\t", info->obj[i].normal.z);
-
-		printf("Plane[%d]'s COLOR (rgb channels):\n\t\t", i);
-		printf("R channel:	<%.20f>\n\t\t", info->obj[i].color.r);
-		printf("G channel:	<%.20f>\n\t\t", info->obj[i].color.g);
-		printf("B channel:	<%.20f>\n\n\n", info->obj[i].color.b);
-
-		i++;
-		if (i < info->n_obj && info->obj[i].type == PLANE)
-			printf("\t");
-	}
-	printf("\n\n");
-
-
-	printf("ALL CYLINDERS DATA:\n\n\t");
-	while (i < info->n_obj && info->obj[i].type == CYLINDER)
-	{
-		printf("CYLINDER[%d]:\n\t", i);
-		printf("Cylinder[%d]'s POSITION coordinates:\n\t\t", i);
-		printf("X coordinate:	<%.20f>\n\t\t", info->obj[i].pos.x);
-		printf("Y coordinate:	<%.20f>\n\t\t", info->obj[i].pos.y);
-		printf("Z coordinate:	<%.20f>\n\n\t", info->obj[i].pos.z);
-
-		printf("Cylinder[%d]'s VECTOR OF CENTRAL AXIS (NORMALIZED):\n\t\t", i);
-		printf("X axis:	<%.20f>\n\t\t", info->obj[i].normal.x);
-		printf("Y axis:	<%.20f>\n\t\t", info->obj[i].normal.y);
-		printf("Z axis:	<%.20f>\n\n\t", info->obj[i].normal.z);
-
-		printf("Cylinder[%d]'s RADIUS:\n\t\t", i);
-		printf("radius is:	<%.20f>\n\n\t", info->obj[i].r);
-
-		printf("Cylinder[%d]'s HEIGHT:\n\t\t", i);
-		printf("height is:	<%.20f>\n\n\t", info->obj[i].h);
-
-		printf("Cylinder[%d]'s COLOR (rgb channels):\n\t\t", i);
-		printf("R channel:	<%.20f>\n\t\t", info->obj[i].color.r);
-		printf("G channel:	<%.20f>\n\t\t", info->obj[i].color.g);
-		printf("B channel:	<%.20f>\n\n\n", info->obj[i].color.b);
-
-		i++;
-		if (i < info->n_obj && info->obj[i].type == CYLINDER)
-			printf("\t");
-	}
-	printf("\n\n");
-}*/
