@@ -112,9 +112,6 @@ void	initialize_mlx(t_info *info)
 		exit(free_exit("Pushing image to window failed", MLX_FAILURE));
 }
 
-// FIXME: Set bonus define here, for:
-// single cored version (mandatory) vs. multithreaded version (bonus)?
-// BUT IS IT POSSIBLE TO ACHIEVE WITH THE MAIN() function??
 #ifndef BONUS
 int	main(int argc, char *argv[])
 {

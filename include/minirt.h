@@ -160,6 +160,7 @@ typedef struct s_info
 		t_object	*obj;  	// array of objects
 		int			n_obj;
 		bool		is_inside;
+		bool		exit_flag;
 
 	}	t_info;
 # else

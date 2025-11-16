@@ -22,7 +22,7 @@ static inline void		draw_pixel(t_info *info, t_vec ray, int x, int y);
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
 
 /*
- * WARN: is this even used???
+ * WARN: is this even used??? - mutex implementation
 void	init_and_lock_mutual_exclusion_object(t_info *info)
 {
 	if (pthread_mutex_init(&info->render_lock, NULL))
@@ -43,7 +43,7 @@ void	init_and_lock_mutual_exclusion_object(t_info *info)
 // destroy it, it means we are quiting anyways. Therefore, there is no need
 // to add an extra quitting if something fails - but we can still acknowledge the
 // failure by writing a message.
-// WARN: is this even used?
+// WARN: is this even used? - mutex implementation
 void	unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
 			bool is_locked)
 {
@@ -158,7 +158,7 @@ static inline void	*rendering_routine(void *ptr)
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
 
-	while (atomic_load(&info->thread_system.status) != ABORT) // || atomic_load(&info->thread_system->status) == WAIT) NOTE: add the wait in the main renderer process...
+	while (atomic_load(&info->thread_system.status) != ABORT)
 	{
 		x = painter->start_x;
 		while (atomic_load(&info->thread_system.status) == WAIT
@@ -182,8 +182,6 @@ static inline void	*rendering_routine(void *ptr)
 			// assigned one function to our loop_hook...
 			// 2. If NOT falling back, review the comment above.
 		}
-		if (atomic_load(&info->thread_system.status) == ABORT)
-			return (NULL);
 		while (x < painter->border_x)
 		{
 			y = 0;
@@ -256,7 +254,11 @@ void	single_threaded_renderer(void *param)
 	}
 }
 #else
-//  FIXME: have to fix many things here!
+//  FIXME:
+//  - design function's fallback on single threaded rendering.
+//  - solve tearing happening on each of the threads' start of chunks when moving camera
+//  - issues with closing the window with the ESC button
+//  - other issues with window's 'x' button
 void	multithreaded_renderer(void *param)
 {
 	t_info			*info;
