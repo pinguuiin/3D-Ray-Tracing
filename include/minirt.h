@@ -214,6 +214,8 @@ void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
 
-void		single_threaded_renderer(void *param);
+# ifndef BONUS
+void		renderer(void *param);
+# endif
 
 #endif

@@ -47,9 +47,9 @@ int	free_exit(char *s, int exit_code)
 
 	// This boolean returns true if 'x' button was pressed, and renderer did not
 	// get the chance to clean up the threads and the barrier!
-	if (info->thread_system.is_multithreaded)
+	if (atomic_load(&info->thread_system.mt_status) != MT_OFF) // if multithreading status is ON, or if there has been a failure and it hasn't been caught yet by the renderer, perhaps it is better to clean it here... this means that I have to set it to MT_OFF every time it is on MT_FAILURE and I catch it from the renderer().
 	{
-		info->thread_system.status = ABORT;
+		atomic_store(&info->thread_system.routine_action, ABORT);
 		clean_up_threads_and_barrier(&info->thread_system, N_THREADS);
 	}
 
@@ -91,7 +91,7 @@ static void	key_handler(mlx_key_data_t keydata, void *param)
 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-		atomic_store(&info->thread_system.status, ABORT);
+		atomic_store(&info->thread_system.routine_action, ABORT);
 	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
 		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
 		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
@@ -129,11 +129,11 @@ int	main(int argc, char *argv[])
 
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, info);
-	mlx_loop_hook(info->mlx, single_threaded_renderer, info); // NOTE: maybe we just call it 'renderer' in both cases?
+	mlx_loop_hook(info->mlx, renderer, info);
 
 	mlx_loop(info->mlx);
 
-	(void)free_exit(NULL, 0); // this does not actually exit the program, no worries
+	(void)free_exit(NULL, 0);
 	return (SUCCESS);
 }
 #else
@@ -149,24 +149,25 @@ int	main(int argc, char *argv[])
 	preprocessor(info);
 
 	initialize_mlx(info);
-	mlx_resize_hook(info->mlx, &resize, info);
 
 	initialize_multithreading(info);
 
-
-	mlx_key_hook(info->mlx, &key_handler, info);
-	if (info->thread_system.is_multithreaded)
-		mlx_loop_hook(info->mlx, multithreaded_renderer, info); // NOTE: maybe we just call it 'renderer' in both cases?
-	/* // WARN: uncomment when ready! Or do I finally just call
-	 * single_threaded_renderer from within the multithreaded_renderer(), which
-	 * could be rather more elegant?
-	else
-		mlx_loop_hook(info->mlx, single_threaded_renderer, info);
+	// WARN: just debugging !
+	/*
+	if (atomic_load(&info->thread_system.mt_status) == MT_ON)
+	{
+		write(1, "MODIFYING VALUE TO BE SINGLE TRHEADED!!!!\n\n\n", sizeof("MODIFYING VALUE TO BE SINGLE TRHEADED!!!!\n\n\n") - 1);
+		atomic_store(&info->thread_system.mt_status, MT_FAILURE);
+	}
 	*/
+
+	mlx_resize_hook(info->mlx, &resize, info);
+	mlx_key_hook(info->mlx, &key_handler, info);
+	mlx_loop_hook(info->mlx, renderer, info);
 
 	mlx_loop(info->mlx);
 
-	(void)free_exit(NULL, 0); // this does not actually exit the program, no worries
+	(void)free_exit(NULL, 0);
 	return (SUCCESS);
 }
 #endif

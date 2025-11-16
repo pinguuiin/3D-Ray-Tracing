@@ -17,6 +17,7 @@
 static void			init_barrier(t_thread_system *thread_system);
 static void			init_threads(t_thread_system *thread_system);
 static inline void	*rendering_routine(void *ptr);
+static void			single_threaded_renderer(void *param);
 static void			let_threads_finish(t_painter *threads, int i);
 static void			destruct_barrier(pthread_barrier_t *barrier);
 #endif
@@ -72,9 +73,9 @@ void	unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
 void	initialize_multithreading(struct s_info *info)
 {
 	init_barrier(&info->thread_system);
-	if (info->thread_system.is_multithreaded)
+	if (atomic_load(&info->thread_system.mt_status) == MT_ON)
 	{
-		info->thread_system.status = WAIT;
+		atomic_store(&info->thread_system.routine_action, WAIT);
 		info->thread_system.threads[0].p_info = info;
 		init_threads(&info->thread_system);
 	}
@@ -87,10 +88,10 @@ static void	init_barrier(t_thread_system *thread_system)
 		ft_putstr_fd("Failed to initialize barrier for multithreaded execution;"
 			" initiating fallback to single-threaded rendering.\n",
 			2);
-		thread_system->is_multithreaded = 0;
+		atomic_store(&thread_system->mt_status, MT_OFF);
 	}
 	else
-		thread_system->is_multithreaded = 1;
+		atomic_store(&thread_system->mt_status, MT_ON);
 }
 
 static void	init_threads(t_thread_system *thread_system)
@@ -103,11 +104,11 @@ static void	init_threads(t_thread_system *thread_system)
 		if (pthread_create(&thread_system->threads[i].painter, NULL,
 			&rendering_routine, &thread_system->threads[i]))
 		{
-			atomic_store(&thread_system->status, ABORT); // signals to the other threads that they should return.
+			atomic_store(&thread_system->routine_action, ABORT); // signals to the other threads that they should return.
 			clean_up_threads_and_barrier(thread_system, i);
 			ft_putstr_fd("Failed to create a thread; initiating fallback to "
 				"single-threaded rendering.\n", 2);
-			thread_system->is_multithreaded = 0; // signals that we fallback to the single threaded rendering function, since multithreading has failed.
+			atomic_store(&thread_system->mt_status, MT_OFF); // signals that we fallback to the single threaded rendering function, since multithreading has failed.
 			return ;
 		}
 		thread_system->threads[i].p_info = thread_system->threads[0].p_info;
@@ -167,10 +168,10 @@ static inline void	*rendering_routine(void *ptr)
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
 
-	while (atomic_load(&info->thread_system.status) != ABORT)
+	while (atomic_load(&info->thread_system.routine_action) != ABORT)
 	{
 		x = painter->start_x;
-		while (atomic_load(&info->thread_system.status) == WAIT
+		while (atomic_load(&info->thread_system.routine_action) == WAIT
 			&& atomic_load(&info->thread_system.n_done_painters))
 		{
 			if (usleep(500))
@@ -224,15 +225,8 @@ static inline void	*rendering_routine(void *ptr)
 }
 #endif
 
-/*
- * FIXME: How do I organize the mandatory vs. bonus function here, knowing
- * that I might want to use the 'mandatory' function as a fallback if BONUS is
- * defined but is_multithreaded is 0, because of some failure in the threads?
- * NOTE: this is the original renderer() function, from before the introduction
- * of multithreading into this project.
-*/
 #ifndef BONUS
-void	single_threaded_renderer(void *param)
+void	renderer(void *param)
 {
 	t_info		*info;
 	int			x;
@@ -266,30 +260,51 @@ void	single_threaded_renderer(void *param)
 //  FIXME:
 //  - design function's fallback on single threaded rendering.
 //  - solve tearing happening on each of the threads' start of chunks when moving camera
-void	multithreaded_renderer(void *param)
+void	renderer(void *param)
 {
 	t_info			*info;
 	t_thread_system	*thread_system;
 
 	info = (t_info *)param;
 	thread_system = &info->thread_system;
-	info->is_inside = false;
-
-	// WARN: the issue with the next block is:
-	// if, theoretically, ESC is pressed and, before the line "thread_system->is_multithreaded = 0"
-	// is executed, the 'x' button of the window would be pressed ---->
-	// bad things could happen, because then free_exit() would clean up again
-	// the thread resources......
-	// HOW CAN I MERGE THE TWO, ESC & 'x' button????
-	if (atomic_load(&thread_system->status) == ABORT)
+	if (atomic_load(&thread_system->mt_status) == MT_OFF)
+	{
+		single_threaded_renderer(info);
+		return ;
+	}
+	else if (atomic_load(&thread_system->routine_action) == ABORT
+		|| atomic_load(&thread_system->mt_status) == MT_FAILURE)
 	{
 		clean_up_threads_and_barrier(thread_system, N_THREADS);
-		mlx_close_window(info->mlx);
-		thread_system->is_multithreaded = 0;
+		atomic_store(&thread_system->mt_status, MT_OFF);
+		if (atomic_load(&thread_system->routine_action) == ABORT)
+			mlx_close_window(info->mlx);
+		else
+			single_threaded_renderer(info);
 		return ;
 	}
 
-	atomic_store(&thread_system->status, RENDER);
+	
+	/*
+	// WARN: the issue with the next block is:
+	// if, theoretically, ESC is pressed and, before the execution of the line
+	// "atomic_store(&thread_system->mt_status = MT_OFF);" , the 'x' button of
+	// the window would be pressed ---->
+	// bad things could happen, because then free_exit() would clean up again
+	// the thread resources......
+	// HOW CAN I MERGE THE TWO, ESC & 'x' button????
+	if (atomic_load(&thread_system->routine_action) == ABORT)
+	{
+		clean_up_threads_and_barrier(thread_system, N_THREADS);
+		mlx_close_window(info->mlx);
+		atomic_store(&thread_system->mt_state, MT_OFF);
+		return ;
+	}
+	*/
+
+	info->is_inside = false;
+
+	atomic_store(&thread_system->routine_action, RENDER);
 
 
 	// WARN: is this good enough? Should I sleep more? or is it even too much?
@@ -298,13 +313,13 @@ void	multithreaded_renderer(void *param)
 	// 	- notice the new RENDER flag
 	// 	- go on to wait at the barrier (until all threads are there)
 	// 	- start rendering, finish rendering their chunk
-	// 	- by which time, the status flag HAS TO BE AGAIN == WAIT!!
+	// 	- by which time, the routine_action flag HAS TO BE AGAIN == WAIT!!
 	if (usleep(400) == -1)
 	{
 		// TODO: handle error?
 	}
-	if (atomic_load(&thread_system->status) != ABORT)
-		atomic_store(&thread_system->status, WAIT);
+	if (atomic_load(&thread_system->routine_action) != ABORT)
+		atomic_store(&thread_system->routine_action, WAIT);
 
 	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
 	{
@@ -316,6 +331,37 @@ void	multithreaded_renderer(void *param)
 	}
 	atomic_store(&thread_system->n_done_painters, 0);
 
+}
+
+static void	single_threaded_renderer(void *param)
+{
+	t_info		*info;
+	int			x;
+	int			y;
+	t_vec		ray;
+
+	info = (t_info *)param;
+	if (atomic_load(&info->thread_system.routine_action) == ABORT)
+	{
+		mlx_close_window(info->mlx);
+		return ;
+	}
+	info->is_inside = false;
+	x = 0;
+	while (x < WIDTH)
+	{
+		y = 0;
+		while (y < HEIGHT)
+		{
+			ray = vec3(x * info->px - info->viewport_width / 2.0,
+			-(y * info->px - info->viewport_height / 2.0), 0);
+			rotate(info->rot, &ray);
+			ray = normalize(add(info->cam.direction, ray));
+			draw_pixel(info, ray, x, y);
+			y++;
+		}
+		x++;
+	}
 }
 #endif
 
