@@ -20,8 +20,6 @@ t_info	*get_info(void)
 	return (&info);
 }
 
-// WARN: do we need to close the window from here, before calling mlx_delete_image()
-// and mlx_terminate()?
 #ifndef BONUS
 int	free_exit(char *s, int exit_code)
 {
@@ -46,6 +44,15 @@ int	free_exit(char *s, int exit_code)
 	t_info	*info;
 
 	info = get_info();
+
+	// This boolean returns true if 'x' button was pressed, and renderer did not
+	// get the chance to clean up the threads and the barrier!
+	if (info->thread_system.is_multithreaded)
+	{
+		info->thread_system.status = ABORT;
+		clean_up_threads_and_barrier(&info->thread_system, N_THREADS);
+	}
+
 	free(info->light);
 	free(info->obj);
 	if (info->img)

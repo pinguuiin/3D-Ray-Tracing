@@ -17,6 +17,8 @@
 static void			init_barrier(t_thread_system *thread_system);
 static void			init_threads(t_thread_system *thread_system);
 static inline void	*rendering_routine(void *ptr);
+static void			let_threads_finish(t_painter *threads, int i);
+static void			destruct_barrier(pthread_barrier_t *barrier);
 #endif
 static inline void		draw_pixel(t_info *info, t_vec ray, int x, int y);
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
@@ -93,7 +95,7 @@ static void	init_barrier(t_thread_system *thread_system)
 
 static void	init_threads(t_thread_system *thread_system)
 {
-	int				i;
+	int	i;
 
 	i = 0;
 	while (i < N_THREADS)
@@ -102,10 +104,9 @@ static void	init_threads(t_thread_system *thread_system)
 			&rendering_routine, &thread_system->threads[i]))
 		{
 			atomic_store(&thread_system->status, ABORT); // signals to the other threads that they should return.
-			let_threads_finish(thread_system->threads, i);
+			clean_up_threads_and_barrier(thread_system, i);
 			ft_putstr_fd("Failed to create a thread; initiating fallback to "
 				"single-threaded rendering.\n", 2);
-			destruct_barrier(&thread_system->barrier);
 			thread_system->is_multithreaded = 0; // signals that we fallback to the single threaded rendering function, since multithreading has failed.
 			return ;
 		}
@@ -120,7 +121,15 @@ static void	init_threads(t_thread_system *thread_system)
 	}
 }
 
-void	let_threads_finish(t_painter *threads, int i)
+// WARN: can those be together in some separate file:
+// clean_up_threads_and_barrier() + let_threads_finish() + destruct_barrier()
+void	clean_up_threads_and_barrier(t_thread_system *thread_system, int i)
+{
+	let_threads_finish(thread_system->threads, i);
+	destruct_barrier(&thread_system->barrier);
+}
+
+static void	let_threads_finish(t_painter *threads, int i)
 {
 	int	j;
 
@@ -133,7 +142,7 @@ void	let_threads_finish(t_painter *threads, int i)
 	}
 }
 
-void	destruct_barrier(pthread_barrier_t *barrier)
+static void	destruct_barrier(pthread_barrier_t *barrier)
 {
 	if (pthread_barrier_destroy(barrier))
 		ft_putstr_fd("Failed to deallocate barrier used for multithreading "
@@ -257,8 +266,6 @@ void	single_threaded_renderer(void *param)
 //  FIXME:
 //  - design function's fallback on single threaded rendering.
 //  - solve tearing happening on each of the threads' start of chunks when moving camera
-//  - issues with closing the window with the ESC button
-//  - other issues with window's 'x' button
 void	multithreaded_renderer(void *param)
 {
 	t_info			*info;
@@ -268,11 +275,17 @@ void	multithreaded_renderer(void *param)
 	thread_system = &info->thread_system;
 	info->is_inside = false;
 
+	// WARN: the issue with the next block is:
+	// if, theoretically, ESC is pressed and, before the line "thread_system->is_multithreaded = 0"
+	// is executed, the 'x' button of the window would be pressed ---->
+	// bad things could happen, because then free_exit() would clean up again
+	// the thread resources......
+	// HOW CAN I MERGE THE TWO, ESC & 'x' button????
 	if (atomic_load(&thread_system->status) == ABORT)
 	{
-		let_threads_finish(thread_system->threads, N_THREADS);
-		destruct_barrier(&thread_system->barrier);
+		clean_up_threads_and_barrier(thread_system, N_THREADS);
 		mlx_close_window(info->mlx);
+		thread_system->is_multithreaded = 0;
 		return ;
 	}
 

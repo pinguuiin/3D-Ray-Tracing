@@ -41,13 +41,12 @@ typedef struct s_thread_system
 	pthread_barrier_t	barrier;
 	atomic_int_fast32_t	status;
 	atomic_int_fast32_t	n_done_painters;
-	bool				is_multithreaded;
+	bool				is_multithreaded; // WARN: am I 100% sure this should not be an ATOMIC bool?
 }	t_thread_system;
 
 void	initialize_multithreading(struct s_info *info);
-void	let_threads_finish(t_painter *threads, int i);
-void	destruct_barrier(pthread_barrier_t *barrier);
 void	multithreaded_renderer(void *param);
+void	clean_up_threads_and_barrier(t_thread_system *thread_system, int i);
 
 # endif
 #endif

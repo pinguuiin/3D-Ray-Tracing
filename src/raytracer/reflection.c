@@ -99,7 +99,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	hit->k_light = norm(hit->incoming);
 	hit->incoming = normalize(hit->incoming);
 	if (is_shadow(info, hit->incoming, hit->pos, hit))
-		return (hit->intensity); // WARN: changed by conaffetto, not sure if this is what is expected if we have only one light, without an array?
+		return (hit->intensity);
 	get_hit_normal(obj, hit);
 	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 	hit->outgoing = subtract(hit->outgoing, hit->incoming);
