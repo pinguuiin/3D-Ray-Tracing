@@ -43,6 +43,7 @@ SRC_FILES = main.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
 			hooks/camera_hooks.c \
+			hooks/hook_utils.c \
 			raytracer/preprocessor.c \
 			raytracer/reflection.c \
 			raytracer/renderer.c \

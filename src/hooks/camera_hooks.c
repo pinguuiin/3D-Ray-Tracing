@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/12 17:11:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:12:56 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-inline void	move_camera(mlx_key_data_t keydata, t_info *info)
+static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
 	if (keydata.key == MLX_KEY_D)
 		info->cam.pos.x += 0.2;
@@ -29,7 +29,7 @@ inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 	update_oc_and_plane_normal(info);
 }
 
-inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
+static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 {
 	// incorrect increment direction
 	if (keydata.key == MLX_KEY_UP)
@@ -42,4 +42,20 @@ inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 		rotate_y(&info->cam.direction, -M_PI / 60.0);  // info->cam.direction.x -= 0.1;
 	info->cam.direction = normalize(info->cam.direction);
 	get_rotation_matrix(info, info->cam.direction);
+}
+
+void	key_handler(mlx_key_data_t keydata, void *param)
+{
+	t_info	*info;
+
+	info = (t_info *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+		mlx_close_window(info->mlx);
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
+		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
+		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
+		rotate_camera(keydata, info);
 }

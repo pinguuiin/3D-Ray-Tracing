@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 05:34:36 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:23:57 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-inline double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, double h)
+static inline double	hit_flat_disk(double is_upper_disk, double oc_n, double ray_n, double h)
 {
 	if (is_upper_disk > 0.0)
 		oc_n -= h;
@@ -58,7 +58,7 @@ static inline double	hit_from_inside(t_object *cy, t_vec ray, t_discrim f, t_vec
 	return (hit_flat_disk(f.oc_n, f.oc_n, f.ray_n, cy->h));
 }
 
-inline double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
+static inline double	ray_parallel_axis(t_info *info, t_object *cy, t_discrim f)
 {
 	if (f.c > -EPSILON)  // shooting outside
 		return (-1.0);
