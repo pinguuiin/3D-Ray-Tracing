@@ -68,10 +68,6 @@ int	free_exit(char *s, int exit_code)
 }
 #endif
 
-//  FIXME:
-// TODO: add # define bonus here too (ESC handler uses atomic_store() for threads)
-// and mandatory version could simply close the window from here - or is it really
-// a good thing, shouldn't closing the window only happen after finishing a frame??
 #ifndef BONUS
 static void	key_handler(mlx_key_data_t keydata, void *param)
 {
