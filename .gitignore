@@ -1,6 +1,8 @@
 .vscode/
 miniRT
 obj/
+obj_bonus/
+.bonus
 src/MLX42/
 src/libft/
 mac_Makefile
