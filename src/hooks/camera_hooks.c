@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/17 00:12:56 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:57:39 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 {
 	// incorrect increment direction
-	if (keydata.key == MLX_KEY_UP)
+	if (keydata.key == MLX_KEY_UP && info->cam.direction.y < 0.98)
 		info->cam.direction.y += 0.05;
-	else if (keydata.key == MLX_KEY_DOWN)
+	else if (keydata.key == MLX_KEY_DOWN && info->cam.direction.y > -0.98)
 		info->cam.direction.y -= 0.05;
 	else if (keydata.key == MLX_KEY_RIGHT)
 		rotate_y(&info->cam.direction, M_PI / 60.0);  // info->cam.direction.x += 0.1;
