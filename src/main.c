@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/17 00:10:51 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:38:47 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,6 @@ int	free_exit(char *s)
 
 void	initialize_mlx(t_info *info)
 {
-	info->mlx = NULL;
-	info->img = NULL;
-	// mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
 		exit(free_exit("Instance initialization failed"));
