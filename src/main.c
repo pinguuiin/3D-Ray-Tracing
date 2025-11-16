@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/12 18:59:21 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/16 22:23:24 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
-	#ifdef B_MODE
+	#ifdef BONUS
 		ft_putendl_fd("bonus mode is ON!", 1);
 	#endif
 
