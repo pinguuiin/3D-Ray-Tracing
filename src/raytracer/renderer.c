@@ -376,6 +376,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	k = nearest_ray_hit(info, ray, &hit, obj);
 	if (k == -1) // not hit
 	{
+		// FIXME: can we change the vec_to_color() to black, for optimization?
 		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
 		return ;
 	}

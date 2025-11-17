@@ -68,40 +68,6 @@ int	free_exit(char *s, int exit_code)
 }
 #endif
 
-#ifndef BONUS
-static void	key_handler(mlx_key_data_t keydata, void *param)
-{
-	t_info	*info;
-
-	info = (t_info *)param;
-	if (keydata.key == MLX_KEY_ESCAPE)
-		info->exit_flag = 1;
-	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
-		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
-		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
-		move_camera(keydata, info);
-	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
-		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
-		rotate_camera(keydata, info);
-}
-#else
-static void	key_handler(mlx_key_data_t keydata, void *param)
-{
-	t_info	*info;
-
-	info = (t_info *)param;
-	if (keydata.key == MLX_KEY_ESCAPE)
-		atomic_store(&info->thread_system.routine_action, ABORT);
-	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
-		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
-		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
-		move_camera(keydata, info);
-	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
-		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
-		rotate_camera(keydata, info);
-}
-#endif
-
 void	initialize_mlx(t_info *info)
 {
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1);

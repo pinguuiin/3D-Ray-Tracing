@@ -44,13 +44,14 @@ static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 	get_rotation_matrix(info, info->cam.direction);
 }
 
+#ifndef BONUS
 void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
 
 	info = (t_info *)param;
 	if (keydata.key == MLX_KEY_ESCAPE)
-		mlx_close_window(info->mlx);
+		info->exit_flag = 1;
 	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
 		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
 		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
@@ -59,3 +60,20 @@ void	key_handler(mlx_key_data_t keydata, void *param)
 		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
 		rotate_camera(keydata, info);
 }
+#else
+void	key_handler(mlx_key_data_t keydata, void *param)
+{
+	t_info	*info;
+
+	info = (t_info *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+		atomic_store(&info->thread_system.routine_action, ABORT);
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
+		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
+		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
+		rotate_camera(keydata, info);
+}
+#endif

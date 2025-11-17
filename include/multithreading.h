@@ -48,7 +48,6 @@ typedef struct s_thread_system
 	pthread_barrier_t	barrier;
 	atomic_int_fast32_t	routine_action;
 	atomic_int_fast32_t	n_done_painters;
-	// bool				is_multithreaded; // WARN: am I 100% sure this should not be an ATOMIC bool?
 	atomic_int_fast32_t	mt_status;
 }	t_thread_system;
 
