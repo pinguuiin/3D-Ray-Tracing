@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/12 18:18:13 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:21:23 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ typedef struct s_info
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;
+	double		width;
+	double		height;
 	double		focal_length;
 	double		viewport_width;
 	double		viewport_height;
@@ -96,6 +98,7 @@ typedef struct s_info
 
 t_info		*get_info(void);
 int			free_exit(char *s);
+void		resize(int32_t width, int32_t height, void *param);
 
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
@@ -114,10 +117,10 @@ void		rotate_y(t_vec *vec, double theta);
 void		get_rotation_matrix(t_info *info, t_vec v);
 void		rotate(double rot[3][3], t_vec *v1);
 
-void		move_camera(mlx_key_data_t keydata, t_info *info);
-void		rotate_camera(mlx_key_data_t keydata, t_info *info);
+void		key_handler(mlx_key_data_t keydata, void *param);
 
 void		update_oc_and_plane_normal(t_info *info);
+void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
 
 #endif

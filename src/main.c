@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/16 22:23:24 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:38:47 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,28 +39,8 @@ int	free_exit(char *s)
 	return (1);
 }
 
-
-static void	key_handler(mlx_key_data_t keydata, void *param)
-{
-	t_info	*info;
-
-	info = (t_info *)param;
-	if (keydata.key == MLX_KEY_ESCAPE)
-		mlx_close_window(info->mlx);
-	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
-		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
-		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
-		move_camera(keydata, info);
-	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
-		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
-		rotate_camera(keydata, info);
-}
-
 void	initialize_mlx(t_info *info)
 {
-	info->mlx = NULL;
-	info->img = NULL;
-	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
 		exit(free_exit("Instance initialization failed"));
@@ -94,6 +74,7 @@ int	main(int argc, char *argv[])
 	preprocessor(info);
 
 	initialize_mlx(info);
+	mlx_resize_hook(info->mlx, &resize, info);
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);

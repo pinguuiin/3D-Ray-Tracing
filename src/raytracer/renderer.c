@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/12 17:48:04 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/17 00:23:06 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
+static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj)
 {
 	double	k;
 	double	k_min;
@@ -72,10 +72,10 @@ void	renderer(void *param)
 	info = (t_info *)param;
 	info->is_inside = false;
 	x = 0;
-	while (x < WIDTH)
+	while (x < info->width)
 	{
 		y = 0;
-		while (y < HEIGHT)
+		while (y < info->height)
 		{
 			ray = vec3(x * info->px - info->viewport_width / 2.0,
 			-(y * info->px - info->viewport_height / 2.0), 0);
