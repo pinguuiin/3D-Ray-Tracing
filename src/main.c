@@ -45,11 +45,10 @@ int	free_exit(char *s, int exit_code)
 
 	info = get_info();
 
-	// This boolean returns true if 'x' button was pressed, and renderer did not
-	// get the chance to clean up the threads and the barrier!
-	if (atomic_load(&info->thread_system.mt_status) != MT_OFF) // if multithreading status is ON, or if there has been a failure and it hasn't been caught yet by the renderer, perhaps it is better to clean it here... this means that I have to set it to MT_OFF every time it is on MT_FAILURE and I catch it from the renderer().
+	if (atomic_load(&info->thread_system.mt_status) != MT_OFF)
 	{
 		atomic_store(&info->thread_system.routine_action, ABORT);
+		pthread_barrier_wait(&info->thread_system.barrier);
 		clean_up_threads_and_barrier(&info->thread_system, N_THREADS);
 	}
 
@@ -70,7 +69,7 @@ int	free_exit(char *s, int exit_code)
 
 void	initialize_mlx(t_info *info)
 {
-	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
+	// mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
 		exit(free_exit("Instance initialization failed", MLX_FAILURE));
@@ -94,6 +93,7 @@ int	main(int argc, char *argv[])
 	preprocessor(info);
 
 	initialize_mlx(info);
+	// mlx_resize_hook(info->mlx, &resize, info);
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 
@@ -127,7 +127,7 @@ int	main(int argc, char *argv[])
 	}
 	*/
 
-	mlx_resize_hook(info->mlx, &resize, info);
+	// mlx_resize_hook(info->mlx, &resize, info);
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 

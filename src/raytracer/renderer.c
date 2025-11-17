@@ -83,7 +83,7 @@ void	initialize_multithreading(struct s_info *info)
 
 static void	init_barrier(t_thread_system *thread_system)
 {
-	if (pthread_barrier_init(&thread_system->barrier, NULL, N_THREADS))
+	if (pthread_barrier_init(&thread_system->barrier, NULL, N_THREADS + 1))
 	{
 		ft_putstr_fd("Failed to initialize barrier for multithreaded execution;"
 			" initiating fallback to single-threaded rendering.\n",
@@ -94,6 +94,7 @@ static void	init_barrier(t_thread_system *thread_system)
 		atomic_store(&thread_system->mt_status, MT_ON);
 }
 
+// FIXME: add an info pointer for the syntax ...... because of recent change
 static void	init_threads(t_thread_system *thread_system)
 {
 	int	i;
@@ -112,12 +113,11 @@ static void	init_threads(t_thread_system *thread_system)
 			return ;
 		}
 		thread_system->threads[i].p_info = thread_system->threads[0].p_info;
-		thread_system->threads[i].start_x = WIDTH / N_THREADS * i;
+		thread_system->threads[i].start_x = thread_system->threads[0].p_info->width / N_THREADS * i;
 		if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
-			thread_system->threads[i].border_x = WIDTH / N_THREADS * (i + 1);
+			thread_system->threads[i].border_x = thread_system->threads[0].p_info->width / N_THREADS * (i + 1);
 		else
-			thread_system->threads[i].border_x = WIDTH; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
-
+			thread_system->threads[i].border_x = thread_system->threads[0].p_info->width; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
 		i++;
 	}
 }
@@ -150,6 +150,12 @@ static void	destruct_barrier(pthread_barrier_t *barrier)
 			"purposes.\n", 2);
 }
 
+// The purpose of 'retval' is to catch the return value of
+// pthread_barrier_wait() because that function can return:
+//	- 0 (if successful)
+//	- the macro PTHREAD_BARRIER_SERIAL_THREAD (if successful, for one of the
+//	- threads synchronised at the barrier)
+//	- an error value in case of an error.
 static inline void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
@@ -157,7 +163,7 @@ static inline void	*rendering_routine(void *ptr)
 	t_vec		ray;
 	int			x;
 	int			y;
-	int			retval;
+
 	// The purpose of 'retval' is to catch the return value of
 	// pthread_barrier_wait() because that function can return:
 	//	- 0 (if successful)
@@ -168,9 +174,10 @@ static inline void	*rendering_routine(void *ptr)
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
 
-	while (atomic_load(&info->thread_system.routine_action) != ABORT)
+	while (1)
 	{
 		x = painter->start_x;
+		/*
 		while (atomic_load(&info->thread_system.routine_action) == WAIT
 			&& atomic_load(&info->thread_system.n_done_painters))
 		{
@@ -180,22 +187,14 @@ static inline void	*rendering_routine(void *ptr)
 				// fallback to other single-threaded version?
 			}
 		}
-		retval = pthread_barrier_wait(&info->thread_system.barrier);
-		if (retval && retval != PTHREAD_BARRIER_SERIAL_THREAD)
-		{
-			ft_putstr_fd("A thread has failed to wait for the barrier which "
-				"ensures synchronisation with other threads;\n"
-				"Initiating fallback to single-threaded rendering.\n", 2);
-			// WARN: is this message finally appropriate? Are we falling back finally?
-			// TODO:
-			// 1. Fallback to single-threaded renderer - but how??? We already
-			// assigned one function to our loop_hook...
-			// 2. If NOT falling back, review the comment above.
-		}
+		*/
+		pthread_barrier_wait(&info->thread_system.barrier);
+		if (atomic_load(&info->thread_system.routine_action) == ABORT)
+			return (NULL);
 		while (x < painter->border_x)
 		{
 			y = 0;
-			while (y < HEIGHT)
+			while (y < info->height)
 			{
 				ray = vec3(x * info->px - info->viewport_width / 2.0,
 				-(y * info->px - info->viewport_height / 2.0), 0);
@@ -210,6 +209,7 @@ static inline void	*rendering_routine(void *ptr)
 		atomic_fetch_add(&info->thread_system.n_done_painters, 1);
 
 	}
+		/*
 	// this extra barrier_wait call is added here to handle a scenario where:
 	// one fast thread would load a false value for exit_flag at the start of
 	// the previous while loop, and go on waiting at the barrier that follows -
@@ -221,6 +221,7 @@ static inline void	*rendering_routine(void *ptr)
 		ft_putstr_fd("A thread has failed to wait for the barrier which "
 			"ensures synchronisation with other threads\n", 2);
 	}
+	*/
 	return (NULL);
 }
 #endif
@@ -228,10 +229,10 @@ static inline void	*rendering_routine(void *ptr)
 #ifndef BONUS
 void	renderer(void *param)
 {
-	t_info		*info;
-	int			x;
-	int			y;
-	t_vec		ray;
+	t_info	*info;
+	int		x;
+	int		y;
+	t_vec	ray;
 
 	info = (t_info *)param;
 	if (info->exit_flag)
@@ -239,12 +240,14 @@ void	renderer(void *param)
 		mlx_close_window(info->mlx);
 		return ;
 	}
+	resize(info->mlx->width, info->mlx->height, info);
+	update_oc_and_plane_normal(info);
 	info->is_inside = false;
 	x = 0;
-	while (x < WIDTH)
+	while (x < info->width)
 	{
 		y = 0;
-		while (y < HEIGHT)
+		while (y < info->height)
 		{
 			ray = vec3(x * info->px - info->viewport_width / 2.0,
 			-(y * info->px - info->viewport_height / 2.0), 0);
@@ -264,71 +267,33 @@ void	renderer(void *param)
 {
 	t_info			*info;
 	t_thread_system	*thread_system;
+	int	i = 0;
 
 	info = (t_info *)param;
 	thread_system = &info->thread_system;
+	update_oc_and_plane_normal(info);
+	if (info->mlx->height != info->height || info->mlx->width != info->width)
+	{
+		resize(info->mlx->width, info->mlx->height, info);
+		while (i < N_THREADS)
+		{
+			thread_system->threads[i].start_x = info->width / N_THREADS * i;
+			if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
+				thread_system->threads[i].border_x = info->width / N_THREADS * (i + 1);
+			else
+				thread_system->threads[i].border_x = info->width; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
+			i++;
+		}
+	}
 	if (atomic_load(&thread_system->mt_status) == MT_OFF)
 	{
 		single_threaded_renderer(info);
 		return ;
 	}
-	else if (atomic_load(&thread_system->routine_action) == ABORT
-		|| atomic_load(&thread_system->mt_status) == MT_FAILURE)
-	{
-		clean_up_threads_and_barrier(thread_system, N_THREADS);
-		atomic_store(&thread_system->mt_status, MT_OFF);
-		if (atomic_load(&thread_system->routine_action) == ABORT)
-			mlx_close_window(info->mlx);
-		else
-			single_threaded_renderer(info);
-		return ;
-	}
-
-	
-	/*
-	// WARN: the issue with the next block is:
-	// if, theoretically, ESC is pressed and, before the execution of the line
-	// "atomic_store(&thread_system->mt_status = MT_OFF);" , the 'x' button of
-	// the window would be pressed ---->
-	// bad things could happen, because then free_exit() would clean up again
-	// the thread resources......
-	// HOW CAN I MERGE THE TWO, ESC & 'x' button????
-	if (atomic_load(&thread_system->routine_action) == ABORT)
-	{
-		clean_up_threads_and_barrier(thread_system, N_THREADS);
-		mlx_close_window(info->mlx);
-		atomic_store(&thread_system->mt_state, MT_OFF);
-		return ;
-	}
-	*/
-
 	info->is_inside = false;
-
-	atomic_store(&thread_system->routine_action, RENDER);
-
-
-	// WARN: is this good enough? Should I sleep more? or is it even too much?
-	// maybe this is the origin for some tests that suddenly froze?
-	// All threads should:
-	// 	- notice the new RENDER flag
-	// 	- go on to wait at the barrier (until all threads are there)
-	// 	- start rendering, finish rendering their chunk
-	// 	- by which time, the routine_action flag HAS TO BE AGAIN == WAIT!!
-	if (usleep(400) == -1)
-	{
-		// TODO: handle error?
-	}
-	if (atomic_load(&thread_system->routine_action) != ABORT)
-		atomic_store(&thread_system->routine_action, WAIT);
-
+	pthread_barrier_wait(&thread_system->barrier);
 	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
-	{
-		if (usleep(200) == -1)
-		{
-			// TODO: handle the error!
-
-		}
-	}
+		(void)usleep(200);
 	atomic_store(&thread_system->n_done_painters, 0);
 
 }
@@ -348,10 +313,10 @@ static void	single_threaded_renderer(void *param)
 	}
 	info->is_inside = false;
 	x = 0;
-	while (x < WIDTH)
+	while (x < info->width)
 	{
 		y = 0;
-		while (y < HEIGHT)
+		while (y < info->height)
 		{
 			ray = vec3(x * info->px - info->viewport_width / 2.0,
 			-(y * info->px - info->viewport_height / 2.0), 0);
@@ -376,8 +341,8 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	k = nearest_ray_hit(info, ray, &hit, obj);
 	if (k == -1) // not hit
 	{
-		// FIXME: can we change the vec_to_color() to black, for optimization?
-		mlx_put_pixel(info->img, x, y, vec_to_color(vec3(0.0, 0.0, 0.0)));
+		// NOTE: we change the vec_to_color() call to black, for optimization :-)
+		mlx_put_pixel(info->img, x, y, 0x000000FF);
 		return ;
 	}
 	obj = &info->obj[hit.obj_id];
