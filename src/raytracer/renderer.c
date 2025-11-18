@@ -29,6 +29,7 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_obje
 * is initialized here, and if that initialization does not succeed, no thread
 * is created and rendering happens on a single thread.
 */
+// FIXME: refactor
 inline void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
@@ -82,8 +83,6 @@ void	renderer(void *param)
 }
 #else
 // FIXME: refactor.
-// FIXME: remove the members "width" and "height" from the info struct:
-// and just use info->img->width and info->img->height
 void	renderer(void *param)
 {
 	t_info			*info;

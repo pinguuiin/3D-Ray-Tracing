@@ -102,9 +102,6 @@ typedef struct s_object
 	// Struct that includes everything
 	typedef struct s_info
 	{
-// FIXME: remove the members "width" and "height" from the info struct:
-// and just use info->img->width and info->img->height
-	// fix in all corresponding places
 		mlx_t		*mlx;
 		mlx_image_t	*img;
 		double		focal_length;
@@ -126,9 +123,6 @@ typedef struct s_object
 	// Struct that includes everything, as well as data for multithreading
 	typedef struct s_info
 	{
-		// FIXME: remove the members "width" and "height" from the info struct:
-		// and just use info->img->width and info->img->height
-		// fix in all corresponding places
 		mlx_t			*mlx;
 		mlx_image_t		*img;
 		double			focal_length;
