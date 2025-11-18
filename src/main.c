@@ -114,15 +114,6 @@ int	main(int argc, char *argv[])
 
 	initialize_multithreading(info);
 
-	// WARN: just debugging !
-	/*
-	if (atomic_load(&info->thread_system.is_multithreaded))
-	{
-		write(1, "MODIFYING VALUE TO BE SINGLE TRHEADED!!!!\n\n\n", sizeof("MODIFYING VALUE TO BE SINGLE TRHEADED!!!!\n\n\n") - 1);
-		atomic_store(&info->thread_system.is_multithreaded, 0);
-	}
-	*/
-
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);

@@ -32,7 +32,7 @@ typedef struct s_thread_system
 {
 	t_painter						threads[N_THREADS];
 	pthread_barrier_t				barrier;
-	volatile atomic_bool			is_done_init; // FIXME: finish implementing this!!!
+	volatile atomic_bool			is_done_init;
 	volatile atomic_bool			is_multithreaded;
 	volatile atomic_bool			exit_flag;
 	volatile atomic_int_fast32_t	n_done_painters;
