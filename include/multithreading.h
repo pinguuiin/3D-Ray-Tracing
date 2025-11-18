@@ -24,8 +24,8 @@ typedef struct s_painter
 {
 	pthread_t		painter;
 	struct s_info	*p_info;
-	int				start_x;
-	int				border_x;
+	uint32_t		start_x;
+	uint32_t		border_x;
 }	t_painter;
 
 typedef struct s_thread_system

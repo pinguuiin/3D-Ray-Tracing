@@ -33,7 +33,7 @@ inline void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
 	t_info		*info;
-	int			x;
+	uint32_t	x;
 
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
@@ -60,8 +60,8 @@ inline void	*rendering_routine(void *ptr)
 #ifndef BONUS
 void	renderer(void *param)
 {
-	t_info	*info;
-	int		x;
+	t_info		*info;
+	uint32_t	x;
 
 	info = (t_info *)param;
 	if (info->has_moved)
@@ -69,11 +69,12 @@ void	renderer(void *param)
 		info->has_moved = 0;
 		update_oc_and_plane_normal(info);
 	}
-	if (info->mlx->height != info->height || info->mlx->width != info->width)
+	if ((uint32_t) info->mlx->height != info->img->height
+		|| (uint32_t)info->mlx->width != info->img->width)
 		resize(info->mlx->width, info->mlx->height, info);
 	info->is_inside = false;
 	x = 0;
-	while (x < info->width)
+	while (x < info->img->width)
 	{
 		render_column(x, info);
 		x++;
@@ -96,20 +97,18 @@ void	renderer(void *param)
 		info->has_moved = 0;
 		update_oc_and_plane_normal(info);
 	}
-	if (info->mlx->height != info->height || info->mlx->width != info->width)
+	if ((uint32_t) info->mlx->height != info->img->height
+		|| (uint32_t)info->mlx->width != info->img->width)
 	{
 		resize(info->mlx->width, info->mlx->height, info);
 		i = 0;
 		while (i < N_THREADS)
 		{
-			thread_system->threads[i].start_x = info->width / N_THREADS * i;
+			thread_system->threads[i].start_x = info->img->width / N_THREADS * i;
 			if (i == N_THREADS - 1)
-				thread_system->threads[i].border_x = info->width;
+				thread_system->threads[i].border_x = info->img->width;
 			else
-			if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
-				thread_system->threads[i].border_x = info->width / N_THREADS * (i + 1);
-			else
-				thread_system->threads[i].border_x = info->width; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
+				thread_system->threads[i].border_x = info->img->width / N_THREADS * (i + 1);
 			i++;
 		}
 	}
@@ -128,11 +127,11 @@ void	renderer(void *param)
 // FIXME: is this even necessary? could it be absorbed to the main renderer() somehow?
 static void	single_threaded_renderer(t_info *info)
 {
-	int	x;
+	uint32_t	x;
 
 	info->is_inside = false;
 	x = 0;
-	while (x < info->width)
+	while (x < info->img->width)
 	{
 		render_column(x, info);
 		x++;
@@ -142,14 +141,14 @@ static void	single_threaded_renderer(t_info *info)
 
 static inline void	render_column(int x, t_info *info)
 {
-	t_vec	ray;
-	int		y;
+	t_vec		ray;
+	uint32_t	y;
 
 	y = 0;
-	while (y < info->height)
+	while (y < info->img->height)
 	{
-		ray = vec3(x * info->px - info->viewport_width / 2.0,
-		-(y * info->px - info->viewport_height / 2.0), 0);
+		ray = vec3(x * info->px - info->viewport_w / 2.0,
+		-(y * info->px - info->viewport_h / 2.0), 0);
 		rotate(info->rot, &ray);
 		ray = normalize(add(info->cam.direction, ray));
 		draw_pixel(info, ray, x, y);

@@ -75,11 +75,11 @@ static void	init_threads(t_info *info)
 		thread = &info->thread_system.threads[i];
 		thread->p_info = info;
 		// FIXME: factor the next 4 lines to a separate function that can be called from renderer() as well!! :-)
-		thread->start_x = info->width / N_THREADS * i;
+		thread->start_x = info->img->width / N_THREADS * i;
 		if (i == N_THREADS - 1)
-			thread->border_x = info->width;
+			thread->border_x = info->img->width;
 		else
-			thread->border_x = info->width / N_THREADS * (i + 1);
+			thread->border_x = info->img->width / N_THREADS * (i + 1);
 		if (pthread_create(&thread->painter, NULL, &rendering_routine, thread))
 		{
 			if (i)
