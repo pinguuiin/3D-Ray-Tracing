@@ -45,13 +45,12 @@ int	free_exit(char *s, int exit_code)
 
 	info = get_info();
 
-	if (atomic_load(&info->thread_system.mt_status) != MT_OFF)
+	if (atomic_load(&info->thread_system.is_multithreaded))
 	{
-		atomic_store(&info->thread_system.routine_action, ABORT);
+		atomic_store(&info->thread_system.exit_flag, 1);
 		pthread_barrier_wait(&info->thread_system.barrier);
 		clean_up_threads_and_barrier(&info->thread_system, N_THREADS);
 	}
-
 	free(info->light);
 	free(info->obj);
 	if (info->img)
@@ -69,10 +68,10 @@ int	free_exit(char *s, int exit_code)
 
 void	initialize_mlx(t_info *info)
 {
-	// mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	info->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
 	if (!info->mlx)
 		exit(free_exit("Instance initialization failed", MLX_FAILURE));
+	mlx_set_window_limit(info->mlx, 50, 50, -1, -1);
 	info->img = mlx_new_image(info->mlx, WIDTH, HEIGHT);
 	if (!info->img)
 		exit(free_exit("Image buffer creation failed", MLX_FAILURE));
@@ -93,10 +92,8 @@ int	main(int argc, char *argv[])
 	preprocessor(info);
 
 	initialize_mlx(info);
-	// mlx_resize_hook(info->mlx, &resize, info);
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
-
 	mlx_loop(info->mlx);
 
 	(void)free_exit(NULL, 0);
@@ -113,24 +110,21 @@ int	main(int argc, char *argv[])
 	parse_scene(info, argv[1]);
 
 	preprocessor(info);
-
 	initialize_mlx(info);
 
 	initialize_multithreading(info);
 
 	// WARN: just debugging !
 	/*
-	if (atomic_load(&info->thread_system.mt_status) == MT_ON)
+	if (atomic_load(&info->thread_system.is_multithreaded))
 	{
 		write(1, "MODIFYING VALUE TO BE SINGLE TRHEADED!!!!\n\n\n", sizeof("MODIFYING VALUE TO BE SINGLE TRHEADED!!!!\n\n\n") - 1);
-		atomic_store(&info->thread_system.mt_status, MT_FAILURE);
+		atomic_store(&info->thread_system.is_multithreaded, 0);
 	}
 	*/
 
-	// mlx_resize_hook(info->mlx, &resize, info);
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
-
 	mlx_loop(info->mlx);
 
 	(void)free_exit(NULL, 0);

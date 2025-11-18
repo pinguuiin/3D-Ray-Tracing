@@ -6,3 +6,5 @@ obj_bonus/
 src/MLX42/
 src/libft/
 mac_Makefile
+.cache
+compile_commands.json

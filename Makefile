@@ -52,6 +52,8 @@ SRC_FILES = main.c \
 			shapes/plane.c \
 			shapes/sphere.c \
 			utils/color.c \
+			utils/init_threads.c \
+			utils/thread_cleanup.c \
 			vector/operations.c \
 			vector/rotation.c
 

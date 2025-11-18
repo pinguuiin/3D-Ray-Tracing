@@ -26,7 +26,8 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 		info->cam.pos.z += 0.2;
 	else if (keydata.key == MLX_KEY_S)
 		info->cam.pos.z -= 0.2;
-	// update_oc_and_plane_normal(info);
+	info->has_moved = 1;
+	// update_oc_and_plane_normal(info); // NOTE: this is finally done from the renderer!
 }
 
 static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
@@ -44,7 +45,6 @@ static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 	get_rotation_matrix(info, info->cam.direction);
 }
 
-#ifndef BONUS
 void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -60,20 +60,3 @@ void	key_handler(mlx_key_data_t keydata, void *param)
 		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
 		rotate_camera(keydata, info);
 }
-#else
-void	key_handler(mlx_key_data_t keydata, void *param)
-{
-	t_info	*info;
-
-	info = (t_info *)param;
-	if (keydata.key == MLX_KEY_ESCAPE)
-		mlx_close_window(info->mlx);
-	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
-		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
-		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
-		move_camera(keydata, info);
-	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
-		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
-		rotate_camera(keydata, info);
-}
-#endif

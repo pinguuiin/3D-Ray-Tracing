@@ -14,214 +14,45 @@
 
 #ifndef BONUS
 #else
-static void			init_barrier(t_thread_system *thread_system);
-static void			init_threads(t_thread_system *thread_system);
-static inline void	*rendering_routine(void *ptr);
-static void			single_threaded_renderer(void *param);
-static void			let_threads_finish(t_painter *threads, int i);
-static void			destruct_barrier(pthread_barrier_t *barrier);
+static void				single_threaded_renderer(t_info *info);
 #endif
+static inline void		render_column(int x, t_info *info);
 static inline void		draw_pixel(t_info *info, t_vec ray, int x, int y);
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
 
-/*
- * WARN: is this even used??? - mutex implementation
-void	init_and_lock_mutual_exclusion_object(t_info *info)
-{
-	if (pthread_mutex_init(&info->render_lock, NULL))
-		exit (free_exit("Failed to initialize mutual exclusion object, crucial "
-			"for the threads' safe synchronicity.", SYSTEM_FAILURE));
-	if (pthread_mutex_lock(&info->render_lock))
-	{
-		unlock_mutex_if_locked_and_destroy(&info->render_lock, 0);
-		exit (free_exit("Failed to lock mutual exclusion object, crucial "
-			"for the threads' safe synchronicity.", SYSTEM_FAILURE));
-	}
-}
-*/
-
-/*
-// NOTE: this function should only be called just before exiting the program.
-// Multithreading rendering in this program depends on the mutex, so if you
-// destroy it, it means we are quiting anyways. Therefore, there is no need
-// to add an extra quitting if something fails - but we can still acknowledge the
-// failure by writing a message.
-// WARN: is this even used? - mutex implementation
-void	unlock_mutex_if_locked_and_destroy(pthread_mutex_t *render_lock,
-			bool is_locked)
-{
-	if (is_locked)
-	{
-		if (pthread_mutex_unlock(render_lock))
-		{
-			// TODO: handle the error. Just write a message, do not quit, let it destroy first?
-			
-		
-		}
-	}
-	if (pthread_mutex_destroy(render_lock))
-	{
-		// TODO: handle the error, simply by writing some message.
-		// this call was cast to (void) in another project you worked on.
-
-	}
-}
-*/
 
 #ifndef BONUS
 #else
-void	initialize_multithreading(struct s_info *info)
-{
-	init_barrier(&info->thread_system);
-	if (atomic_load(&info->thread_system.mt_status) == MT_ON)
-	{
-		atomic_store(&info->thread_system.routine_action, WAIT);
-		info->thread_system.threads[0].p_info = info;
-		init_threads(&info->thread_system);
-	}
-}
-
-static void	init_barrier(t_thread_system *thread_system)
-{
-	if (pthread_barrier_init(&thread_system->barrier, NULL, N_THREADS + 1))
-	{
-		ft_putstr_fd("Failed to initialize barrier for multithreaded execution;"
-			" initiating fallback to single-threaded rendering.\n",
-			2);
-		atomic_store(&thread_system->mt_status, MT_OFF);
-	}
-	else
-		atomic_store(&thread_system->mt_status, MT_ON);
-}
-
-// FIXME: add an info pointer for the syntax ...... because of recent change
-static void	init_threads(t_thread_system *thread_system)
-{
-	int	i;
-
-	i = 0;
-	while (i < N_THREADS)
-	{
-		if (pthread_create(&thread_system->threads[i].painter, NULL,
-			&rendering_routine, &thread_system->threads[i]))
-		{
-			atomic_store(&thread_system->routine_action, ABORT); // signals to the other threads that they should return.
-			clean_up_threads_and_barrier(thread_system, i);
-			ft_putstr_fd("Failed to create a thread; initiating fallback to "
-				"single-threaded rendering.\n", 2);
-			atomic_store(&thread_system->mt_status, MT_OFF); // signals that we fallback to the single threaded rendering function, since multithreading has failed.
-			return ;
-		}
-		thread_system->threads[i].p_info = thread_system->threads[0].p_info;
-		thread_system->threads[i].start_x = thread_system->threads[0].p_info->width / N_THREADS * i;
-		if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
-			thread_system->threads[i].border_x = thread_system->threads[0].p_info->width / N_THREADS * (i + 1);
-		else
-			thread_system->threads[i].border_x = thread_system->threads[0].p_info->width; // important, otherwise a pixel (or more) could be lost and not rendered, because of floating point truncations. We let the last thread do those until the very last one.
-		i++;
-	}
-}
-
-// WARN: can those be together in some separate file:
-// clean_up_threads_and_barrier() + let_threads_finish() + destruct_barrier()
-void	clean_up_threads_and_barrier(t_thread_system *thread_system, int i)
-{
-	let_threads_finish(thread_system->threads, i);
-	destruct_barrier(&thread_system->barrier);
-}
-
-static void	let_threads_finish(t_painter *threads, int i)
-{
-	int	j;
-
-	j = 0;
-	while (j < i)
-	{
-		if (pthread_join(threads[j].painter, NULL))
-			ft_putstr_fd("Failed to join one of the threads.\n", 2);
-		j++;
-	}
-}
-
-static void	destruct_barrier(pthread_barrier_t *barrier)
-{
-	if (pthread_barrier_destroy(barrier))
-		ft_putstr_fd("Failed to deallocate barrier used for multithreading "
-			"purposes.\n", 2);
-}
-
-// The purpose of 'retval' is to catch the return value of
-// pthread_barrier_wait() because that function can return:
-//	- 0 (if successful)
-//	- the macro PTHREAD_BARRIER_SERIAL_THREAD (if successful, for one of the
-//	- threads synchronised at the barrier)
-//	- an error value in case of an error.
-static inline void	*rendering_routine(void *ptr)
+/*
+* Since pthread_barrier_wait() can only fail if the barrier is not initialized
+* beforehand, this program does no error handling for that failure: The barrier
+* is initialized here, and if that initialization does not succeed, no thread
+* is created and rendering happens on a single thread.
+*/
+inline void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
 	t_info		*info;
-	t_vec		ray;
 	int			x;
-	int			y;
-
-	// The purpose of 'retval' is to catch the return value of
-	// pthread_barrier_wait() because that function can return:
-	//	- 0 (if successful)
-	//	- the macro PTHREAD_BARRIER_SERIAL_THREAD (if successful, for one of the
-	//	- threads synchronised at the barrier)
-	//	- an error value in case of an error.
 
 	painter = (t_painter *)ptr;
 	info = painter->p_info;
-
+	while (!atomic_load(&info->thread_system.is_done_init))
+	{
+		(void)usleep(1000);
+		if (atomic_load(&info->thread_system.exit_flag))
+			return (NULL);
+	}
 	while (1)
 	{
 		x = painter->start_x;
-		/*
-		while (atomic_load(&info->thread_system.routine_action) == WAIT
-			&& atomic_load(&info->thread_system.n_done_painters))
-		{
-			if (usleep(500))
-			{
-				// TODO : handle the error!!!!
-				// fallback to other single-threaded version?
-			}
-		}
-		*/
-		pthread_barrier_wait(&info->thread_system.barrier);
-		if (atomic_load(&info->thread_system.routine_action) == ABORT)
+		(void)pthread_barrier_wait(&info->thread_system.barrier);
+		if (atomic_load(&info->thread_system.exit_flag))
 			return (NULL);
 		while (x < painter->border_x)
-		{
-			y = 0;
-			while (y < info->height)
-			{
-				ray = vec3(x * info->px - info->viewport_width / 2.0,
-				-(y * info->px - info->viewport_height / 2.0), 0);
-				rotate(info->rot, &ray);
-				ray = normalize(add(info->cam.direction, ray));
-				draw_pixel(info, ray, x, y);
-				y++;
-			}
-			x++;
-		}
-
+			render_column(x++, info);
 		atomic_fetch_add(&info->thread_system.n_done_painters, 1);
-
 	}
-		/*
-	// this extra barrier_wait call is added here to handle a scenario where:
-	// one fast thread would load a false value for exit_flag at the start of
-	// the previous while loop, and go on waiting at the barrier that follows -
-	// while a slower thread would, in the meanwhile, notice that exit_flag is
-	// set, and exit the loop - which would create a deadlock at the barrier!
-	retval = pthread_barrier_wait(&info->thread_system.barrier);
-	if (retval && retval != PTHREAD_BARRIER_SERIAL_THREAD)
-	{
-		ft_putstr_fd("A thread has failed to wait for the barrier which "
-			"ensures synchronisation with other threads\n", 2);
-	}
-	*/
 	return (NULL);
 }
 #endif
@@ -231,53 +62,50 @@ void	renderer(void *param)
 {
 	t_info	*info;
 	int		x;
-	int		y;
-	t_vec	ray;
 
 	info = (t_info *)param;
-	if (info->exit_flag)
+	if (info->has_moved)
 	{
-		mlx_close_window(info->mlx);
-		return ;
+		info->has_moved = 0;
+		update_oc_and_plane_normal(info);
 	}
-	resize(info->mlx->width, info->mlx->height, info);
-	update_oc_and_plane_normal(info);
+	if (info->mlx->height != info->height || info->mlx->width != info->width)
+		resize(info->mlx->width, info->mlx->height, info);
 	info->is_inside = false;
 	x = 0;
 	while (x < info->width)
 	{
-		y = 0;
-		while (y < info->height)
-		{
-			ray = vec3(x * info->px - info->viewport_width / 2.0,
-			-(y * info->px - info->viewport_height / 2.0), 0);
-			rotate(info->rot, &ray);
-			ray = normalize(add(info->cam.direction, ray));
-			draw_pixel(info, ray, x, y);
-			y++;
-		}
+		render_column(x, info);
 		x++;
 	}
 }
 #else
-//  FIXME:
-//  - design function's fallback on single threaded rendering.
-//  - solve tearing happening on each of the threads' start of chunks when moving camera
+// FIXME: refactor.
+// FIXME: remove the members "width" and "height" from the info struct:
+// and just use info->img->width and info->img->height
 void	renderer(void *param)
 {
 	t_info			*info;
 	t_thread_system	*thread_system;
-	int	i = 0;
+	int				i;
 
 	info = (t_info *)param;
 	thread_system = &info->thread_system;
-	update_oc_and_plane_normal(info);
+	if (info->has_moved)
+	{
+		info->has_moved = 0;
+		update_oc_and_plane_normal(info);
+	}
 	if (info->mlx->height != info->height || info->mlx->width != info->width)
 	{
 		resize(info->mlx->width, info->mlx->height, info);
+		i = 0;
 		while (i < N_THREADS)
 		{
 			thread_system->threads[i].start_x = info->width / N_THREADS * i;
+			if (i == N_THREADS - 1)
+				thread_system->threads[i].border_x = info->width;
+			else
 			if (N_THREADS && i < N_THREADS - 1) // first part is just to avoid overflow in the unlikely but theoretically possible case where N_THREADS would be defined to 1!
 				thread_system->threads[i].border_x = info->width / N_THREADS * (i + 1);
 			else
@@ -285,7 +113,7 @@ void	renderer(void *param)
 			i++;
 		}
 	}
-	if (atomic_load(&thread_system->mt_status) == MT_OFF)
+	if (!atomic_load(&thread_system->is_multithreaded))
 	{
 		single_threaded_renderer(info);
 		return ;
@@ -295,40 +123,39 @@ void	renderer(void *param)
 	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
 		(void)usleep(200);
 	atomic_store(&thread_system->n_done_painters, 0);
-
 }
 
-static void	single_threaded_renderer(void *param)
+// FIXME: is this even necessary? could it be absorbed to the main renderer() somehow?
+static void	single_threaded_renderer(t_info *info)
 {
-	t_info		*info;
-	int			x;
-	int			y;
-	t_vec		ray;
+	int	x;
 
-	info = (t_info *)param;
-	if (atomic_load(&info->thread_system.routine_action) == ABORT)
-	{
-		mlx_close_window(info->mlx);
-		return ;
-	}
 	info->is_inside = false;
 	x = 0;
 	while (x < info->width)
 	{
-		y = 0;
-		while (y < info->height)
-		{
-			ray = vec3(x * info->px - info->viewport_width / 2.0,
-			-(y * info->px - info->viewport_height / 2.0), 0);
-			rotate(info->rot, &ray);
-			ray = normalize(add(info->cam.direction, ray));
-			draw_pixel(info, ray, x, y);
-			y++;
-		}
+		render_column(x, info);
 		x++;
 	}
 }
 #endif
+
+static inline void	render_column(int x, t_info *info)
+{
+	t_vec	ray;
+	int		y;
+
+	y = 0;
+	while (y < info->height)
+	{
+		ray = vec3(x * info->px - info->viewport_width / 2.0,
+		-(y * info->px - info->viewport_height / 2.0), 0);
+		rotate(info->rot, &ray);
+		ray = normalize(add(info->cam.direction, ray));
+		draw_pixel(info, ray, x, y);
+		y++;
+	}
+}
 
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {

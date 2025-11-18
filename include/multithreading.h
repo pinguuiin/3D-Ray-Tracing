@@ -20,20 +20,6 @@
 
 # define N_THREADS 5
 
-enum e_routine_action
-{
-	WAIT,
-	RENDER,
-	ABORT
-};
-
-enum e_mt_status
-{
-	MT_OFF,
-	MT_ON,
-	MT_FAILURE
-};
-
 typedef struct s_painter
 {
 	pthread_t		painter;
@@ -44,15 +30,17 @@ typedef struct s_painter
 
 typedef struct s_thread_system
 {
-	t_painter			threads[N_THREADS];
-	pthread_barrier_t	barrier;
-	atomic_int_fast32_t	routine_action;
-	atomic_int_fast32_t	n_done_painters;
-	atomic_int_fast32_t	mt_status;
+	t_painter						threads[N_THREADS];
+	pthread_barrier_t				barrier;
+	volatile atomic_bool			is_done_init; // FIXME: finish implementing this!!!
+	volatile atomic_bool			is_multithreaded;
+	volatile atomic_bool			exit_flag;
+	volatile atomic_int_fast32_t	n_done_painters;
 }	t_thread_system;
 
 void	initialize_multithreading(struct s_info *info);
 void	renderer(void *param);
+void	*rendering_routine(void *ptr);
 void	clean_up_threads_and_barrier(t_thread_system *thread_system, int i);
 
 # endif
