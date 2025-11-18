@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/17 00:21:23 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,9 @@ typedef struct s_info
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;
-	double		width;
-	double		height;
 	double		focal_length;
-	double		viewport_width;
-	double		viewport_height;
+	double		viewport_w;
+	double		viewport_h;
 	double		rot[3][3];
 	double		px;
 	t_color		amb;

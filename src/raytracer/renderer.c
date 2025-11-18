@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/17 00:23:06 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,13 @@ void	renderer(void *param)
 	info = (t_info *)param;
 	info->is_inside = false;
 	x = 0;
-	while (x < info->width)
+	while (x < info->img->width)
 	{
 		y = 0;
-		while (y < info->height)
+		while (y < info->img->height)
 		{
-			ray = vec3(x * info->px - info->viewport_width / 2.0,
-			-(y * info->px - info->viewport_height / 2.0), 0);
+			ray = vec3(x * info->px - info->viewport_w / 2.0,
+			-(y * info->px - info->viewport_h / 2.0), 0);
 			rotate(info->rot, &ray);
 			ray = normalize(add(info->cam.direction, ray));
 			draw_pixel(info, ray, x, y);

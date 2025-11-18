@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   test__deprecated.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:17 by piyu              #+#    #+#             */
-/*   Updated: 2025/10/22 03:26:59 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,9 @@ int	main(void)
 	info->num = 3;
 
 	info->focal_length = 1.0;
-	info->viewport_width = tan(info->cam.fov / 2.0) * 2 * info->focal_length;
-	info->viewport_height = info->viewport_width * (double)HEIGHT / (double)WIDTH;
-	info->px = info->viewport_width / (double)WIDTH;
+	info->viewport_w = tan(info->cam.fov / 2.0) * 2 * info->focal_length;
+	info->viewport_h = info->viewport_w * (double)HEIGHT / (double)WIDTH;
+	info->px = info->viewport_w / (double)WIDTH;
 
 	initialize_mlx(info);
 	mlx_key_hook(info->mlx, &key_handler, info);
