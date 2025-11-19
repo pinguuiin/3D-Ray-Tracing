@@ -45,7 +45,6 @@ typedef struct s_thread_system
 
 void	initialize_multithreading(struct s_info *info);
 void	init_chunk_borders(int32_t width, t_painter *thread, int i);
-void	renderer(void *param);
 void	*rendering_routine(void *ptr);
 void	clean_up_threads_and_barrier(t_thread_system *thread_system, int i);
 

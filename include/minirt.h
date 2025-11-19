@@ -155,6 +155,7 @@ double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
 double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
 double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
+void		render_column(int x, t_info *info);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
@@ -170,8 +171,5 @@ void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
 
-# ifndef BONUS
-void		renderer(void *param);
-# endif
 
 #endif

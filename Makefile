@@ -48,6 +48,7 @@ SRC_FILES = main.c \
 			raytracer/preprocessor.c \
 			raytracer/reflection.c \
 			raytracer/renderer.c \
+			raytracer/rendering_utils.c \
 			shapes/cylinder.c \
 			shapes/plane.c \
 			shapes/sphere.c \
