@@ -12,13 +12,10 @@
 
 #include "minirt.h"
 
-#ifndef BONUS
-#else
-static void				single_threaded_renderer(t_info *info);
-#endif
 static inline void		render_column(int x, t_info *info);
 static inline void		draw_pixel(t_info *info, t_vec ray, int x, int y);
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_object *obj);
+static inline void		update_data_for_new_frame(t_info *info);
 
 
 #ifndef BONUS
@@ -26,10 +23,9 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit, t_obje
 /*
 * Since pthread_barrier_wait() can only fail if the barrier is not initialized
 * beforehand, this program does no error handling for that failure: The barrier
-* is initialized here, and if that initialization does not succeed, no thread
-* is created and rendering happens on a single thread.
+* is initialized in the init_barrier() function, and if that initialization does
+* not succeed, no thread is created and rendering happens a single process.
 */
-// FIXME: refactor
 inline void	*rendering_routine(void *ptr)
 {
 	t_painter	*painter;
@@ -65,76 +61,75 @@ void	renderer(void *param)
 	uint32_t	x;
 
 	info = (t_info *)param;
-	if (info->has_moved)
-	{
-		info->has_moved = 0;
-		update_oc_and_plane_normal(info);
-	}
-	if ((uint32_t) info->mlx->height != info->img->height
-		|| (uint32_t)info->mlx->width != info->img->width)
-		resize(info->mlx->width, info->mlx->height, info);
-	info->is_inside = false;
+	update_data_for_new_frame(info);
 	x = 0;
 	while (x < info->img->width)
-	{
-		render_column(x, info);
-		x++;
-	}
+		render_column(x++, info);
 }
 #else
-// FIXME: refactor.
 void	renderer(void *param)
 {
 	t_info			*info;
 	t_thread_system	*thread_system;
-	int				i;
+	uint32_t		x;
 
 	info = (t_info *)param;
+	update_data_for_new_frame(info);
 	thread_system = &info->thread_system;
-	if (info->has_moved)
-	{
-		info->has_moved = 0;
-		update_oc_and_plane_normal(info);
-	}
-	if ((uint32_t) info->mlx->height != info->img->height
-		|| (uint32_t)info->mlx->width != info->img->width)
-	{
-		resize(info->mlx->width, info->mlx->height, info);
-		i = 0;
-		while (i < N_THREADS)
-		{
-			thread_system->threads[i].start_x = info->img->width / N_THREADS * i;
-			if (i == N_THREADS - 1)
-				thread_system->threads[i].border_x = info->img->width;
-			else
-				thread_system->threads[i].border_x = info->img->width / N_THREADS * (i + 1);
-			i++;
-		}
-	}
 	if (!atomic_load(&thread_system->is_multithreaded))
 	{
-		single_threaded_renderer(info);
+		// fallback to single_threaded rendering!
+		x = 0;
+		while (x < info->img->width)
+			render_column(x++, info);
 		return ;
 	}
-	info->is_inside = false;
 	pthread_barrier_wait(&thread_system->barrier);
 	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
 		(void)usleep(200);
 	atomic_store(&thread_system->n_done_painters, 0);
 }
+#endif
 
-// FIXME: is this even necessary? could it be absorbed to the main renderer() somehow?
-static void	single_threaded_renderer(t_info *info)
+#ifndef BONUS
+static inline void	update_data_for_new_frame(t_info *info)
 {
-	uint32_t	x;
-
-	info->is_inside = false;
-	x = 0;
-	while (x < info->img->width)
+	if (info->has_moved)
 	{
-		render_column(x, info);
-		x++;
+		info->has_moved = 0;
+		update_oc_and_plane_normal(info);
 	}
+	if ((uint32_t) info->mlx->height != info->img->height
+		|| (uint32_t)info->mlx->width != info->img->width)
+		resize(info->mlx->width, info->mlx->height, info);
+	info->is_inside = false;
+}
+#else
+static inline void	update_data_for_new_frame(t_info *info)
+{
+	int	i;
+
+	if (info->has_moved)
+	{
+		info->has_moved = 0;
+		update_oc_and_plane_normal(info);
+	}
+	if ((uint32_t) info->mlx->height != info->img->height
+		|| (uint32_t)info->mlx->width != info->img->width)
+	{
+		resize(info->mlx->width, info->mlx->height, info);
+		if (atomic_load(&info->thread_system.is_multithreaded))
+		{
+			i = 0;
+			while (i < N_THREADS)
+			{
+				init_chunk_borders(info->img->width,
+					&info->thread_system.threads[i], i);
+				i++;
+			}
+		}
+	}
+	info->is_inside = false;
 }
 #endif
 

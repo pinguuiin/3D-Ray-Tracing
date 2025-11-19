@@ -56,13 +56,22 @@ static int	init_barrier(t_thread_system *thread_system)
 * Creates all threads.
 *
 * In case of failure:
-* Sets 'is_multithreaded' to 0, communicating to the rendering hook that a
+* Sets 'is_multithreaded' to false, communicating to the rendering hook that a
 * fallback to single-threaded execution is necessasry.
+* If that failure occurs during the creation loop, after at least one thread is
+* already up and running, those threads should not wait on the barrier; if they
+* do, the barrier would never detect sufficient threads waiting on it, since it
+* expects the amount of threads that was passed to it in init_barrier(). The
+* waiting threads would therefore get stuck there indefinitely. This is why the
+* flag 'is_done_init' exists, and is only set at the end of init_threads(),
+* after all expected threads have been created. As soon as the threads
+* start their routine, they enter a while loop which checks that flag as well as
+* the 'exit_flag', preventing them from the undesired wait at the barrer.
 *
 * In case of success:
-* Assigns the address of the info struct to each thread (via their 'p_info'
-* member). Also, assigns to each thread the left and right borders of the chunk
-* of the frame that they are supposed to render.
+* This function assigns to each thread the left and right borders of the chunk
+* of the frame that they are supposed to render (in this implementation, the
+* whole frame is split into equal vertical slices).
 */
 static void	init_threads(t_info *info)
 {
@@ -74,12 +83,7 @@ static void	init_threads(t_info *info)
 	{
 		thread = &info->thread_system.threads[i];
 		thread->p_info = info;
-		// FIXME: factor the next 4 lines to a separate function that can be called from renderer() as well!! :-)
-		thread->start_x = info->img->width / N_THREADS * i;
-		if (i == N_THREADS - 1)
-			thread->border_x = info->img->width;
-		else
-			thread->border_x = info->img->width / N_THREADS * (i + 1);
+		init_chunk_borders(info->img->width, thread, i);
 		if (pthread_create(&thread->painter, NULL, &rendering_routine, thread))
 		{
 			if (i)
@@ -93,5 +97,14 @@ static void	init_threads(t_info *info)
 		i++;
 	}
 	atomic_store(&info->thread_system.is_done_init, 1);
+}
+
+inline void	init_chunk_borders(int32_t width, t_painter *thread, int i)
+{
+	thread->start_x = width / N_THREADS * i;
+	if (i == N_THREADS - 1)
+		thread->border_x = width;
+	else
+		thread->border_x = width / N_THREADS * (i + 1);
 }
 #endif

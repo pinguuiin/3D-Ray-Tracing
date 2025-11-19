@@ -20,6 +20,11 @@
 
 # define N_THREADS 5
 
+/*
+* NOTE: uint32_t is used for the 'x' axis values to avoid casting, because they
+* are often compared against the 'mlx->img->width' value, which is of that same
+* data type as well.
+*/
 typedef struct s_painter
 {
 	pthread_t		painter;
@@ -39,6 +44,7 @@ typedef struct s_thread_system
 }	t_thread_system;
 
 void	initialize_multithreading(struct s_info *info);
+void	init_chunk_borders(int32_t width, t_painter *thread, int i);
 void	renderer(void *param);
 void	*rendering_routine(void *ptr);
 void	clean_up_threads_and_barrier(t_thread_system *thread_system, int i);
