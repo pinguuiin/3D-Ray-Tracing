@@ -18,7 +18,9 @@ void	resize(int32_t width, int32_t height, void *param)
 
 	info = (t_info *)param;
 	if (mlx_resize_image(info->img, width, height) == false)
-		ft_putstr_fd("Image resizing failed\n", 2); // we don't have to exit for this
-		// exit(free_exit("Image resizing failed", MLX_FAILURE));
+	{
+		ft_putstr_fd("Image resizing failed\n", 2);
+		exit(free_exit("Image resizing failed", MLX_FAILURE));
+	}
 	get_viewport_data(info);
 }
