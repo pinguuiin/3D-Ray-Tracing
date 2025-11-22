@@ -16,7 +16,6 @@ inline void	update_oc_and_plane_normal(t_info *info)
 {
 	int i;
 
-	info->has_moved = 0;
 	i = 0;
 	while (i < info->n_obj)
 	{
