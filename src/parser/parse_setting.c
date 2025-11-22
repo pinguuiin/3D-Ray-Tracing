@@ -13,6 +13,10 @@
 #include "parser.h"
 
 static inline double	str_degrees_to_radians(char **str, size_t line_num);
+#ifndef BONUS
+#else
+static int	create_new_light_node(t_parser *parser);
+#endif
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
@@ -112,36 +116,19 @@ int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 // NOTE: note the other important distinction beetween mandatory and bonus
 // parts: the color data is unused in the mandatory, but perhaps could still
 // be accepted -> while the bonus (or is it only some bonus parts) require/s it!
-int	parse_light(t_parser *parser, char *str)
+
+#ifndef BONUS
+int	parse_light(t_parser *parser, char *str, t_light *light)
 {
 	double	ratio;
-	t_light	*light; // shortcut, for readability
 
-	light = NULL; // can be omitted
-
-	/*
-	 * This block is only for the mandatory part.
-	// check if we already have a light source: Only 1 is accepted
+	// check if we already have a light source: Only 1 is accepted in the mandatory part.
 	if (parser->n_lights) // the mandatory part only accepts one single light source
 	{
 		display_parsing_error("Too many light sources present in the scene; "
 			"Only one fixed light is accepted. See line", parser->line_num);
 		return (INVALID_INPUT);
 	}
-	*/
-
-	// allocate new light node, check for malloc() failure
-	if (create_new_node(&parser->head, &parser->current, LIGHT, sizeof (t_node_light)) == -1)
-		return (ALLOCATION_FAILURE);
-
-	/*
-	 * WARN: this is the alternate version, which I most probably am going to end
-	 * up using instead of the above !!!
-	if (create_new_light_node(parser) == -1)
-		return (ALLOCATION_FAILURE);
-	*/
-
-	light = &parser->current->light;
 
 	// parse the string into the allocated 'light'
 	skip_whitespace_but_not_newline(&str);
@@ -185,6 +172,60 @@ int	parse_light(t_parser *parser, char *str)
 		}
 		else	// no color provided by input for 'light', so set it to white
 			apply_ratio_to_color(&light->color, ratio, 0);
+		parser->n_lights++; // keep count of valid lights
+		return (NO_ERROR);
+	}
+	display_parsing_error("Unexpected input found at tail end of light "
+		"source's ratio value, on line", parser->line_num);
+	return (INVALID_INPUT);
+}
+#else
+int	parse_light(t_parser *parser, char *str)
+{
+	double	ratio;
+	t_light	*light; // shortcut, for readability
+
+	light = NULL; // can be omitted
+
+	if (create_new_light_node(parser) == -1)
+		return (ALLOCATION_FAILURE);
+
+	light = &parser->curr_light->light;
+
+	// parse the string into the allocated 'light'
+	skip_whitespace_but_not_newline(&str);
+
+	// parse coordinates of the light point
+	if (parse_3d_vector(&str, &light->pos, parser->line_num) == -1)
+		return (INVALID_INPUT);
+
+	if (!is_valid_tail_when_expecting_more_data(&str, parser->line_num))
+		return (INVALID_INPUT);
+
+	skip_whitespace_but_not_newline(&str);
+
+	// prase the light brightness ratio in range [0.0,1.0]
+	ratio = 0.0;
+	if (ft_strtod(&str, &ratio, parser->line_num) == -1)
+		return (INVALID_INPUT);
+	if (ratio < 0.0 || ratio > 1.0)
+	{
+		display_parsing_error("Value provided for light source's brightness "
+			"is out of range. Allowed range: 0.0 to 1.0. See line", parser->line_num);
+		return (INVALID_INPUT);
+	}
+	if (!*str || ft_isspace(*str))
+	{
+		skip_whitespace(&str);
+		if (*str)
+		{
+			if (parse_color(&str, &light->color, &ratio, parser->line_num) == -1)
+				return (INVALID_INPUT);
+			if (!is_valid_end_of_line(str, parser->line_num))
+				return (INVALID_INPUT);
+		}
+		else	// no color provided by input for 'light', so set it to white
+			apply_ratio_to_color(&light->color, ratio, 0);
 		if (!is_valid_n_elements(parser, LIGHT))
 			return (INVALID_INPUT);
 		parser->n_lights++; // keep count of valid lights
@@ -194,6 +235,7 @@ int	parse_light(t_parser *parser, char *str)
 		"source's ratio value, on line", parser->line_num);
 	return (INVALID_INPUT);
 }
+#endif
 
 static inline double	str_degrees_to_radians(char **str, size_t line_num)
 {
@@ -225,19 +267,20 @@ static inline double	str_degrees_to_radians(char **str, size_t line_num)
 	return (angle * M_PI / 180.0);
 }
 
-/*
+#ifndef BONUS
+#else
 static int	create_new_light_node(t_parser *parser)
 {
 	t_node_light	*new_node;
 
-	new_node = (t_node_light *) ft_calloc(1, sizeof (t_light_node));
+	new_node = (t_node_light *) ft_calloc(1, sizeof (t_node_light));
 	if (!new_node)
 		return (-1);
-	if (!parser->head)
-		parser->head = new_node;
+	if (!parser->head_light)
+		parser->head_light = new_node;
 	else
-		parser->current->next = new_node;
-	parser->current = new_node;
+		parser->curr_light->next = new_node;
+	parser->curr_light = new_node;
 	return (0);
 }
-*/
+#endif

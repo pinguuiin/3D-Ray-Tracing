@@ -105,10 +105,9 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd)
 	write(fd, ".\n", 2);
 }
 
-// WARN: REMEMBER TO ADJUST THIS FUNCTION EVERY TIME free_exit() IS MODIFIED!!!
 /*
 * This function frees the dynamically allocated memory used by parsing, i.e:
-* - linked list for 'lights'
+* - linked list for 'lights' (only when BONUS is defined)
 * - linked list for all 'objects'
 * - 'line', returned by get_next_line_revised()
 * It also closes the file descriptor associated with the input .rt file.
@@ -119,29 +118,19 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd)
 *	CLOSE_FAILURE:	Allocated memory was successfully freed, but close() has
 *		failed. It is safe to end the program.
 */
+#ifndef BONUS
 int	clean_up_parser(t_parser *parser, char *line)
 {
-	t_node_light	*current;
-	t_node_light	*next;
-	t_node_obj		*curr_obj;
-	t_node_obj		*next_obj;
+	t_node_obj	*current;
+	t_node_obj	*next;
 
-	// free linked list of lights
+	// free linked list of objects
 	current = parser->head;
 	while (current)
 	{
 		next = current->next;
 		free(current);
 		current = next;
-	}
-
-	// free linked list of objects
-	curr_obj = parser->head_obj;
-	while (curr_obj)
-	{
-		next_obj = curr_obj->next;
-		free(curr_obj);
-		curr_obj = next_obj;
 	}
 
 	// free the returned line obtained by get_next_line_revised()
@@ -153,17 +142,43 @@ int	clean_up_parser(t_parser *parser, char *line)
 		ft_putstr_fd("Failed to close input file. Aborting miniRT.\n", 2);
 		return (CLOSE_FAILURE);
 	}
-
-	/*
-	 * WARN: I am pretty sure this function is only used BEFORE MLX initialization.
-	 * so no need to make those checks. But let's double check later.
-	 * NOTE: Also, I am pretty sure I'd like to use this function after I am done
-	 * parsing a valid file, and so I for sure don't want to include this next block.
-	if (info->img)
-		mlx_delete_image(info->mlx, info->img);
-	if (info->mlx)
-		mlx_terminate(info->mlx);
-	*/
-
 	return (0);
 }
+#else
+int	clean_up_parser(t_parser *parser, char *line)
+{
+	t_node_obj		*current;
+	t_node_obj		*next;
+	t_node_light	*curr_light;
+	t_node_light	*next_light;
+
+	// free linked list of lights
+	curr_light = parser->head_light;
+	while (curr_light)
+	{
+		next_light = curr_light->next;
+		free(curr_light);
+		curr_light = next_light;
+	}
+
+	// free linked list of objects
+	current = parser->head;
+	while (current)
+	{
+		next = current->next;
+		free(current);
+		current = next;
+	}
+
+	// free the returned line obtained by get_next_line_revised()
+	if (line)
+		free(line);
+
+	if (close(parser->fd) == -1)
+	{
+		ft_putstr_fd("Failed to close input file. Aborting miniRT.\n", 2);
+		return (CLOSE_FAILURE);
+	}
+	return (0);
+}
+#endif

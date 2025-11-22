@@ -30,36 +30,21 @@ typedef enum e_status
 
 }	t_status;
 
-enum e_exit_code
-{
-	SUCCESS			=	0,
-	MLX_FAILURE		=	1,
-	INPUT_ERROR		=	2,
-	SYSTEM_FAILURE	=	3
-
-};
-
-// FIXME: delete this when sure not to use it (only used in order to create_new_node()
-// using the very same function for both linked lists (LIGHT and OBJECT),
-// but I am probably going to abandon that idea, the function is soooo complicated
-// and odd looking. Better revert back too the original split functions, create_new_light_node()
-// and creat_new_obj_node()
 typedef enum e_list_id
 {
 	LIGHT,
 	OBJECT
 }	t_list_id;
 
-// wrapper for each t_light node, only needed in parsing
+# ifndef BONUS
+# else
+/* wrapper for each t_light node, only needed in parsing */
 typedef struct s_node_light
 {
 	t_light				light; // current 'light' element
 	struct s_node_light	*next;
-	// FIXME: when compiling the project, try to see if replacing 'struct s_node_light'
-	// with 't_node_light' would work. I suppose it wouldn't compile since it is
-	// not yet declared in this scope!
-
 }	t_node_light;
+# endif
 
 typedef struct s_node_obj
 {
@@ -68,38 +53,64 @@ typedef struct s_node_obj
 
 }	t_node_obj;
 
+# ifndef BONUS
 typedef struct s_parser
 {
-	int				fd;
-
-	// light linked list
-	t_node_light	*head;
-	t_node_light	*current;
+	int		fd;
+	size_t	line_num;
+	int		n_lights;
+	int		n_spheres;
+	int		n_planes;
+	int		n_cylinders;
+	int		n_ambs;
+	int		n_cams;
 
 	// objects linked list
-	// 'curr_obj' allows creation of nodes to happen faster, without walking
+	// 'current' allows creation of nodes to happen faster, without walking
 	// through the list on each iteration, since it always points at the 'hole'
 	// for the node to be created (except at the very first iteration, but in
 	// that case 'head' is already pointing there).
-	t_node_obj		*head_obj;
-	t_node_obj		*curr_obj;
-
-	size_t		line_num;
-	int			n_lights;
-	int			n_spheres;
-	int			n_planes;
-	int			n_cylinders;
-	int			n_ambs;
-	int			n_cams;
+	t_node_obj		*head;
+	t_node_obj		*current;
 
 }	t_parser;
+# else
+typedef struct s_parser
+{
+	int				fd;
+	size_t			line_num;
+	int				n_lights;
+	int				n_spheres;
+	int				n_planes;
+	int				n_cylinders;
+	int				n_ambs;
+	int				n_cams;
+
+	// objects linked list
+	// 'current' allows creation of nodes to happen faster, without walking
+	// through the list on each iteration, since it always points at the 'hole'
+	// for the node to be created (except at the very first iteration, but in
+	// that case 'head' is already pointing there).
+	t_node_obj		*head;
+	t_node_obj		*current;
+
+	// light linked list
+	t_node_light	*head_light;
+	t_node_light	*curr_light;
+
+}	t_parser;
+# endif
 
 // scene and elements parsing
 void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
 int		parse_camera(t_cam *cam, char *str, t_parser *parser);
+# ifndef BONUS
+int	parse_light(t_parser *parser, char *str, t_light *light);
+# else
 int		parse_light(t_parser *parser, char *str);
+# endif
 int		parse_sphere(t_parser *parser, char *str, size_t line_num);
 int		parse_plane(t_parser *parser, char *str, size_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
@@ -116,7 +127,6 @@ int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
 bool	is_valid_separator(char	**str, size_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
-int		create_new_node(void *head, void *current, t_list_id id, size_t size);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 

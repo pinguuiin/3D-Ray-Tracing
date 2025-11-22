@@ -24,9 +24,33 @@
 # include "../src/MLX42/include/MLX42/MLX42.h"
 # include "vector.h"
 # include "hit.h"
+
 # include <stdlib.h>
 # include <math.h>
 # include <stdbool.h>
+
+# ifndef BONUS
+# else
+#  include "multithreading.h"
+# endif
+
+/*
+* Exit codes:
+*	1: MLX function failures
+*	2: invalid input - unexpected argument or misconfigured .rt file
+*	3: fatal system error during parsing, such as failures of open(), malloc(),
+* 	   read(), close() and pthread_create() functions, or buffer for
+* 	   get_next_line_revised() is predefined as empty.
+*	0: If program runs smoothly
+*/
+enum e_exit_code
+{
+	SUCCESS			=	0,
+	MLX_FAILURE		=	1,
+	INPUT_ERROR		=	2,
+	SYSTEM_FAILURE	=	3
+
+};
 
 /* Type of object */
 typedef enum e_type
@@ -74,29 +98,54 @@ typedef struct s_object
 
 }	t_object;
 
-/* Struct that includes everything */
-typedef struct s_info
-{
-	mlx_t		*mlx;
-	mlx_image_t	*img;
-	double		focal_length;
-	double		viewport_w;
-	double		viewport_h;
-	double		rot[3][3];
-	double		px;
-	t_color		amb;
-	t_cam		cam;
-	t_light		*light;	// array of lights
-	t_object	*obj;  	// array of objects
-	int			n_light;
-	int			n_obj;
-	bool		is_inside;
+# ifndef BONUS
+	// Struct that includes everything
+	typedef struct s_info
+	{
+		mlx_t		*mlx;
+		mlx_image_t	*img;
+		double		focal_length;
+		double		viewport_w;
+		double		viewport_h;
+		double		rot[3][3];
+		double		px;
+		t_color		amb;
+		t_cam		cam;
+		t_object	*obj;  	// array of objects
+		int			n_obj;
+		t_light		light;	// one single light
+		bool		is_inside;
+		bool		has_moved;
 
-}	t_info;
+
+	}	t_info;
+# else
+	// Struct that includes everything, as well as data for multithreading
+	typedef struct s_info
+	{
+		mlx_t			*mlx;
+		mlx_image_t		*img;
+		double			focal_length;
+		double			viewport_w;
+		double			viewport_h;
+		double			rot[3][3];
+		double			px;
+		t_color			amb;
+		t_cam			cam;
+		t_object		*obj;  	// array of objects
+		int				n_obj;
+		t_light			*light;	// array of lights
+		int				n_light;
+		bool			is_inside;
+		bool			has_moved;
+		t_thread_system	thread_system;
+
+	}	t_info;
+# endif
 
 t_info		*get_info(void);
-int			free_exit(char *s);
 void		resize(int32_t width, int32_t height, void *param);
+int			free_exit(char *s, int exit_code);
 
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
@@ -106,6 +155,7 @@ double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
 double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
 double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
+void		render_column(int x, t_info *info);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
@@ -120,5 +170,6 @@ void		key_handler(mlx_key_data_t keydata, void *param);
 void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
+
 
 #endif

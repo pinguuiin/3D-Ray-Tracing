@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-// static int	create_new_object_node(t_parser *parser); // NOTE: put this back if ever the complicated version create_new_node() does not work (or you decide to not go with it!!)
+static int	create_new_object_node(t_parser *parser);
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
@@ -26,17 +26,10 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 
 	// initialize sphere
 
-	if (create_new_node(&parser->head_obj, &parser->curr_obj, OBJECT, sizeof (t_node_obj)) == -1)
-		return (ALLOCATION_FAILURE);
-
-
-	/*
-	 * WARN: this is the alternate version, which I most probably am going to end
-	 * up using instead of the above !!!
 	if (create_new_object_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
-	*/
-	sphere = &parser->curr_obj->object;
+
+	sphere = &parser->current->object;
 
 	sphere->type = SPHERE;
 
@@ -89,19 +82,10 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 
 	plane = NULL;
 
-	// initialize plane
-	if (create_new_node(&parser->head_obj, &parser->curr_obj, OBJECT, sizeof (t_node_obj)) == -1)
-		return (ALLOCATION_FAILURE);
-
-
-	/*
-	 * WARN: this is the alternate version, which I most probably am going to end
-	 * up using instead of the above !!!
 	if (create_new_object_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
-	*/
 
-	plane = &parser->curr_obj->object;
+	plane = &parser->current->object;
 	plane->type = PLANE;
 
 	// start parsing 'str'
@@ -159,18 +143,10 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 
 	cylinder = NULL;
 
-	// initialize cylinder
-	if (create_new_node(&parser->head_obj, &parser->curr_obj, OBJECT, sizeof (t_node_obj)) == -1)
-		return (ALLOCATION_FAILURE);
-
-	/*
-	 * WARN: this is the alternate version, which I most probably am going to end
-	 * up using instead of the above !!!
 	if (create_new_object_node(parser) == -1)
 		return (ALLOCATION_FAILURE);
-	*/
 
-	cylinder = &parser->curr_obj->object;
+	cylinder = &parser->current->object;
 	cylinder->type = CYLINDER;
 
 	// start parsing 'str'
@@ -256,8 +232,6 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 	return (NO_ERROR);
 }
 
-/*
- * WARN: delete if unused.
 static int	create_new_object_node(t_parser *parser)
 {
 	t_node_obj	*new_node;
@@ -265,11 +239,10 @@ static int	create_new_object_node(t_parser *parser)
 	new_node = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
 	if (!new_node)
 		return (-1);
-	if (!parser->head_obj)
-		parser->head_obj = new_node;
+	if (!parser->head)
+		parser->head = new_node;
 	else
-		parser->curr_obj->next = new_node;
-	parser->curr_obj = new_node;
+		parser->current->next = new_node;
+	parser->current = new_node;
 	return (0);
 }
-*/

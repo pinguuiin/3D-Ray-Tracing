@@ -24,7 +24,8 @@ LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 INC_DIR = include
 
 HEADERS = $(INC_DIR)/minirt.h $(INC_DIR)/vector.h $(INC_DIR)/hit.h \
-		  $(INC_DIR)/get_next_line_revised.h $(INC_DIR)/parser.h
+		  $(INC_DIR)/get_next_line_revised.h $(INC_DIR)/parser.h \
+		  $(INC_DIR)/multithreading.h
 HEADER_DIR = -I./$(INC_DIR) -I$(LIBMLX_DIR)/$(INC_DIR) -I$(LIBFT_DIR)
 
 SRC_DIR = ./src
@@ -47,10 +48,13 @@ SRC_FILES = main.c \
 			raytracer/preprocessor.c \
 			raytracer/reflection.c \
 			raytracer/renderer.c \
+			raytracer/rendering_utils.c \
 			shapes/cylinder.c \
 			shapes/plane.c \
 			shapes/sphere.c \
 			utils/color.c \
+			utils/init_threads.c \
+			utils/thread_cleanup.c \
 			vector/operations.c \
 			vector/rotation.c
 

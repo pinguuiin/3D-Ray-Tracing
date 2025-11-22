@@ -26,7 +26,8 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 		info->cam.pos.z += 0.2;
 	else if (keydata.key == MLX_KEY_S)
 		info->cam.pos.z -= 0.2;
-	update_oc_and_plane_normal(info);
+	info->has_moved = 1;
+	// update_oc_and_plane_normal(info); // NOTE: this is finally done from the renderer!
 }
 
 static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)

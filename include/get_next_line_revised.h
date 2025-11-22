@@ -17,8 +17,7 @@
 * NOTE: We define buffer size as 1024 in the header file of libft.
 * Size 1024 is a well-established convention providing good balance between
 * performance, memory efficiency and portability with modern hardware; This is
-* why it has been chosen as the default size. But one can compile the function
-* with a different BUFFER_SIZE, using flag -D BUFFER_SIZE=<n>.
+* why it has been chosen as the default size.
 * get_next_line_revised() is a variation of the get_next_line() function,
 * which is specifically designed for the miniRT program, but could be of great
 * use in many other ones. Instead of returning a pointer to the dynamically

@@ -85,6 +85,28 @@ Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 => Specular term is counted when both terms' dot products greater than 0;
 Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 */
+#ifndef BONUS
+inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
+{
+	t_light		*light;
+
+	hit->intensity = vec3(0.0, 0.0, 0.0);
+	hit->pos = add(info->cam.pos, ray);
+	hit->ray = normalize(scale(ray, -1));
+	hit->op = subtract(hit->pos, obj->pos);
+	light = &info->light;
+	hit->incoming = subtract(light->pos, hit->pos);
+	hit->k_light = norm(hit->incoming);
+	hit->incoming = normalize(hit->incoming);
+	if (is_shadow(info, hit->incoming, hit->pos, hit))
+		return (hit->intensity);
+	get_hit_normal(obj, hit);
+	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
+	hit->outgoing = subtract(hit->outgoing, hit->incoming);
+	add_diffuse_and_specular(hit, light, obj);
+	return (hit->intensity);
+}
+#else
 inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	int			i;
@@ -110,3 +132,4 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	}
 	return (hit->intensity);
 }
+#endif

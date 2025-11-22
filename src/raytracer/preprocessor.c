@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-void	update_oc_and_plane_normal(t_info *info)
+inline void	update_oc_and_plane_normal(t_info *info)
 {
 	int i;
 
@@ -27,7 +27,7 @@ void	update_oc_and_plane_normal(t_info *info)
 	}
 }
 
-void	get_viewport_data(t_info *info)
+inline void	get_viewport_data(t_info *info)
 {
 	info->focal_length = 1.0;
 	info->viewport_w = tan(info->cam.fov / 2.0) * 2 * info->focal_length;
