@@ -93,6 +93,7 @@ static inline void	update_data_for_new_frame(t_info *info)
 	if (info->has_moved)
 	{
 		info->has_moved = 0;
+		info->cam_curr_frame = info->cam;
 		update_oc_and_plane_normal(info);
 	}
 	if ((uint32_t) info->mlx->height != info->img->height
@@ -108,6 +109,7 @@ static inline void	update_data_for_new_frame(t_info *info)
 	if (info->has_moved)
 	{
 		info->has_moved = 0;
+		info->cam_curr_frame = info->cam;
 		update_oc_and_plane_normal(info);
 	}
 	if ((uint32_t) info->mlx->height != info->img->height
