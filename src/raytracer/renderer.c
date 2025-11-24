@@ -92,8 +92,11 @@ static inline void	update_data_for_new_frame(t_info *info)
 {
 	if (info->has_moved)
 	{
-		info->has_moved = 0;
+		info->cam_curr_frame = info->cam;
 		update_oc_and_plane_normal(info);
+		info->cam_curr_frame.direction = normalize(info->cam_curr_frame.direction);
+		get_rotation_matrix(info, info->cam_curr_frame.direction);
+		info->has_moved = 0;
 	}
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
@@ -107,8 +110,11 @@ static inline void	update_data_for_new_frame(t_info *info)
 
 	if (info->has_moved)
 	{
-		info->has_moved = 0;
+		info->cam_curr_frame = info->cam;
 		update_oc_and_plane_normal(info);
+		info->cam_curr_frame.direction = normalize(info->cam_curr_frame.direction);
+		get_rotation_matrix(info, info->cam_curr_frame.direction);
+		info->has_moved = 0;
 	}
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)

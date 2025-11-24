@@ -111,6 +111,7 @@ typedef struct s_object
 		double		px;
 		t_color		amb;
 		t_cam		cam;
+		t_cam		cam_curr_frame;
 		t_object	*obj;  	// array of objects
 		int			n_obj;
 		t_light		light;	// one single light
@@ -132,6 +133,7 @@ typedef struct s_object
 		double			px;
 		t_color			amb;
 		t_cam			cam;
+		t_cam			cam_curr_frame;
 		t_object		*obj;  	// array of objects
 		int				n_obj;
 		t_light			*light;	// array of lights

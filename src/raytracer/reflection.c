@@ -91,7 +91,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	t_light		*light;
 
 	hit->intensity = vec3(0.0, 0.0, 0.0);
-	hit->pos = add(info->cam.pos, ray);
+	hit->pos = add(info->cam_curr_frame.pos, ray);
 	hit->ray = normalize(scale(ray, -1));
 	hit->op = subtract(hit->pos, obj->pos);
 	light = &info->light;

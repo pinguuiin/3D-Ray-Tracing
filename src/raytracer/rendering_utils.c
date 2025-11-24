@@ -74,7 +74,7 @@ inline void	render_column(int x, t_info *info)
 		ray = vec3(x * info->px - info->viewport_w / 2.0,
 		-(y * info->px - info->viewport_h / 2.0), 0);
 		rotate(info->rot, &ray);
-		ray = normalize(add(info->cam.direction, ray));
+		ray = normalize(add(info->cam_curr_frame.direction, ray));
 		draw_pixel(info, ray, x, y);
 		y++;
 	}
