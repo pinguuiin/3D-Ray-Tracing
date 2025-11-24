@@ -12,6 +12,33 @@
 
 #include "minirt.h"
 
+// TODO: attempt at making the camera move according to the direction it is facing.
+// FIXME: only up and down (along the 'y' axis) needs work. the others are working really well!
+static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
+{
+	t_vec	right_vector;
+
+	if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A)
+	{
+		right_vector = normalize(cross(info->cam.direction, vec3(0.0, 1.0, 0.0)));
+		if (keydata.key == MLX_KEY_D)
+			info->cam.pos = add(info->cam.pos, dot_elem(right_vector, vec3(0.8, 0.8, 0.8)));
+		else
+			info->cam.pos = subtract(info->cam.pos, dot_elem(right_vector, vec3(0.8, 0.8, 0.8)));
+	}
+	else if (keydata.key == MLX_KEY_Q)
+		info->cam.pos.y += 0.4;
+	else if (keydata.key == MLX_KEY_Z)
+		info->cam.pos.y -= 0.4;
+	else if (keydata.key == MLX_KEY_W)
+		info->cam.pos = add(info->cam.pos, dot_elem(info->cam.direction, vec3(0.8, 0.8, 0.8)));
+	else if (keydata.key == MLX_KEY_S)
+		info->cam.pos = subtract(info->cam.pos, dot_elem(info->cam.direction, vec3(0.8, 0.8, 0.8)));
+	info->has_moved = 1;
+	// update_oc_and_plane_normal(info); // NOTE: this is finally done from the renderer!
+}
+
+/*
 static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
 	if (keydata.key == MLX_KEY_D)
@@ -29,6 +56,7 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 	info->has_moved = 1;
 	// update_oc_and_plane_normal(info); // NOTE: this is finally done from the renderer!
 }
+*/
 
 static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 {
