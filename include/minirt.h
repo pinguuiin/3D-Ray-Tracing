@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/25 00:18:54 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,25 +78,51 @@ typedef struct s_cam
 
 }	t_cam;
 
-/* Object information */
-typedef struct s_object
-{
-	// general attributes
-	t_type	type;
-	t_vec	pos;
-	t_color	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
-	t_vec	oc;  // vector from object to camera
+# ifndef BONUS
+	/* Object information */
+	typedef struct s_object
+	{
+		// general attributes
+		t_type	type;
+		t_vec	pos;
+		t_color	color;
+		t_vec	oc;  // vector from object to camera
 
-	// sphere and cylinder
-	double	r;  // converted to radius from diameter  ==parsing==
+		// sphere and cylinder
+		double	r;
 
-	// plane and cylinder
-	t_vec	normal;
+		// plane and cylinder
+		t_vec	normal;
 
-	// cylinder
-	double	h;  // Half height of the cylinder
+		// cylinder
+		double	h;  // Half height of the cylinder
 
-}	t_object;
+	}	t_object;
+# else
+	/* Object information */
+	typedef struct s_object
+	{
+		// general attributes
+		t_type			type;
+		t_vec			pos;
+		t_color			color;
+		t_vec			oc;  // vector from object to camera
+
+		// sphere and cylinder
+		double			r;
+
+		// plane and cylinder
+		t_vec			normal;
+
+		// cylinder
+		double			h;  // Half height of the cylinder
+
+		// texture
+		mlx_texture_t	*texture;
+		mlx_texture_t	*tex_normal;
+
+	}	t_object;
+# endif
 
 # ifndef BONUS
 	// Struct that includes everything
