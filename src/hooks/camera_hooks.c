@@ -43,6 +43,7 @@ static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 		rotate_y(&info->cam.direction, -M_PI / 60.0);  // info->cam.direction.x -= 0.1;
 	info->cam.direction = normalize(info->cam.direction);
 	get_rotation_matrix(info, info->cam.direction);
+	info->has_moved = 1;
 }
 
 void	key_handler(mlx_key_data_t keydata, void *param)
