@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/25 00:55:48 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/25 22:06:21 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,25 @@ t_vec	img_to_xyz(t_object *sphere, int i, int nx, int ny)
 	return (uv_to_xyz(u, v, sphere->r));
 }
 
+/* Parse the texture and normal maps for each object, could be inserted into parser later idk*/
 void	parse_texture(t_object *obj, char *name)
 {
 	int		len;
-	char	*tex_file;
-	char	*normal_file;
 
 	len = ft_strlen(name);
-	tex_file = calloc(len + 22, sizeof(char));
-	normal_file = calloc(len + 23, sizeof(char));
-	if (!tex_file || !normal_file)
+	obj->tex_file = calloc(len + 22, sizeof(char));
+	obj->normal_file = calloc(len + 23, sizeof(char));
+	if (!obj->tex_file || !obj->normal_file)
 		exit(free_exit("Malloc failed", 1));
-	ft_memmove(tex_file, "./textures/", 11);
-	ft_memmove(normal_file, "./textures/", 11);
-	ft_memmove(tex_file + 11, name, len);
-	ft_memmove(normal_file + 11, name, len);
-	ft_memmove(tex_file + 11 + len, "_color.png", 10);
-	ft_memmove(normal_file + 11 + len, "_normal.png", 11);
-	obj->texture = mlx_load_png(tex_file);
-	obj->tex_normal = mlx_load_png(normal_file);
-	if (!obj->texture || !obj->tex_normal)
+	ft_memmove(obj->tex_file, "./textures/", 11);
+	ft_memmove(obj->normal_file, "./textures/", 11);
+	ft_memmove(obj->tex_file + 11, name, len);
+	ft_memmove(obj->normal_file + 11, name, len);
+	ft_memmove(obj->tex_file + 11 + len, "_color.png", 10);
+	ft_memmove(obj->normal_file + 11 + len, "_normal.png", 11);
+	obj->texture = mlx_load_png(obj->tex_file);
+	obj->normal = mlx_load_png(obj->normal_file);
+	if (!obj->texture || !obj->normal)
 		exit(free_exit("Loading texture failed", 1));
 }
 

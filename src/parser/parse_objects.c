@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_objects.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 07:32:46 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/03 19:27:00 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/11/25 20:34:13 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,22 +99,22 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(&str);
 
-	// parse 3d normalized normal vector. In range [-1,1] for each x,y,z axis (t_vec 'normal')
+	// parse 3d normalized axis vector. In range [-1,1] for each x,y,z axis (t_vec 'axis')
 
-	if (parse_3d_vector(&str, &plane->normal, line_num) == -1)
+	if (parse_3d_vector(&str, &plane->axis, line_num) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_within_range_vector(&plane->normal, line_num))
+	if (!is_within_range_vector(&plane->axis, line_num))
 		return (INVALID_INPUT);
 
-	if (fabs(plane->normal.x) < EPSILON && fabs(plane->normal.y) < EPSILON
-		&& fabs(plane->normal.y) < EPSILON)
+	if (fabs(plane->axis.x) < EPSILON && fabs(plane->axis.y) < EPSILON
+		&& fabs(plane->axis.y) < EPSILON)
 	{
 		display_parsing_error("Provided normal vector for plane has a "
 			"magnitude of zero; Unable to render object. See line:", line_num);
 		return (INVALID_INPUT);
 	}
-	plane->normal = normalize(plane->normal);
+	plane->axis = normalize(plane->axis);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (INVALID_INPUT);
@@ -161,20 +161,20 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(&str);
 
-	// parse three dimensional normalized vector of the cylinder's axis (t_vec 'normal')
+	// parse three dimensional normalized vector of the cylinder's axis (t_vec 'axis')
 	// it is not an actual normal, but the direction of the central axis of the cylinder.
-	if (parse_3d_vector(&str, &cylinder->normal, line_num) == -1)
+	if (parse_3d_vector(&str, &cylinder->axis, line_num) == -1)
 		return (INVALID_INPUT);
-	if (!is_within_range_vector(&cylinder->normal, line_num))
+	if (!is_within_range_vector(&cylinder->axis, line_num))
 		return (INVALID_INPUT);
-	if (fabs(cylinder->normal.x) < EPSILON && fabs(cylinder->normal.y) < EPSILON
-		&& fabs(cylinder->normal.z) < EPSILON)
+	if (fabs(cylinder->axis.x) < EPSILON && fabs(cylinder->axis.y) < EPSILON
+		&& fabs(cylinder->axis.z) < EPSILON)
 	{
 		display_parsing_error("Provided vector for cylinder's axis has a "
 			"magnitude of zero; Unable to render object. See line:", line_num);
 		return (INVALID_INPUT);
 	}
-	cylinder->normal = normalize(cylinder->normal);
+	cylinder->axis = normalize(cylinder->axis);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (INVALID_INPUT);

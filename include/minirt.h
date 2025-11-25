@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/25 00:18:54 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/25 21:11:47 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ typedef struct s_cam
 		double	r;
 
 		// plane and cylinder
-		t_vec	normal;
+		t_vec	axis;
 
 		// cylinder
 		double	h;  // Half height of the cylinder
@@ -112,14 +112,17 @@ typedef struct s_cam
 		double			r;
 
 		// plane and cylinder
-		t_vec			normal;
+		t_vec			axis;
 
 		// cylinder
 		double			h;  // Half height of the cylinder
 
 		// texture
+		char			*tex_name;
+		char			*tex_file;
+		char			*normal_file;
 		mlx_texture_t	*texture;
-		mlx_texture_t	*tex_normal;
+		mlx_texture_t	*normal;
 
 	}	t_object;
 # endif

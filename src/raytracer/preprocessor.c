@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/25 20:35:22 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ inline void	update_oc_and_plane_normal(t_info *info)
 	{
 		info->obj[i].oc = subtract(info->cam_curr_frame.pos, info->obj[i].pos);
 		if (info->obj[i].type == PLANE &&
-			dot(info->obj[i].normal, info->obj[i].oc) < 0)
-			info->obj[i].normal = scale(info->obj[i].normal, -1);
+			dot(info->obj[i].axis, info->obj[i].oc) < 0)
+			info->obj[i].axis = scale(info->obj[i].axis, -1);
 		i++;
 	}
 }

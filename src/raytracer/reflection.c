@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/04 04:25:48 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/25 20:44:53 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,17 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 		hit->normal = normalize(hit->op);
 	else if (obj->type == CYLINDER)
 	{
-		hit_h = dot(hit->op, obj->normal);
+		hit_h = dot(hit->op, obj->axis);
 		if (hit_h - obj->h > -EPSILON)
-			hit->normal = obj->normal;
+			hit->normal = obj->axis;
 		else if (hit_h + obj->h < EPSILON)
-			hit->normal = scale(obj->normal, -1);
+			hit->normal = scale(obj->axis, -1);
 		else
 			hit->normal = normalize(subtract(hit->op,
-				scale(obj->normal, hit_h)));
+				scale(obj->axis, hit_h)));
 	}
 	else if (obj->type == PLANE)
-		hit->normal = obj->normal;
+		hit->normal = obj->axis;
 }
 
 static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
@@ -79,7 +79,7 @@ static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object
 }
 
 /* Implement Phong reflection model:
-Diffuse = Kd (incoming light · object normal)
+Diffuse = Kd (incoming light · hit point surface normal)
 => Diffuse term is counted when its dot product is greater than 0
 Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 => Specular term is counted when both terms' dot products greater than 0;

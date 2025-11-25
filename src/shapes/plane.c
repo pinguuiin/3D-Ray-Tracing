@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:06:23 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 05:33:47 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/25 20:41:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ inline double	ray_hit_plane(t_vec ray, t_object *plane, t_vec oc)
 {
 	t_discrim	f;
 
-	f.a = dot(oc, plane->normal);
-	f.b = dot(ray, plane->normal);
+	f.a = dot(oc, plane->axis);
+	f.b = dot(ray, plane->axis);
 	if (fabs(f.a) < EPSILON)
 		return (0.0);
 	if (fabs(f.b) > EPSILON)
