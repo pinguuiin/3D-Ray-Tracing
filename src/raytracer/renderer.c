@@ -108,11 +108,13 @@ static inline void	update_data_for_new_frame(t_info *info)
 {
 	int	i;
 
+	// FIXME: if (has_rotated)
+		// get_rotation_matrix();
 	if (info->has_moved)
 	{
 		info->cam_curr_frame = info->cam;
 		update_oc_and_plane_normal(info);
-		info->cam_curr_frame.direction = normalize(info->cam_curr_frame.direction);
+		// info->cam_curr_frame.direction = normalize(info->cam_curr_frame.direction);
 		get_rotation_matrix(info, info->cam_curr_frame.direction);
 		info->has_moved = 0;
 	}

@@ -164,7 +164,7 @@ t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 // void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
 // void		rotate_z(t_vec *vec, double theta);
-void		get_rotation_matrix(t_info *info, t_vec v);
+void		get_rotation_matrix(t_info *info, t_vec f);
 void		rotate(double rot[3][3], t_vec *v1);
 
 void		key_handler(mlx_key_data_t keydata, void *param);

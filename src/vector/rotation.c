@@ -42,15 +42,13 @@ inline void	rotate_z(t_vec *vec, double theta)
 /* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
 new up (u) is the unit vector of r x f */
-inline void	get_rotation_matrix(t_info *info, t_vec v)
+inline void	get_rotation_matrix(t_info *info, t_vec f)
 {
 	t_vec	up;
-	t_vec	f;
 	t_vec	r;
 	t_vec	u;
 
 	up = vec3(0, 1, 0);
-	f = v;
 	// Avoid zero vector when f and up are on the same or opposite directions
 	if (fabs(dot(f, up)) > 1 - EPSILON)
 		up = vec3(0, 0, -1);

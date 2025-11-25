@@ -17,25 +17,34 @@
 static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
 	t_vec	right_vector;
+	t_vec	up_vector;
 
+	// FIXME: if (has_rotated)
+	// 				get_rotation_matrix();
+	// 		THEN USE THE MATRIX VALUES HERE!!!!!
+	// 	FIXME: fix the lateral movement.
 	if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A)
 	{
-		right_vector = normalize(cross(info->cam.direction, vec3(0.0, 1.0, 0.0)));
+		right_vector = normalize(cross(vec3(0.0, 1.0, 0.0), info->cam.direction));
 		if (keydata.key == MLX_KEY_D)
-			info->cam.pos = add(info->cam.pos, dot_elem(right_vector, vec3(0.8, 0.8, 0.8)));
+			info->cam.pos = add(info->cam.pos, scale(right_vector, 0.8));
 		else
-			info->cam.pos = subtract(info->cam.pos, dot_elem(right_vector, vec3(0.8, 0.8, 0.8)));
+			info->cam.pos = subtract(info->cam.pos,  scale(right_vector, 0.8));
 	}
-	else if (keydata.key == MLX_KEY_Q)
-		info->cam.pos.y += 0.4;
-	else if (keydata.key == MLX_KEY_Z)
-		info->cam.pos.y -= 0.4;
+	else if (keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z)
+	{
+		right_vector = normalize(cross(vec3(0.0, 1.0, 0.0), info->cam.direction));
+		up_vector = normalize(cross(info->cam.direction, right_vector));
+		if (keydata.key == MLX_KEY_Q)
+			info->cam.pos = add(info->cam.pos, scale(up_vector, 0.8));
+		else
+			info->cam.pos = subtract(info->cam.pos, scale(up_vector, 0.8));
+	}
 	else if (keydata.key == MLX_KEY_W)
-		info->cam.pos = add(info->cam.pos, dot_elem(info->cam.direction, vec3(0.8, 0.8, 0.8)));
+		info->cam.pos = add(info->cam.pos, scale(info->cam.direction, 0.8));
 	else if (keydata.key == MLX_KEY_S)
-		info->cam.pos = subtract(info->cam.pos, dot_elem(info->cam.direction, vec3(0.8, 0.8, 0.8)));
+		info->cam.pos = subtract(info->cam.pos, scale(info->cam.direction, 0.8));
 	info->has_moved = 1;
-	// update_oc_and_plane_normal(info); // NOTE: this is finally done from the renderer!
 }
 
 /*
@@ -69,7 +78,7 @@ static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 		rotate_y(&info->cam.direction, M_PI / 60.0);  // info->cam.direction.x += 0.1;
 	else if (keydata.key == MLX_KEY_LEFT)
 		rotate_y(&info->cam.direction, -M_PI / 60.0);  // info->cam.direction.x -= 0.1;
-	// info->cam.direction = normalize(info->cam.direction);
+	info->cam.direction = normalize(info->cam.direction); // this has to be done from here!! before someone accesses it.
 	// get_rotation_matrix(info, info->cam.direction);
 	info->has_moved = 1;
 }
