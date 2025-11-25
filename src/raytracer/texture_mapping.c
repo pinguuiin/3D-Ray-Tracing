@@ -6,38 +6,39 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/25 22:06:21 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 01:06:06 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
 #ifndef BONUS
-/* Define u as the horizontal coordinate in the range of [0, 1],
-v as the vertical coordinate in the range of [0, 1] in the reference frame
-of a unit sphere from the origin */
-t_vec	uv_to_xyz(double u, double v, double r)
+#else
+/* Convert hit point coordinates to pixel location on the texture or normal map */
+void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 {
 	double	phi;
 	double	theta;
-	t_vec	vec;
 
-	phi = u * 2.0 * M_PI;
-	theta = v * M_PI;
-	vec.x = - cos(phi) * sin(theta);
-	vec.y = - cos(theta);
-	vec.z = sin(phi) * sin(theta);
-	return (vec);
+	p = add(p, sphere->oc);
+	phi = atan2(p.z, p.x) + M_PI;
+	theta = acos(-p.y / sphere->r);
+	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1); // can also test if floor() looks better
+	*j = theta / M_PI * (sphere->texture->height - 1);
 }
 
-t_vec	img_to_xyz(t_object *sphere, int i, int nx, int ny)
+/* Map pixel location to corresponding color value (r, g, b) */
+t_color	px_loc_to_color(t_object *obj, mlx_texture_t *map, int i, int j)
 {
-	double	u;
-	double	v;
+	int		idx;
+	t_color	c;
 
-	u = (double)(i % nx) / (double)(nx - 1);
-	v = 1.0 - (double)(i / nx) / (double)(ny - 1);
-	return (uv_to_xyz(u, v, sphere->r));
+	idx = (obj->texture->height - j - 1) * obj->texture->width + i;
+	idx = idx * obj->texture->bytes_per_pixel;
+	c.r = map->pixels[idx];
+	c.g = map->pixels[idx + 1];
+	c.b = map->pixels[idx + 2];
+	return (c);
 }
 
 /* Parse the texture and normal maps for each object, could be inserted into parser later idk*/
