@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/25 20:44:53 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 03:54:47 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 	return (false);
 }
 
+#ifndef BONUS
 static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 {
 	double	hit_h;
@@ -56,7 +57,30 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
 }
+#else
+static inline void	get_hit_normal(t_object *obj, t_hit *hit, int *tex_loc)
+{
+	double	hit_h;
 
+	if (obj->type == SPHERE)
+		hit->normal = normalize(px_loc_to_color(obj->normal, tex_loc[0], tex_loc[1]));
+	else if (obj->type == CYLINDER)
+	{
+		hit_h = dot(hit->op, obj->axis);
+		if (hit_h - obj->h > -EPSILON)
+			hit->normal = obj->axis;
+		else if (hit_h + obj->h < EPSILON)
+			hit->normal = scale(obj->axis, -1);
+		else
+			hit->normal = normalize(subtract(hit->op,
+				scale(obj->axis, hit_h)));
+	}
+	else if (obj->type == PLANE)
+		hit->normal = obj->axis;
+}
+#endif
+
+#ifndef BONUS
 static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
 {
 	double	flux;
@@ -77,6 +101,30 @@ static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object
 		}
 	}
 }
+#else
+static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj, int *tex_loc)
+{
+	double	flux;
+	double	spec;
+
+	flux = dot(hit->incoming, hit->normal);
+	if (obj->type == SPHERE)
+		obj->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
+	if (flux > EPSILON)
+	{
+		flux *= KD;
+		hit->diffuse = scale(dot_elem(light->color, obj->color), flux);
+		hit->intensity = add(hit->intensity, hit->diffuse);
+		spec = dot(hit->outgoing, hit->ray);
+		if (spec > EPSILON)
+		{
+			spec = KS * pow(spec, SHININESS);
+			hit->specular = scale(light->color, spec);
+			hit->intensity = add(hit->intensity, hit->specular);
+		}
+	}
+}
+#endif
 
 /* Implement Phong reflection model:
 Diffuse = Kd (incoming light · hit point surface normal)
@@ -110,13 +158,18 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	int			i;
+	int			tex_loc[2];
 	t_light		*light;
 
 	i = -1;
+	tex_loc[0] = 0;
+	tex_loc[1] = 0;
 	hit->intensity = vec3(0.0, 0.0, 0.0);
 	hit->pos = add(info->cam.pos, ray);
 	hit->ray = normalize(scale(ray, -1));
 	hit->op = subtract(hit->pos, obj->pos);
+	if (obj->type == SPHERE)
+		sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
 	while (i++ < info->n_light - 1)
 	{
 		light = &info->light[i];
@@ -125,10 +178,10 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		hit->incoming = normalize(hit->incoming);
 		if (is_shadow(info, hit->incoming, hit->pos, hit))
 			continue ;
-		get_hit_normal(obj, hit);
+		get_hit_normal(obj, hit, tex_loc);
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 		hit->outgoing = subtract(hit->outgoing, hit->incoming);
-		add_diffuse_and_specular(hit, light, obj);
+		add_diffuse_and_specular(hit, light, obj, tex_loc);
 	}
 	return (hit->intensity);
 }

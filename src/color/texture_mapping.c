@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 01:06:06 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 04:03:36 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #ifndef BONUS
 #else
 /* Convert hit point coordinates to pixel location on the texture or normal map */
-void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
+inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 {
 	double	phi;
 	double	theta;
@@ -28,13 +28,13 @@ void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 }
 
 /* Map pixel location to corresponding color value (r, g, b) */
-t_color	px_loc_to_color(t_object *obj, mlx_texture_t *map, int i, int j)
+inline t_color	px_loc_to_color(mlx_texture_t *map, int i, int j)
 {
 	int		idx;
 	t_color	c;
 
-	idx = (obj->texture->height - j - 1) * obj->texture->width + i;
-	idx = idx * obj->texture->bytes_per_pixel;
+	idx = (map->height - j - 1) * map->width + i;
+	idx = idx * map->bytes_per_pixel;
 	c.r = map->pixels[idx];
 	c.g = map->pixels[idx + 1];
 	c.b = map->pixels[idx + 2];
@@ -42,10 +42,12 @@ t_color	px_loc_to_color(t_object *obj, mlx_texture_t *map, int i, int j)
 }
 
 /* Parse the texture and normal maps for each object, could be inserted into parser later idk*/
-void	parse_texture(t_object *obj, char *name)
+inline void	parse_texture(t_object *obj, char *name)
 {
 	int		len;
 
+	if (obj->type != SPHERE)
+		return ;
 	len = ft_strlen(name);
 	obj->tex_file = calloc(len + 22, sizeof(char));
 	obj->normal_file = calloc(len + 23, sizeof(char));
@@ -61,6 +63,8 @@ void	parse_texture(t_object *obj, char *name)
 	obj->normal = mlx_load_png(obj->normal_file);
 	if (!obj->texture || !obj->normal)
 		exit(free_exit("Loading texture failed", 1));
-}
 
+
+	exit(free_exit("Stop after loading texture", 1));
+}
 #endif

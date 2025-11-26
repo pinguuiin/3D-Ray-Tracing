@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/25 20:35:22 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 04:15:15 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ inline void	get_viewport_data(t_info *info)
 	info->px = info->viewport_w / info->img->width;
 }
 
+#ifndef BONUS
 void	preprocessor(t_info *info)
 {
 	info->cam_curr_frame = info->cam;
@@ -42,3 +43,20 @@ void	preprocessor(t_info *info)
 	get_rotation_matrix(info, info->cam_curr_frame.direction);
 	get_viewport_data(info);
 }
+#else
+void	preprocessor(t_info *info)
+{
+	int	i;
+	
+	i = 0;
+	info->cam_curr_frame = info->cam;
+	update_oc_and_plane_normal(info);
+	get_rotation_matrix(info, info->cam_curr_frame.direction);
+	get_viewport_data(info);
+	while (i < info->n_obj)
+	{
+		parse_texture(&info->obj[i], "limestone3");   // name will later be passed from input ==========================c:=====c:=====c:=====c:=================
+		i++;
+	}
+}
+#endif

@@ -44,7 +44,7 @@ SRC_FILES = main.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
 			color/color.c \
-			color/texture_mapping \
+			color/texture_mapping.c \
 			hooks/camera_hooks.c \
 			hooks/hook_utils.c \
 			raytracer/preprocessor.c \

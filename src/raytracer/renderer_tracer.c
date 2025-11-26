@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/26 02:11:20 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 04:11:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit,
 	return (k_min);
 }
 
+#ifndef BONUS
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
 	double		k;
@@ -78,6 +79,29 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
+#else
+static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
+{
+	double		k;
+	t_object	*obj;
+	t_color		color;
+	t_hit		hit;
+
+	obj = NULL;
+	k = nearest_ray_hit(info, ray, &hit, obj);
+	if (k == -1) // not hit
+	{
+		// NOTE: we change the vec_to_color() call to black, for optimization :-)
+		mlx_put_pixel(info->img, x, y, 0x000000FF);
+		return ;
+	}
+	obj = &info->obj[hit.obj_id];
+	color = dot_elem(info->amb, obj->color);  // need fixxxxxxxxxxxxxxx
+	if (!info->is_inside)
+		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
+	mlx_put_pixel(info->img, x, y, vec_to_color(color));
+}
+#endif
 
 inline void	render_column(int x, t_info *info)
 {

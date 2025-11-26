@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/25 21:11:47 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 03:52:41 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 # define KD 0.5
 # define SHININESS 30
 
-# include "../src/libft/libft.h"
-# include "../src/MLX42/include/MLX42/MLX42.h"
+# include "../libft/libft.h"
+# include "../MLX42/include/MLX42/MLX42.h"
 # include "vector.h"
 # include "hit.h"
 
@@ -183,6 +183,10 @@ int			free_exit(char *s, int exit_code);
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 // t_vec		color_to_vec(int r, int g, int b);
+void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
+t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
+void		parse_texture(t_object *obj, char *name);
+
 
 double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
 double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
