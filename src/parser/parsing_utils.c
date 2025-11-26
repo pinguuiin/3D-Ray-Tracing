@@ -159,3 +159,58 @@ bool	is_within_range_vector(t_vec *vec, size_t line_num)
 	}
 	return (1);
 }
+
+
+// WARN: add to header file.
+// WARN: display_parsing_error if something is not a file name?
+int	parse_texture_for_sphere(char **str, t_info *info, size_t line_num)
+{
+	// FIXME: 'str' is now a double pointer - so adapt this code which now behaves as if it were a simple pointer.
+	if (!*str || *str == '\n') // no texture was provided, which is accepted.
+	{
+		// check that not too many objects were provided by the user, before
+		// incrementing their counter.
+		if (!is_valid_n_elements(parser, OBJECT))
+			return (INVALID_INPUT);
+		parser->n_spheres++; // validate sphere
+		return (NO_ERROR);
+	}
+	if (parse_3d_vector(&str, &sphere->normal, line_num == -1)
+		return (-1);
+	skip_whitespace_but_not_newline(&str);
+	if (!*str || *str == '\n')
+	{
+		display_parsing_error("Unexpected texture input for sphere. If you "
+			"want that object to be rendered with a texture,\nplease provide "
+			"a valid axis vector for the sphere, followed by the texture's "
+			"filename. Error on line", line_num);
+		return (-1);
+	}
+	if (parse_string(&str, line_num) == -1)
+	{
+		// WARN: do we need this display parsing error ?
+		display_parsing_error("?????", line_num);
+		return (-1);
+	}
+
+	return (0);
+}
+
+// WARN: add to header file.
+// WARN: display_parsing_error if something is not a file name?
+// WARN: accpet quotes? single and double? probably overkill and adding unnecessary complexity!!!
+// WARN: allocate (and free!!!) the string.
+// WARN: do I even need to return an int here? is there actually a possible failure?
+// probably not because a filename can have spaces in it !
+int	parse_string(char **str, size_t line_num)
+{
+	char	*s;
+
+	s = *str;
+
+
+
+
+	*str = s;
+	return (0);
+}

@@ -18,6 +18,8 @@ static int	create_new_object_node(t_parser *parser);
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
 // (non-newline) character that follows it!
+
+#ifndef BONUS
 int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 {
 	t_object	*sphere;
@@ -75,6 +77,98 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 
 	return (NO_ERROR);
 }
+#else
+int	parse_sphere(t_parser *parser, char *str, size_t line_num)
+{
+	t_object	*sphere;
+
+	sphere = NULL;
+
+	// initialize sphere
+
+	if (create_new_object_node(parser) == -1)
+		return (ALLOCATION_FAILURE);
+
+	sphere = &parser->current->object;
+
+	sphere->type = SPHERE;
+
+
+	// start parsing 'str'
+	skip_whitespace_but_not_newline(&str);
+
+	// parse x,y,z coordinates of the center of the sphere (t_vec 'pos')
+	if (parse_3d_vector(&str, &sphere->pos, line_num) == -1)
+		return (INVALID_INPUT);
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (INVALID_INPUT);
+
+	skip_whitespace_but_not_newline(&str);
+
+	// parse the sphere's diameter, and convert it to radius (double 'r')
+	if (ft_strtod(&str, &sphere->r, line_num) == -1)
+		return (INVALID_INPUT);
+	if (sphere->r < EPSILON)  // No need to use fabs() here, since a negative value does not make sense for the diameter.
+	{
+		display_parsing_error("Unable to render sphere: diameter provided "
+			"has to be a positive value, not too close to zero. See line:", line_num);
+		return (INVALID_INPUT);
+	}
+	sphere->r *= 0.5; // convert diameter to radius.
+
+	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
+		return (INVALID_INPUT);
+	skip_whitespace_but_not_newline(&str);
+
+	// parse R,G,B colors in range [0-255]
+	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
+		return (INVALID_INPUT);
+
+	
+
+	// WARN: we need both elements - IF there IS a TEXTURE.
+	// Accept: - no texture.
+	//	- texture starting with the 'normal/ axis' vector + string (texture file). no extension.
+	//	NOTE: if there is an axis vector but not the string : refuse input.
+	//	NOTE: if the string is first: refuse input.
+	// TODO: parse axis vector (for now, it's the 'normal' member of 'obj', will be transformed to 'axis')
+	// FIXME: does the axis need to be normalized? 
+
+	skip_whitespace_but_not_newline(&str);
+	if (!*str || *str == '\n') // no texture was provided, which is accepted! a texture is EXTRA stuff.
+	{
+		// check that not too many objects were provided by the user, before
+		// incrementing their counter.
+		if (!is_valid_n_elements(parser, OBJECT))
+			return (INVALID_INPUT);
+		parser->n_spheres++; // validate sphere
+		return (NO_ERROR);
+	}
+
+	// TODO: parse texture string.
+	// NOTE: consider a sphere without an axis but without the string!
+	// TODO: write this function, that will combine both parsing parts - AXIS & STRING, since we want them both to show up.
+	if (parse_texture_for_sphere(&str, info, line_num) == -1)
+		return (INVALID_INPUT);
+
+
+
+	// FIXME: new draft is up until here.
+
+
+
+	if (!is_valid_end_of_line(str, line_num))
+		return (INVALID_INPUT);
+
+	// check that not too many objects were provided by the user, before
+	// incrementing their counter.
+	if (!is_valid_n_elements(parser, OBJECT))
+		return (INVALID_INPUT);
+	parser->n_spheres++; // validate sphere
+
+	return (NO_ERROR);
+}
+#endif
 
 int	parse_plane(t_parser *parser, char *str, size_t line_num)
 {
