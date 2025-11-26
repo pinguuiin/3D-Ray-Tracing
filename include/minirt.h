@@ -117,6 +117,7 @@ typedef struct s_object
 		t_light		light;	// one single light
 		bool		is_inside;
 		bool		has_moved;
+		bool		has_rotated;
 
 
 	}	t_info;
@@ -140,6 +141,7 @@ typedef struct s_object
 		int				n_light;
 		bool			is_inside;
 		bool			has_moved;
+		bool			has_rotated;
 		t_thread_system	thread_system;
 
 	}	t_info;
@@ -158,13 +160,14 @@ double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
 double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
 void		render_column(int x, t_info *info);
+void		update_camera_for_new_frame(t_info *info);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
 // void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
 // void		rotate_z(t_vec *vec, double theta);
-void		get_rotation_matrix(t_info *info, t_vec v);
+void		get_rotation_matrix(t_info *info, t_vec f);
 void		rotate(double rot[3][3], t_vec *v1);
 
 void		key_handler(mlx_key_data_t keydata, void *param);

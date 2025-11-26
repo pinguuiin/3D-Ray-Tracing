@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-static inline void		update_data_for_new_frame(t_info *info);
+static void	update_data_for_new_frame(t_info *info);
 
 #ifndef BONUS
 #else
@@ -88,34 +88,20 @@ void	renderer(void *param)
 #endif
 
 #ifndef BONUS
-static inline void	update_data_for_new_frame(t_info *info)
+static void	update_data_for_new_frame(t_info *info)
 {
-	if (info->has_moved)
-	{
-		info->cam_curr_frame = info->cam;
-		update_oc_and_plane_normal(info);
-		info->cam_curr_frame.direction = normalize(info->cam_curr_frame.direction);
-		get_rotation_matrix(info, info->cam_curr_frame.direction);
-		info->has_moved = 0;
-	}
+	update_camera_for_new_frame(info);
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
 		resize(info->mlx->width, info->mlx->height, info);
 	info->is_inside = false;
 }
 #else
-static inline void	update_data_for_new_frame(t_info *info)
+static void	update_data_for_new_frame(t_info *info)
 {
 	int	i;
 
-	if (info->has_moved)
-	{
-		info->cam_curr_frame = info->cam;
-		update_oc_and_plane_normal(info);
-		info->cam_curr_frame.direction = normalize(info->cam_curr_frame.direction);
-		get_rotation_matrix(info, info->cam_curr_frame.direction);
-		info->has_moved = 0;
-	}
+	update_camera_for_new_frame(info);
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
 	{
