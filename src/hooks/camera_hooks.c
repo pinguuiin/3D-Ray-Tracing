@@ -37,11 +37,10 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
 	double	(*rot)[3];
 
-	rot = info->rot;
 	info->has_moved = 1;
 	if (info->has_rotated)
 		get_rotation_matrix(info, info->cam.direction);
-
+	rot = info->rot;
 	if (keydata.key == MLX_KEY_W)
 		info->cam.pos = add(info->cam.pos, info->cam.direction);
 	else if (keydata.key == MLX_KEY_S)
