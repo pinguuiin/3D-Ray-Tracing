@@ -6,27 +6,11 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/26 21:44:25 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 22:07:28 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-inline void	update_camera_for_new_frame(t_info *info)
-{
-	if (info->has_rotated)
-	{
-		info->has_rotated = 0;
-		info->cam_curr_frame.direction = info->cam.direction;
-		get_rotation_matrix(info, info->cam_curr_frame.direction);
-	}
-	if (info->has_moved)
-	{
-		info->has_moved = 0;
-		info->cam_curr_frame.pos = info->cam.pos;
-		update_oc_and_plane_normal(info);
-	}
-}
 
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 {

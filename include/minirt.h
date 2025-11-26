@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 15:53:34 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 22:09:59 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
 double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
 void		render_column(int x, t_info *info);
-void		update_camera_for_new_frame(t_info *info);
+void		update_data_for_new_frame(t_info *info);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
