@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 04:15:15 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 17:18:28 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	preprocessor(t_info *info)
 void	preprocessor(t_info *info)
 {
 	int	i;
-	
+
 	i = 0;
 	info->cam_curr_frame = info->cam;
 	update_oc_and_plane_normal(info);

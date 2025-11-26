@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 04:03:36 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 19:36:26 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	double	phi;
 	double	theta;
 
-	p = add(p, sphere->oc);
+	p = subtract(p, sphere->pos);
 	phi = atan2(p.z, p.x) + M_PI;
 	theta = acos(-p.y / sphere->r);
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1); // can also test if floor() looks better
@@ -35,9 +35,9 @@ inline t_color	px_loc_to_color(mlx_texture_t *map, int i, int j)
 
 	idx = (map->height - j - 1) * map->width + i;
 	idx = idx * map->bytes_per_pixel;
-	c.r = map->pixels[idx];
-	c.g = map->pixels[idx + 1];
-	c.b = map->pixels[idx + 2];
+	c.r = map->pixels[idx] / 255.0;
+	c.g = map->pixels[idx + 1] / 255.0;
+	c.b = map->pixels[idx + 2] / 255.0;
 	return (c);
 }
 
@@ -46,8 +46,6 @@ inline void	parse_texture(t_object *obj, char *name)
 {
 	int		len;
 
-	if (obj->type != SPHERE)
-		return ;
 	len = ft_strlen(name);
 	obj->tex_file = calloc(len + 22, sizeof(char));
 	obj->normal_file = calloc(len + 23, sizeof(char));
@@ -63,8 +61,5 @@ inline void	parse_texture(t_object *obj, char *name)
 	obj->normal = mlx_load_png(obj->normal_file);
 	if (!obj->texture || !obj->normal)
 		exit(free_exit("Loading texture failed", 1));
-
-
-	exit(free_exit("Stop after loading texture", 1));
 }
 #endif
