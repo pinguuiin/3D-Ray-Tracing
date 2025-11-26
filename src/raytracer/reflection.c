@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 19:07:28 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 21:11:49 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,28 +80,6 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 }
 #endif
 
-#ifndef BONUS
-static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
-{
-	double	flux;
-	double	spec;
-
-	flux = dot(hit->incoming, hit->normal);
-	if (flux > EPSILON)
-	{
-		flux *= KD;
-		hit->diffuse = scale(dot_elem(light->color, obj->color), flux);
-		hit->intensity = add(hit->intensity, hit->diffuse);
-		spec = dot(hit->outgoing, hit->ray);
-		if (spec > EPSILON)
-		{
-			spec = KS * pow(spec, SHININESS);
-			hit->specular = scale(light->color, spec);
-			hit->intensity = add(hit->intensity, hit->specular);
-		}
-	}
-}
-#else
 static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light)
 {
 	double	flux;
@@ -122,7 +100,6 @@ static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light)
 		}
 	}
 }
-#endif
 
 /* Implement Phong reflection model:
 Diffuse = Kd (incoming light · hit point surface normal)
@@ -149,7 +126,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	get_hit_normal(obj, hit);
 	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 	hit->outgoing = subtract(hit->outgoing, hit->incoming);
-	add_diffuse_and_specular(hit, light, obj);
+	add_diffuse_and_specular(hit, light);
 	return (hit->intensity);
 }
 #else

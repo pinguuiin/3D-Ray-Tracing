@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/26 19:04:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 21:44:25 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,16 @@ inline void	update_camera_for_new_frame(t_info *info)
 	}
 }
 
-static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit,
-							t_object *obj)
+static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 {
-	double	k;
-	double	k_min;
-	int		id;
+	int			id;
+	double		k;
+	double		k_min;
+	t_object	*obj;
 
+	id = 0;
 	k = -1.0;
 	k_min = -1.0;
-	id = 0;
 	while (id < info->n_obj)
 	{
 		obj = &info->obj[id];
@@ -65,11 +65,9 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	t_color		color;
 	t_hit		hit;
 
-	obj = NULL;
-	k = nearest_ray_hit(info, ray, &hit, obj);
+	k = nearest_ray_hit(info, ray, &hit);
 	if (k == -1) // not hit
 	{
-		// NOTE: we change the vec_to_color() call to black, for optimization :-)
 		mlx_put_pixel(info->img, x, y, 0x000000FF);
 		return ;
 	}
@@ -88,11 +86,9 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	t_color		color;
 	t_hit		hit;
 
-	obj = NULL;
-	k = nearest_ray_hit(info, ray, &hit, obj);
+	k = nearest_ray_hit(info, ray, &hit);
 	if (k == -1) // not hit
 	{
-		// NOTE: we change the vec_to_color() call to black, for optimization :-)
 		mlx_put_pixel(info->img, x, y, 0x000000FF);
 		return ;
 	}
