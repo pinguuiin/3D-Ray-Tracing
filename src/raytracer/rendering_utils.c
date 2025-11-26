@@ -12,6 +12,22 @@
 
 #include "minirt.h"
 
+inline void	update_camera_for_new_frame(t_info *info)
+{
+	if (info->has_rotated)
+	{
+		info->has_rotated = 0;
+		info->cam_curr_frame.direction = info->cam.direction;
+		get_rotation_matrix(info, info->cam_curr_frame.direction);
+	}
+	if (info->has_moved)
+	{
+		info->has_moved = 0;
+		info->cam_curr_frame.pos = info->cam.pos;
+		update_oc_and_plane_normal(info);
+	}
+}
+
 static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit,
 							t_object *obj)
 {
