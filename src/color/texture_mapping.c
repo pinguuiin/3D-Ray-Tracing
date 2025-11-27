@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/27 23:35:38 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/28 00:08:14 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ inline void	parse_texture(t_object *obj, char *name)
 	if (!obj->normal)
 	{
 		mlx_delete_texture(obj->texture);
-		exit(free_exit("Loading texture map failed", 1));
+		exit(free_exit("Loading normal map failed", 1));
 	}
 	obj->has_tex = true;
 }
