@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/26 17:11:03 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 23:22:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,11 @@ int	free_exit(char *s, int exit_code)
 		// free(info->obj[i].tex_name);
 		free(info->obj[i].tex_file);
 		free(info->obj[i].normal_file);
-		mlx_delete_texture(info->obj[i].texture);  //need to make sure MLX provides NULL check
-		mlx_delete_texture(info->obj[i].normal);
+		if (info->obj[i].has_tex == true)
+		{
+			mlx_delete_texture(info->obj[i].texture);  //need to make sure MLX provides NULL check
+			mlx_delete_texture(info->obj[i].normal);
+		}
 		i++;
 	}
 	free(info->light);

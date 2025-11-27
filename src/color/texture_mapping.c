@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/27 21:58:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 23:35:38 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ inline t_color	px_loc_to_color(mlx_texture_t *map, int i, int j)
 /* Parse the texture and normal maps for each object, could be inserted into parser later idk*/
 inline void	parse_texture(t_object *obj, char *name)
 {
-	int		len;
+	int	len;
 
 	len = ft_strlen(name);
 	obj->tex_file = calloc(len + 22, sizeof(char));
@@ -58,9 +58,14 @@ inline void	parse_texture(t_object *obj, char *name)
 	ft_memmove(obj->tex_file + 11 + len, "_color.png", 10);
 	ft_memmove(obj->normal_file + 11 + len, "_normal.png", 11);
 	obj->texture = mlx_load_png(obj->tex_file);
+	if (!obj->texture)
+		exit(free_exit("Loading texture map failed", 1));
 	obj->normal = mlx_load_png(obj->normal_file);
-	if (!obj->texture || !obj->normal)
-		exit(free_exit("Loading texture failed", 1));
+	if (!obj->normal)
+	{
+		mlx_delete_texture(obj->texture);
+		exit(free_exit("Loading texture map failed", 1));
+	}
 	obj->has_tex = true;
 }
 #endif
