@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/27 01:57:44 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 21:57:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,17 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 #else
+static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
+{
+	int	tex_loc[2];
+
+	sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
+	hit->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
+	hit->normal = normalize(px_loc_to_color(obj->normal, tex_loc[0], tex_loc[1]));
+}
+
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
-	int			tex_loc[2];
 	double		k;
 	t_object	*obj;
 	t_color		color;
@@ -80,12 +88,10 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	obj = &info->obj[hit.obj_id];
 	ray = scale(ray, k);
 	hit.pos = add(info->cam.pos, ray);
-	sphere_xyz_to_px_loc(hit.pos, obj, &tex_loc[0], &tex_loc[1]);
-	if (obj->type == SPHERE)
-		hit.color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
+	if (obj->type == SPHERE && obj->has_tex == true)
+		get_texture_color_and_normal(&hit, obj);
 	else
 		hit.color = obj->color;
-	hit.normal = normalize(px_loc_to_color(obj->normal, tex_loc[0], tex_loc[1]));
 	color = dot_elem(info->amb, hit.color);
 	if (!info->is_inside)
 		color = add(color, reflection(info, obj, ray, &hit));  // when camera on the object, k=0, the return will only include diffuse

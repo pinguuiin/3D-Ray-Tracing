@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 19:36:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 21:58:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,6 @@ inline void	parse_texture(t_object *obj, char *name)
 	obj->normal = mlx_load_png(obj->normal_file);
 	if (!obj->texture || !obj->normal)
 		exit(free_exit("Loading texture failed", 1));
+	obj->has_tex = true;
 }
 #endif

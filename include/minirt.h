@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 22:09:59 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 19:46:43 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ typedef struct s_cam
 		double			h;  // Half height of the cylinder
 
 		// texture
+		bool			has_tex;
 		char			*tex_name;
 		char			*tex_file;
 		char			*normal_file;
