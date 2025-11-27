@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/26 22:07:28 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 01:57:44 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 		return ;
 	}
 	obj = &info->obj[hit.obj_id];
-	color = dot_elem(info->amb, obj->color);
+	hit.color = obj->color;
+	color = dot_elem(info->amb, hit.color);
 	if (!info->is_inside)
 		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
