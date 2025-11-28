@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/17 00:57:39 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/28 02:12:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 
 	info->has_moved = 1;
 	if (info->has_rotated)
-		get_rotation_matrix(info, info->cam.direction);
+		get_rotation_matrix(&info->rot, info->cam.direction);
 	rot = info->rot;
 	if (keydata.key == MLX_KEY_W)
 		info->cam.pos = add(info->cam.pos, info->cam.direction);

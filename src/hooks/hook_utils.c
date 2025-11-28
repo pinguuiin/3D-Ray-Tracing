@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 22:08:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/28 02:12:59 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static inline void	update_camera_for_new_frame(t_info *info)
 	{
 		info->has_rotated = 0;
 		info->cam_curr_frame.direction = info->cam.direction;
-		get_rotation_matrix(info, info->cam_curr_frame.direction);
+		get_rotation_matrix(&info->rot, info->cam_curr_frame.direction);
 	}
 	if (info->has_moved)
 	{
