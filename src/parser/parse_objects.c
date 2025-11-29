@@ -151,10 +151,20 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	// NOTE: consider a sphere without an axis but without the string!
 	// TODO: write this function, that will combine both parsing parts - AXIS & STRING, since we want them both to show up.
 
-	// WARN: if we do not handle a wrong file name,  and then call mlx_whatever_it_is_that_initiates_texture() --->
-	// WE MIGHT GET A SEGMENTATION FAULT !!!!!!!!!!!!!!! Test to see.
+	// WARN: if we do not handle a wrong file name,  and then call
+	// mlx_load_png() ---> check that it does not segfault. Probably not, though.
 
-	skip_whitespace_but_not_newline(&str);
+	int	retval;
+
+	retval = parse_texture_for_sphere(&str, sphere, line_num);
+	if (retval)
+	{
+		// TODO: write a function walking through the linked list of objects,
+		// and freeing the malloc'ed strings + deleting the png through mlx for
+		// each object whose 'has_tex' is set (like in free_exit()).
+		// call it from here!
+		return (retval);
+	}
 	if (parse_texture_for_sphere(&str, sphere, line_num) == -1) // WARN: how about returning ALLOCATION_FAILURE??
 	{
 		// FIXME:

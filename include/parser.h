@@ -26,7 +26,8 @@ typedef enum e_status
 	OPEN_FAILURE		=	-3,
 	CLOSE_FAILURE		=	-4,
 	READ_FAILURE		=	-5,
-	BUFFER_SIZE_ERROR	=	-6
+	BUFFER_SIZE_ERROR	=	-6,
+	LOAD_TEXTURE_FAIL	=	-7
 
 }	t_status;
 
@@ -106,14 +107,15 @@ void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
 int		parse_camera(t_cam *cam, char *str, t_parser *parser);
-# ifndef BONUS
-int	parse_light(t_parser *parser, char *str, t_light *light);
-# else
-int		parse_light(t_parser *parser, char *str);
-# endif
 int		parse_sphere(t_parser *parser, char *str, size_t line_num);
 int		parse_plane(t_parser *parser, char *str, size_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
+# ifndef BONUS
+int		parse_light(t_parser *parser, char *str, t_light *light);
+# else
+int		parse_light(t_parser *parser, char *str);
+int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
+# endif
 
 // parsing utilities
 bool	ft_isspace(int c);

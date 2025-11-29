@@ -119,7 +119,6 @@ typedef struct s_cam
 
 		// texture
 		bool			has_tex;
-		// char			*tex_name; // FIXME: remove if unused.
 		char			*tex_file;
 		char			*normal_file;
 		mlx_texture_t	*texture;
