@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/28 02:13:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/29 20:41:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	preprocessor(t_info *info)
 {
 	info->cam_curr_frame = info->cam;
 	update_oc_and_plane_normal(info);
-	get_rotation_matrix(&info->rot, info->cam_curr_frame.direction);
+	get_rotation_matrix(info->rot, info->cam_curr_frame.direction);
 	get_viewport_data(info);
 }
 #else
@@ -51,7 +51,7 @@ void	preprocessor(t_info *info)
 	i = 0;
 	info->cam_curr_frame = info->cam;
 	update_oc_and_plane_normal(info);
-	get_rotation_matrix(&info->rot, info->cam_curr_frame.direction);
+	get_rotation_matrix(info->rot, info->cam_curr_frame.direction);
 	get_viewport_data(info);
 	while (i < info->n_obj)
 	{

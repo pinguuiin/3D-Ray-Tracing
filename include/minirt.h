@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/28 02:15:13 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/29 19:37:18 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 // void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
 // void		rotate_z(t_vec *vec, double theta);
-void		get_rotation_matrix(double (*rot)[3][3], t_vec f);
+void		get_rotation_matrix(double (*rot)[3], t_vec f);
 void		rotate(double rot[3][3], t_vec *v1);
 
 void		key_handler(mlx_key_data_t keydata, void *param);
