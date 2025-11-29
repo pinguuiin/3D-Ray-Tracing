@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/29 19:37:33 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/30 00:07:58 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,21 @@ static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 		get_rotation_matrix(info->rot, info->cam.direction);
 	rot = info->rot;
 	if (keydata.key == MLX_KEY_W)
-		info->cam.pos = add(info->cam.pos, info->cam.direction);
+		info->cam.pos = add(info->cam.pos, scale(info->cam.direction, 0.1));
 	else if (keydata.key == MLX_KEY_S)
-		info->cam.pos = subtract(info->cam.pos, info->cam.direction);
+		info->cam.pos = subtract(info->cam.pos, scale(info->cam.direction, 0.1));
 	else if (keydata.key == MLX_KEY_D)
 		info->cam.pos = add(info->cam.pos,
-			vec3(rot[0][0], rot[1][0], rot[2][0]));
+			scale(vec3(rot[0][0], rot[1][0], rot[2][0]), 0.1));
 	else if (keydata.key == MLX_KEY_A)
 		info->cam.pos = subtract(info->cam.pos,
-			vec3(rot[0][0], rot[1][0], rot[2][0]));
+			scale(vec3(rot[0][0], rot[1][0], rot[2][0]), 0.1));
 	else if (keydata.key == MLX_KEY_Q)
 		info->cam.pos = add(info->cam.pos,
-			vec3(rot[0][1], rot[1][1], rot[2][1]));
+			scale(vec3(rot[0][1], rot[1][1], rot[2][1]), 0.1));
 	else if (keydata.key == MLX_KEY_Z)
 		info->cam.pos = subtract(info->cam.pos,
-			vec3(rot[0][1], rot[1][1], rot[2][1]));
+			scale(vec3(rot[0][1], rot[1][1], rot[2][1]), 0.1));
 }
 
 static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
@@ -73,6 +73,7 @@ static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 	info->cam.direction = normalize(info->cam.direction); // this has to be done from here!! before someone accesses it.
 }
 
+#ifndef BONUS
 void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -88,3 +89,24 @@ void	key_handler(mlx_key_data_t keydata, void *param)
 		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
 		rotate_camera(keydata, info);
 }
+#else
+void	key_handler(mlx_key_data_t keydata, void *param)
+{
+	t_info	*info;
+
+	info = (t_info *)param;
+	if (keydata.key == MLX_KEY_ESCAPE)
+		mlx_close_window(info->mlx);
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A
+		|| keydata.key == MLX_KEY_Q || keydata.key == MLX_KEY_Z
+		|| keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_S)
+		move_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN
+		|| keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
+		rotate_camera(keydata, info);
+	else if (keydata.key == MLX_KEY_1 || keydata.key == MLX_KEY_2
+		|| keydata.key == MLX_KEY_3 || keydata.key == MLX_KEY_4
+		|| keydata.key == MLX_KEY_5 || keydata.key == MLX_KEY_6)
+		rotate_object(keydata, info);
+}
+#endif

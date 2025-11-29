@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/29 19:37:18 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/30 01:20:57 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # define WIDTH 1500
 # define HEIGHT 1000
 # define EPSILON 1e-8
-# define KS 0.5
-# define KD 0.5
+# define KS 0.05
+# define KD 2
 # define SHININESS 30
 
 # include "../libft/libft.h"
@@ -124,6 +124,8 @@ typedef struct s_cam
 		char			*normal_file;
 		mlx_texture_t	*texture;
 		mlx_texture_t	*normal;
+		double			rot[3][3];
+		double			phase;
 
 	}	t_object;
 # endif
@@ -189,6 +191,8 @@ uint32_t	vec_to_color(t_vec color);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
 void		parse_texture(t_object *obj, char *name);
+void		get_object_rot_matrix(double (*rot)[3], t_vec u);
+void		rotate_object(mlx_key_data_t keydata, t_info *info);
 #endif
 
 double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);

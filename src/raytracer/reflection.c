@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/27 20:02:38 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/30 01:14:42 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 
 	if (obj->type == SPHERE)
 	{
-		if (obj->has_tex == true)
-			return ;
+		// if (obj->has_tex == true)
+		// 	return ;
 		hit->normal = normalize(hit->op);
 	}
 	else if (obj->type == CYLINDER)

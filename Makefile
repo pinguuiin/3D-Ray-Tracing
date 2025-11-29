@@ -46,6 +46,7 @@ SRC_FILES = main.c \
 			color/color.c \
 			color/texture_mapping.c \
 			hooks/camera_hooks.c \
+			hooks/object_hooks.c \
 			hooks/hook_utils.c \
 			raytracer/preprocessor.c \
 			raytracer/reflection.c \

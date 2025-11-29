@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/28 00:08:14 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/30 01:28:44 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	double	theta;
 
 	p = subtract(p, sphere->pos);
-	phi = atan2(p.z, p.x) + M_PI;
+	rotate(sphere->rot, &p);
+	phi = fmod(atan2(p.z, p.x) + M_PI + sphere->phase, 2 * M_PI);
 	theta = acos(-p.y / sphere->r);
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1); // can also test if floor() looks better
 	*j = theta / M_PI * (sphere->texture->height - 1);
@@ -67,5 +68,6 @@ inline void	parse_texture(t_object *obj, char *name)
 		exit(free_exit("Loading normal map failed", 1));
 	}
 	obj->has_tex = true;
+	get_object_rot_matrix(obj->rot, normalize(vec3(0.43, 1.0, 0.0)));
 }
 #endif

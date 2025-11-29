@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/29 20:41:03 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/30 01:06:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	preprocessor(t_info *info)
 	get_viewport_data(info);
 	while (i < info->n_obj)
 	{
-		parse_texture(&info->obj[i], "limestone3");   // name will later be passed from input ==========================c:=====c:=====c:=====c:=================
+		parse_texture(&info->obj[i], "earth");   // name will later be passed from input ==========================c:=====c:=====c:=====c:=================
 		i++;
 	}
 }

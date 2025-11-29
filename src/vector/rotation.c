@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/29 20:57:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/29 22:31:37 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,28 @@ inline void	rotate_z(t_vec *vec, double theta)
 	vec->y = vec->y * cos(theta) + temp * sin(theta);
 }
 
-// inline void	get_object_rot_matrix(double (*rot)[3], t_vec f)
+#ifndef BONUS
+#else
+/* Get rotation matrix [r u f] for an object. We define the forward vector as +Z,
+upward vector as the rotation axis and right vector accordingly*/
+inline void	get_object_rot_matrix(double (*rot)[3], t_vec u)
+{
+	t_vec	r;
+	t_vec	f;
 
+	f = vec3(0, 0, 1);
+	r = normalize(cross(f, u));
+	rot[0][0] = r.x;
+	rot[0][1] = r.y;
+	rot[0][2] = r.z;
+	rot[1][0] = u.x;
+	rot[1][1] = u.y;
+	rot[1][2] = u.z;
+	rot[2][0] = f.x;
+	rot[2][1] = f.y;
+	rot[2][2] = f.z;
+}
+#endif
 
 /* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
@@ -57,11 +77,6 @@ inline void	get_rotation_matrix(double (*rot)[3], t_vec f)
 		up = vec3(0, 0, -1);
 	r = normalize(cross(f, up));
 	u = cross(r, f);
-	// (*rot)[3][3] = {
-	// 	{r.x, u.x, f.x},
-	// 	{r.y, u.y, f.y},
-	// 	{r.z, u.z, f.z}
-	// };
 	rot[0][0] = r.x;
 	rot[1][0] = r.y;
 	rot[2][0] = r.z;

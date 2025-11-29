@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/27 21:57:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/30 01:05:57 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 #else
+// #include <stdio.h>
 static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 {
 	int	tex_loc[2];
@@ -70,6 +71,7 @@ static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 	sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
 	hit->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
 	hit->normal = normalize(px_loc_to_color(obj->normal, tex_loc[0], tex_loc[1]));
+	// printf("x:%f  y:%f  z:%f\n",hit->normal.x, hit->normal.y, hit->normal.z);
 }
 
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
