@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/28 02:15:13 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 # define KD 0.5
 # define SHININESS 30
 
-# include "../src/libft/libft.h"
-# include "../src/MLX42/include/MLX42/MLX42.h"
+# include "../libft/libft.h"
+# include "../MLX42/include/MLX42/MLX42.h"
 # include "vector.h"
 # include "hit.h"
 
@@ -78,25 +78,55 @@ typedef struct s_cam
 
 }	t_cam;
 
-/* Object information */
-typedef struct s_object
-{
-	// general attributes
-	t_type	type;
-	t_vec	pos;
-	t_color	color;  // converted to 3d vector from rgb  ==parsing== (function is ready)
-	t_vec	oc;  // vector from object to camera
+# ifndef BONUS
+	/* Object information */
+	typedef struct s_object
+	{
+		// general attributes
+		t_type	type;
+		t_vec	pos;
+		t_color	color;
+		t_vec	oc;  // vector from object to camera
 
-	// sphere and cylinder
-	double	r;  // converted to radius from diameter  ==parsing==
+		// sphere and cylinder
+		double	r;
 
-	// plane and cylinder
-	t_vec	normal;
+		// plane and cylinder
+		t_vec	axis;
 
-	// cylinder
-	double	h;  // Half height of the cylinder
+		// cylinder
+		double	h;  // Half height of the cylinder
 
-}	t_object;
+	}	t_object;
+# else
+	/* Object information */
+	typedef struct s_object
+	{
+		// general attributes
+		t_type			type;
+		t_vec			pos;
+		t_color			color;
+		t_vec			oc;  // vector from object to camera
+
+		// sphere and cylinder
+		double			r;
+
+		// plane and cylinder
+		t_vec			axis;
+
+		// cylinder
+		double			h;  // Half height of the cylinder
+
+		// texture
+		bool			has_tex;
+		char			*tex_name;
+		char			*tex_file;
+		char			*normal_file;
+		mlx_texture_t	*texture;
+		mlx_texture_t	*normal;
+
+	}	t_object;
+# endif
 
 # ifndef BONUS
 	// Struct that includes everything
@@ -154,20 +184,26 @@ int			free_exit(char *s, int exit_code);
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 // t_vec		color_to_vec(int r, int g, int b);
+#ifndef BONUS
+#else
+void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
+t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
+void		parse_texture(t_object *obj, char *name);
+#endif
 
 double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
 double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
 double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
 void		renderer(void *param);
 void		render_column(int x, t_info *info);
-void		update_camera_for_new_frame(t_info *info);
+void		update_data_for_new_frame(t_info *info);
 
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
 // void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
 // void		rotate_z(t_vec *vec, double theta);
-void		get_rotation_matrix(t_info *info, t_vec f);
+void		get_rotation_matrix(double (*rot)[3][3], t_vec f);
 void		rotate(double rot[3][3], t_vec *v1);
 
 void		key_handler(mlx_key_data_t keydata, void *param);

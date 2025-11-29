@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/17 00:38:47 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 23:22:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,28 @@ int	free_exit(char *s, int exit_code)
 #else
 int	free_exit(char *s, int exit_code)
 {
+	int		i;
 	t_info	*info;
 
+	i = 0;
 	info = get_info();
-
 	if (atomic_load(&info->thread_system.is_multithreaded))
 	{
 		atomic_store(&info->thread_system.exit_flag, 1);
 		pthread_barrier_wait(&info->thread_system.barrier);
 		clean_up_threads_and_barrier(&info->thread_system, N_THREADS);
+	}
+	while (i < info->n_obj)
+	{
+		// free(info->obj[i].tex_name);
+		free(info->obj[i].tex_file);
+		free(info->obj[i].normal_file);
+		if (info->obj[i].has_tex == true)
+		{
+			mlx_delete_texture(info->obj[i].texture);  //need to make sure MLX provides NULL check
+			mlx_delete_texture(info->obj[i].normal);
+		}
+		i++;
 	}
 	free(info->light);
 	free(info->obj);

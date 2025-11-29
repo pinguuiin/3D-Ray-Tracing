@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/04 04:25:48 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/27 20:02:38 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 	return (false);
 }
 
+#ifndef BONUS
 static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 {
 	double	hit_h;
@@ -44,20 +45,46 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 		hit->normal = normalize(hit->op);
 	else if (obj->type == CYLINDER)
 	{
-		hit_h = dot(hit->op, obj->normal);
+		hit_h = dot(hit->op, obj->axis);
 		if (hit_h - obj->h > -EPSILON)
-			hit->normal = obj->normal;
+			hit->normal = obj->axis;
 		else if (hit_h + obj->h < EPSILON)
-			hit->normal = scale(obj->normal, -1);
+			hit->normal = scale(obj->axis, -1);
 		else
 			hit->normal = normalize(subtract(hit->op,
-				scale(obj->normal, hit_h)));
+				scale(obj->axis, hit_h)));
 	}
 	else if (obj->type == PLANE)
-		hit->normal = obj->normal;
+		hit->normal = obj->axis;
 }
+#else
+static inline void	get_hit_normal(t_object *obj, t_hit *hit)
+{
+	double	hit_h;
 
-static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object *obj)
+	if (obj->type == SPHERE)
+	{
+		if (obj->has_tex == true)
+			return ;
+		hit->normal = normalize(hit->op);
+	}
+	else if (obj->type == CYLINDER)
+	{
+		hit_h = dot(hit->op, obj->axis);
+		if (hit_h - obj->h > -EPSILON)
+			hit->normal = obj->axis;
+		else if (hit_h + obj->h < EPSILON)
+			hit->normal = scale(obj->axis, -1);
+		else
+			hit->normal = normalize(subtract(hit->op,
+				scale(obj->axis, hit_h)));
+	}
+	else if (obj->type == PLANE)
+		hit->normal = obj->axis;
+}
+#endif
+
+static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light)
 {
 	double	flux;
 	double	spec;
@@ -66,7 +93,7 @@ static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object
 	if (flux > EPSILON)
 	{
 		flux *= KD;
-		hit->diffuse = scale(dot_elem(light->color, obj->color), flux);
+		hit->diffuse = scale(dot_elem(light->color, hit->color), flux);
 		hit->intensity = add(hit->intensity, hit->diffuse);
 		spec = dot(hit->outgoing, hit->ray);
 		if (spec > EPSILON)
@@ -79,7 +106,7 @@ static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light, t_object
 }
 
 /* Implement Phong reflection model:
-Diffuse = Kd (incoming light · object normal)
+Diffuse = Kd (incoming light · hit point surface normal)
 => Diffuse term is counted when its dot product is greater than 0
 Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 => Specular term is counted when both terms' dot products greater than 0;
@@ -103,7 +130,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	get_hit_normal(obj, hit);
 	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 	hit->outgoing = subtract(hit->outgoing, hit->incoming);
-	add_diffuse_and_specular(hit, light, obj);
+	add_diffuse_and_specular(hit, light);
 	return (hit->intensity);
 }
 #else
@@ -114,7 +141,6 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 
 	i = -1;
 	hit->intensity = vec3(0.0, 0.0, 0.0);
-	hit->pos = add(info->cam.pos, ray);
 	hit->ray = normalize(scale(ray, -1));
 	hit->op = subtract(hit->pos, obj->pos);
 	while (i++ < info->n_light - 1)
@@ -128,7 +154,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		get_hit_normal(obj, hit);
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 		hit->outgoing = subtract(hit->outgoing, hit->incoming);
-		add_diffuse_and_specular(hit, light, obj);
+		add_diffuse_and_specular(hit, light);
 	}
 	return (hit->intensity);
 }

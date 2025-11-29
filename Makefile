@@ -14,10 +14,10 @@ FLAGS = -Wall -Wextra -Werror -g -O3 -ffast-math -march=native -flto
 
 LIBS = -ldl -lglfw -pthread -lm
 
-LIBMLX_DIR = ./src/MLX42
+LIBMLX_DIR = ./MLX42
 LIBMLX = $(LIBMLX_DIR)/build/libmlx42.a
 
-LIBFT_DIR = ./src/libft
+LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 
@@ -43,18 +43,19 @@ SRC_FILES = main.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
+			color/color.c \
+			color/texture_mapping.c \
 			hooks/camera_hooks.c \
 			hooks/hook_utils.c \
 			raytracer/preprocessor.c \
 			raytracer/reflection.c \
+			raytracer/renderer_tracer.c \
 			raytracer/renderer.c \
-			raytracer/rendering_utils.c \
 			shapes/cylinder.c \
 			shapes/plane.c \
 			shapes/sphere.c \
-			utils/color.c \
-			utils/init_threads.c \
-			utils/thread_cleanup.c \
+			thread/init_threads.c \
+			thread/thread_cleanup.c \
 			vector/operations.c \
 			vector/rotation.c
 

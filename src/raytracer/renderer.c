@@ -6,13 +6,11 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/18 23:16:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/26 22:08:42 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-static void	update_data_for_new_frame(t_info *info);
 
 #ifndef BONUS
 #else
@@ -84,39 +82,5 @@ void	renderer(void *param)
 	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
 		(void)usleep(200);
 	atomic_store(&thread_system->n_done_painters, 0);
-}
-#endif
-
-#ifndef BONUS
-static void	update_data_for_new_frame(t_info *info)
-{
-	update_camera_for_new_frame(info);
-	if ((uint32_t) info->mlx->height != info->img->height
-		|| (uint32_t)info->mlx->width != info->img->width)
-		resize(info->mlx->width, info->mlx->height, info);
-	info->is_inside = false;
-}
-#else
-static void	update_data_for_new_frame(t_info *info)
-{
-	int	i;
-
-	update_camera_for_new_frame(info);
-	if ((uint32_t) info->mlx->height != info->img->height
-		|| (uint32_t)info->mlx->width != info->img->width)
-	{
-		resize(info->mlx->width, info->mlx->height, info);
-		if (atomic_load(&info->thread_system.is_multithreaded))
-		{
-			i = 0;
-			while (i < N_THREADS)
-			{
-				init_chunk_borders(info->img->width,
-					&info->thread_system.threads[i], i);
-				i++;
-			}
-		}
-	}
-	info->is_inside = false;
 }
 #endif

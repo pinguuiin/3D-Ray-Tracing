@@ -3,8 +3,8 @@ miniRT
 obj/
 obj_bonus/
 .bonus
-src/MLX42/
-src/libft/
+MLX42/
+libft/
 mac_Makefile
 .cache
 compile_commands.json

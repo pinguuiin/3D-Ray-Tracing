@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 05:07:21 by piyu             ###   ########.fr       */
+/*   Updated: 2025/11/28 02:15:58 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ inline void	rotate_z(t_vec *vec, double theta)
 /* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
 new up (u) is the unit vector of r x f */
-inline void	get_rotation_matrix(t_info *info, t_vec f)
+inline void	get_rotation_matrix(double (*rot)[3][3], t_vec f)
 {
 	t_vec	up;
 	t_vec	r;
@@ -54,20 +54,20 @@ inline void	get_rotation_matrix(t_info *info, t_vec f)
 		up = vec3(0, 0, -1);
 	r = normalize(cross(f, up));
 	u = cross(r, f);
-	// info->rot[3][3] = {
+	// (*rot)[3][3] = {
 	// 	{r.x, u.x, f.x},
 	// 	{r.y, u.y, f.y},
 	// 	{r.z, u.z, f.z}
 	// };
-	info->rot[0][0] = r.x;
-	info->rot[1][0] = r.y;
-	info->rot[2][0] = r.z;
-	info->rot[0][1] = u.x;
-	info->rot[1][1] = u.y;
-	info->rot[2][1] = u.z;
-	info->rot[0][2] = f.x;
-	info->rot[1][2] = f.y;
-	info->rot[2][2] = f.z;
+	(*rot)[0][0] = r.x;
+	(*rot)[1][0] = r.y;
+	(*rot)[2][0] = r.z;
+	(*rot)[0][1] = u.x;
+	(*rot)[1][1] = u.y;
+	(*rot)[2][1] = u.z;
+	(*rot)[0][2] = f.x;
+	(*rot)[1][2] = f.y;
+	(*rot)[2][2] = f.z;
 }
 
 inline void	rotate(double rot[3][3], t_vec *v1)
