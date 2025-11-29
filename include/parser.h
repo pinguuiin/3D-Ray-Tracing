@@ -56,22 +56,22 @@ typedef struct s_node_obj
 # ifndef BONUS
 typedef struct s_parser
 {
-	int		fd;
-	size_t	line_num;
-	int		n_lights;
-	int		n_spheres;
-	int		n_planes;
-	int		n_cylinders;
-	int		n_ambs;
-	int		n_cams;
+	int			fd;
+	size_t		line_num;
+	int			n_lights;
+	int			n_spheres;
+	int			n_planes;
+	int			n_cylinders;
+	int			n_ambs;
+	int			n_cams;
 
 	// objects linked list
 	// 'current' allows creation of nodes to happen faster, without walking
 	// through the list on each iteration, since it always points at the 'hole'
 	// for the node to be created (except at the very first iteration, but in
 	// that case 'head' is already pointing there).
-	t_node_obj		*head;
-	t_node_obj		*current;
+	t_node_obj	*head;
+	t_node_obj	*current;
 
 }	t_parser;
 # else

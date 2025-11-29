@@ -144,7 +144,7 @@ int	clean_up_parser(t_parser *parser, char *line)
 	}
 	return (0);
 }
-#else
+#else // FIXME: this needs review, now that we have a texture to deal with!
 int	clean_up_parser(t_parser *parser, char *line)
 {
 	t_node_obj		*current;

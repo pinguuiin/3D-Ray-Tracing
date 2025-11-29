@@ -133,6 +133,8 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	//	NOTE: if the string is first: refuse input.
 	// TODO: parse axis vector (for now, it's the 'normal' member of 'obj', will be transformed to 'axis')
 	// FIXME: does the axis need to be normalized? 
+	// WARN: what if the file provided already has a file extension? shouldn't we
+	// overwrite that extension, and replace it with the required suffix (_color.png || _normal.png)???
 
 	skip_whitespace_but_not_newline(&str);
 	if (!*str || *str == '\n') // no texture was provided, which is accepted! a texture is EXTRA stuff.
@@ -148,8 +150,18 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	// TODO: parse texture string.
 	// NOTE: consider a sphere without an axis but without the string!
 	// TODO: write this function, that will combine both parsing parts - AXIS & STRING, since we want them both to show up.
-	if (parse_texture_for_sphere(&str, info, line_num) == -1)
+
+	// WARN: if we do not handle a wrong file name,  and then call mlx_whatever_it_is_that_initiates_texture() --->
+	// WE MIGHT GET A SEGMENTATION FAULT !!!!!!!!!!!!!!! Test to see.
+
+	skip_whitespace_but_not_newline(&str);
+	if (parse_texture_for_sphere(&str, sphere, line_num) == -1) // WARN: how about returning ALLOCATION_FAILURE??
+	{
+		// FIXME:
+		// TODO: please walk through the list of objects and free all texture elements -> ONLY if has_tex is set for each.
+		// Because you might have a failure in one texture, while others have already been set up!
 		return (INVALID_INPUT);
+	}
 
 
 
