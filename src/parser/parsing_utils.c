@@ -169,9 +169,13 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 {
 	size_t	len;
 
-	// FIXME: 'str' is now a double pointer - so adapt this code which now behaves as if it were a simple pointer.
 	if (parse_3d_vector(str, &sphere->normal, line_num == -1)
 		return (-1);
+
+	// set the z value of the sphere's axis to 0, and normalize the vector.
+	sphere->axis.z = 0.0;
+	sphere->axis = normalize(sphere->axis);
+
 	skip_whitespace_but_not_newline(str);
 	if (!**str || **str == '\n')
 	{
