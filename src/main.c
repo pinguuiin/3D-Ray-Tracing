@@ -54,7 +54,7 @@ int	free_exit(char *s, int exit_code)
 	}
 	while (i < info->n_obj)
 	{
-		if (info->obj[i].has_tex == true)
+		if (info->obj[i].tex_file)
 		{
 			free(info->obj[i].tex_file);
 			free(info->obj[i].normal_file);

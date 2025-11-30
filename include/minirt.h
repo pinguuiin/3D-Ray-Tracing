@@ -118,7 +118,6 @@ typedef struct s_cam
 		double			h;  // Half height of the cylinder
 
 		// texture
-		bool			has_tex;
 		char			*tex_file;
 		char			*normal_file;
 		mlx_texture_t	*texture;

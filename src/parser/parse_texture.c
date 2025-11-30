@@ -56,7 +56,6 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	if (load_textures_and_free_them_upon_failure(sphere) == -1)
 		return (LOAD_TEXTURE_FAIL);
 
-	obj->has_tex = true;
 	*str += len;
 	return (0);
 }
@@ -85,6 +84,7 @@ static int	allocate_texture_file_names(t_object *sphere, size_t len)
 	if (!sphere->normal_file)
 	{
 		free(sphere->tex_file);
+		sphere->tex_file = NULL;
 		return (-1);
 	}
 	return (0);
@@ -108,6 +108,8 @@ static int	load_textures_and_free_them_upon_failure(t_object *sphere)
 	{
 		free(sphere->tex_file);
 		free(sphere->normal_file);
+		sphere->tex_file = NULL;
+		sphere->normal_file = NULL;
 		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
 		return (-1);
 	}
@@ -117,6 +119,8 @@ static int	load_textures_and_free_them_upon_failure(t_object *sphere)
 		mlx_delete_texture(sphere->texture);
 		free(sphere->tex_file);
 		free(sphere->normal_file);
+		sphere->tex_file = NULL;
+		sphere->normal_file = NULL;
 		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
 		return (-1);
 	}

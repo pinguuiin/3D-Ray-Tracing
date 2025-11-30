@@ -187,7 +187,7 @@ static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 
 	while (p_head)
 	{
-		if (p_head->object.has_tex)
+		if (p_head->object.tex_file)
 		{
 			p_object = &p_head->object;
 			free(p_object->tex_file);
