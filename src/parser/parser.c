@@ -275,7 +275,10 @@ static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 	// allocate array of objects. make ft_calloc() failure check!
 	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
 	if (!info->obj)
+	{
+		free (info->light);
 		return (ALLOCATION_FAILURE);
+	}
 
 
 	i = 0;

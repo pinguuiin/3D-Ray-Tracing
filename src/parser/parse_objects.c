@@ -14,6 +14,11 @@
 
 static int	create_new_object_node(t_parser *parser);
 
+#ifndef BONUS
+#else
+static void	free_all_textures_from_linked_list(t_node_obj *p_head);
+#endif
+
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
 // identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
@@ -124,15 +129,13 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
 
-	
+
 
 	// WARN: we need both elements - IF there IS a TEXTURE.
 	// Accept: - no texture.
 	//	- texture starting with the 'normal/ axis' vector + string (texture file). no extension.
 	//	NOTE: if there is an axis vector but not the string : refuse input.
 	//	NOTE: if the string is first: refuse input.
-	// TODO: parse axis vector (for now, it's the 'normal' member of 'obj', will be transformed to 'axis')
-	// FIXME: does the axis need to be normalized? 
 	// WARN: what if the file provided already has a file extension? shouldn't we
 	// overwrite that extension, and replace it with the required suffix (_color.png || _normal.png)???
 
@@ -159,25 +162,12 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	retval = parse_texture_for_sphere(&str, sphere, line_num);
 	if (retval)
 	{
-		// TODO: write a function walking through the linked list of objects,
-		// and freeing the malloc'ed strings + deleting the png through mlx for
-		// each object whose 'has_tex' is set (like in free_exit()).
-		// call it from here!
+		free_all_textures_from_linked_list(parser->head);
 		return (retval);
 	}
-	if (parse_texture_for_sphere(&str, sphere, line_num) == -1) // WARN: how about returning ALLOCATION_FAILURE??
-	{
-		// FIXME:
-		// TODO: please walk through the list of objects and free all texture elements -> ONLY if has_tex is set for each.
-		// Because you might have a failure in one texture, while others have already been set up!
-		return (INVALID_INPUT);
-	}
-
 
 
 	// FIXME: new draft is up until here.
-
-
 
 	if (!is_valid_end_of_line(str, line_num))
 		return (INVALID_INPUT);
@@ -189,6 +179,24 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	parser->n_spheres++; // validate sphere
 
 	return (NO_ERROR);
+}
+
+static void	free_all_textures_from_linked_list(t_node_obj *p_head)
+{
+	t_object	*p_object;
+
+	while (p_head)
+	{
+		if (p_head->object.has_tex)
+		{
+			p_object = &p_head->object;
+			free(p_object->tex_file);
+			free(p_object->normal_file);
+			mlx_delete_texture(p_object->texture);
+			mlx_delete_texture(p_object->normal);
+		}
+		p_head = p_head->next;
+	}
 }
 #endif
 

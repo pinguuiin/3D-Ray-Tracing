@@ -19,12 +19,11 @@ static int		load_textures_and_free_them_upon_failure(t_object *sphere);
 
 #ifndef BONUS
 #else
-// WARN: add to header file.
-// WARN: display_parsing_error if something is not a file name?
 int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 {
 	size_t	len;
 
+	// parse axis vector
 	if (parse_3d_vector(str, &sphere->normal, line_num == -1)
 		return (-1);
 
@@ -33,26 +32,20 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	sphere->axis = normalize(sphere->axis);
 
 	skip_whitespace_but_not_newline(str);
+
 	if (!**str || **str == '\n')
 	{
-		display_parsing_error("Unexpected texture input for sphere. If you "
-			"want that object to be rendered with a texture,\nplease provide "
-			"a valid axis vector for the sphere, followed by the texture's "
-			".png file name. Error on line:", line_num);
+		display_parsing_error("Unexpected texture input for sphere. If you'd "
+			"like a sphere to be rendered with a texture,\nplease provide "
+			"a valid axis vector for it, followed by the texture's .png file "
+			"name. Error on line:", line_num);
 		return (INVALID_INPUT);
 	}
 
+	// parse string (texture file name)
 	len = strlen_texture_name(*str);
 	if (allocate_texture_file_names(sphere, len) == -1)
-	{
-		// TODO: handle allocation failure!
-		// You are simply supposed to communicate ALLOCATION_FAILURE all the way
-		// up to the parser - do NOT print anything yet.
-		// TODO: free the rest of the objects from here?
-		// or just from the caller - that should do it !
-
-		return (ALLOCATION_FAILURE); ????? This is not caught at the caller for now, we need a retval variable there...
-	}
+		return (ALLOCATION_FAILURE);
 	prepare_texture_file_names(*str);
 
 	// TESTING: PLEASE FORCE THE ERROR INSIDE LOAD_TEXTURES_AND_FREE....(),
@@ -61,23 +54,14 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	// also printf() inside the right else-if scope in handle_parsing_error(),
 	// for LOAD_TEXTURE_FAIL.
 	if (load_textures_and_free_them_upon_failure(sphere) == -1)
-	{
-		// TODO: handle the error! free everything from the other objects.
-
-
 		return (LOAD_TEXTURE_FAIL);
-	}
 
 	obj->has_tex = true;
 	*str += len;
 	return (0);
 }
-// FIXME: YOU HAVE TO MAKE SURE THAT FREE_EXIT() DOES NOT FREE EVERYTHING!
-// OTHERWISE YOU WILL HAVE DOUBLE FREES !!!!
-// FIXME: remember to adjust your clean_up_parser()!!!
-// or perhaps there is nothing to adjust there, because it is also used just before  -> perhaps you should have a function
-// that walks through your linked list of objects in case of failure at any point during parsing,
-// and frees the texture stuff... YOu might have an issue there!
+// FIXME: try to flip the order of initialize_mlx() and preprocessor() in main(),
+// if you manage, it would need some tweaking...
 // FIXME: remember to check that the values are transferred correctly to the final array of objects...
 
 // this will always be greater than 0, since there is a check for null terminator
@@ -106,7 +90,6 @@ static int	allocate_texture_file_names(t_object *sphere, size_t len)
 	return (0);
 }
 
-// FIXME: unfinished!
 static void	prepare_texture_file_names(const char *tex_name, size_t len)
 {
 	ft_memmove(obj->tex_file, "./textures/", 11);
@@ -116,11 +99,8 @@ static void	prepare_texture_file_names(const char *tex_name, size_t len)
 	ft_memmove(obj->normal_file, "./textures/", 11);
 	ft_memmove(obj->normal_file + 11, str, len);
 	ft_memmove(obj->normal_file + 11 + len, "_normal.png", 11);
-
 }
 
-// FIXME: try to flip the order of initialize_mlx() and preprocessor() in main(),
-// if you manage, it would need some tweaking...
 static int	load_textures_and_free_them_upon_failure(t_object *sphere)
 {
 	sphere->texture = mlx_load_png(sphere->tex_file);
