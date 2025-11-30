@@ -114,16 +114,8 @@ static int	load_textures_and_free_them_upon_failure(t_object *sphere)
 		return (-1);
 	}
 	sphere->normal = mlx_load_png(sphere->normal_file);
-	if (!sphere->normal)
-	{
-		mlx_delete_texture(sphere->texture);
-		free(sphere->tex_file);
-		free(sphere->normal_file);
-		sphere->tex_file = NULL;
-		sphere->normal_file = NULL;
-		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
-		return (-1);
-	}
+	// no need to handle the error, if loading the .png for sphere->normal has
+	// failed after this call, it is okay and we still render without it.
 	return (0);
 }
 #endif

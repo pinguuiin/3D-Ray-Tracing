@@ -140,6 +140,36 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	// overwrite that extension, and replace it with the required suffix (_color.png || _normal.png)???
 
 	skip_whitespace_but_not_newline(&str);
+
+
+	// FIXME: the line below is a better idea than the previous implementation:
+	// use it, and only call the 'retval' + parse_texture_for_sphere() within
+	// its scope (if it returns true) ----> this way you can simply put the rest of the code
+	// afterwards, only once!!!! This is implemented right now, but it needs review.
+	if (*str && *str != '\n')
+	{
+
+		// TODO: parse texture string.
+		// NOTE: consider a sphere without an axis but without the string!
+		// TODO: write this function, that will combine both parsing parts - AXIS & STRING, since we want them both to show up.
+
+		// WARN: if we do not handle a wrong file name,  and then call
+		// mlx_load_png() ---> check that it does not segfault. Probably not, though.
+
+		int	retval;
+
+		retval = parse_texture_for_sphere(&str, sphere, line_num);
+		if (retval)
+		{
+			free_all_textures_from_linked_list(parser->head);
+			return (retval);
+		}
+	}
+
+	/*
+	 * WARN: if the rest of the code works, after testing different cases ->
+	 * this block can be safely deleted.
+
 	if (!*str || *str == '\n') // no texture was provided, which is accepted! a texture is EXTRA stuff.
 	{
 		// check that not too many objects were provided by the user, before
@@ -149,22 +179,7 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 		parser->n_spheres++; // validate sphere
 		return (NO_ERROR);
 	}
-
-	// TODO: parse texture string.
-	// NOTE: consider a sphere without an axis but without the string!
-	// TODO: write this function, that will combine both parsing parts - AXIS & STRING, since we want them both to show up.
-
-	// WARN: if we do not handle a wrong file name,  and then call
-	// mlx_load_png() ---> check that it does not segfault. Probably not, though.
-
-	int	retval;
-
-	retval = parse_texture_for_sphere(&str, sphere, line_num);
-	if (retval)
-	{
-		free_all_textures_from_linked_list(parser->head);
-		return (retval);
-	}
+	*/
 
 
 	// FIXME: new draft is up until here.
@@ -193,7 +208,15 @@ static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 			free(p_object->tex_file);
 			free(p_object->normal_file);
 			mlx_delete_texture(p_object->texture);
-			mlx_delete_texture(p_object->normal);
+			// WARN: I am not sure about the next line -
+			// if mlx_load_png() for p_object->normal failed in
+			// load_textures_and_free_them_upon_failure(), it seems like that
+			// function returns a void pointer to mlx_error(), which is some kind
+			// of internal mlx_strerror() function using its own errno....
+			// maybe simply deleting the texture, whether it failed or not,
+			// is better? Since that void function pointer is probably not NULL?
+			if (p_object->normal)
+				mlx_delete_texture(p_object->normal);
 		}
 		p_head = p_head->next;
 	}
