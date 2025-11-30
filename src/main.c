@@ -59,14 +59,6 @@ int	free_exit(char *s, int exit_code)
 			free(info->obj[i].tex_file);
 			free(info->obj[i].normal_file);
 			mlx_delete_texture(info->obj[i].texture);  //need to make sure MLX provides NULL check
-
-			// WARN: I am not sure about the next line -
-			// if mlx_load_png() for p_object->normal failed in
-			// load_textures_and_free_them_upon_failure(), it seems like that
-			// function returns a void pointer to mlx_error(), which is some kind
-			// of internal mlx_strerror() function using its own errno....
-			// maybe simply deleting the texture, whether it failed or not,
-			// is better? Since that void function pointer is probably not NULL?
 			if (info->obj[i].normal)
 				mlx_delete_texture(info->obj[i].normal);
 		}

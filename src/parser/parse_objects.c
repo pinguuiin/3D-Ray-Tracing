@@ -208,13 +208,6 @@ static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 			free(p_object->tex_file);
 			free(p_object->normal_file);
 			mlx_delete_texture(p_object->texture);
-			// WARN: I am not sure about the next line -
-			// if mlx_load_png() for p_object->normal failed in
-			// load_textures_and_free_them_upon_failure(), it seems like that
-			// function returns a void pointer to mlx_error(), which is some kind
-			// of internal mlx_strerror() function using its own errno....
-			// maybe simply deleting the texture, whether it failed or not,
-			// is better? Since that void function pointer is probably not NULL?
 			if (p_object->normal)
 				mlx_delete_texture(p_object->normal);
 		}
