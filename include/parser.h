@@ -102,7 +102,7 @@ typedef struct s_parser
 }	t_parser;
 # endif
 
-// scene and elements parsing
+/* scene and elements parsing */
 void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
@@ -117,7 +117,7 @@ int		parse_light(t_parser *parser, char *str);
 int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num);
 # endif
 
-// parsing utilities
+/* parsing utilities */
 bool	ft_isspace(int c);
 bool	isspace_but_not_newline(int c);
 void	skip_whitespace(char **str);
@@ -132,7 +132,7 @@ bool	is_valid_end_of_line(char *s, size_t line_num);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 
-// error messaging and memory management
+/* error messaging and memory management */
 int		handle_parsing_error(t_status status, char *line, t_parser *parser);
 void	display_parsing_error(char *msg, size_t line_num);
 int		clean_up_parser(t_parser *parser, char *line);
