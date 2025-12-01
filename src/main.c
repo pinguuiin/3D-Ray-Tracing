@@ -102,8 +102,8 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
-	initialize_mlx(info);
 	preprocessor(info);
+	initialize_mlx(info);
 
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
@@ -122,8 +122,8 @@ int	main(int argc, char *argv[])
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
 
-	initialize_mlx(info);
 	preprocessor(info);
+	initialize_mlx(info);
 
 	initialize_multithreading(info);
 
