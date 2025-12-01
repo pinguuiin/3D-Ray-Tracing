@@ -14,10 +14,12 @@ FLAGS = -Wall -Wextra -Werror -g -O3 -ffast-math -march=native -flto
 
 LIBS = -ldl -lglfw -pthread -lm
 
-LIBMLX_DIR = ./MLX42
+LIB_DIR = ./libs
+
+LIBMLX_DIR = $(LIB_DIR)/MLX42
 LIBMLX = $(LIBMLX_DIR)/build/libmlx42.a
 
-LIBFT_DIR = ./libft
+LIBFT_DIR = $(LIB_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 
