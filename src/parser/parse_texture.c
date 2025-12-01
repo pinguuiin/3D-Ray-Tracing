@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include "parser.h"
 
 static size_t	strlen_texture_name(char *s);
 static int		allocate_texture_file_names(t_object *sphere, size_t len);
@@ -24,7 +24,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	size_t	len;
 
 	// parse axis vector
-	if (parse_3d_vector(str, &sphere->normal, line_num == -1)
+	if (parse_3d_vector(str, &sphere->normal, line_num) == -1)
 		return (-1);
 
 	// set the z value of the sphere's axis to 0, and normalize the vector.
