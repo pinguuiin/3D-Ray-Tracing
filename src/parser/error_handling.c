@@ -77,7 +77,7 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	if (status == INVALID_INPUT)
 		return (INPUT_ERROR);
 
-	if (status == MLX_LOAD_TEX_FAIL)
+	if (status == LOAD_TEXUTURE_FAIL)
 		return (MLX_FAILURE);
 
 	if (status == ALLOCATION_FAILURE)

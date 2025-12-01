@@ -114,7 +114,7 @@ int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
 int		parse_light(t_parser *parser, char *str, t_light *light);
 # else
 int		parse_light(t_parser *parser, char *str);
-int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
+int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num);
 # endif
 
 // parsing utilities
