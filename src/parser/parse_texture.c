@@ -14,7 +14,7 @@
 
 static size_t	strlen_texture_name(char *s);
 static int		allocate_texture_file_names(t_object *sphere, size_t len);
-static void		prepare_texture_file_names(char *tex_name, size_t len);
+static void		prepare_tex_names(t_object *sphere, char *tex_name, size_t len);
 static int		load_textures_and_free_them_upon_failure(t_object *sphere);
 
 #ifndef BONUS
@@ -46,7 +46,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	len = strlen_texture_name(*str);
 	if (allocate_texture_file_names(sphere, len) == -1)
 		return (ALLOCATION_FAILURE);
-	prepare_texture_file_names(*str, len);
+	prepare_tex_names(sphere, *str, len);
 
 	// TESTING: PLEASE FORCE THE ERROR INSIDE LOAD_TEXTURES_AND_FREE....(),
 	// and check that it is clean, with Valgrind and also that you are actually
@@ -90,15 +90,15 @@ static int	allocate_texture_file_names(t_object *sphere, size_t len)
 	return (0);
 }
 
-static void	prepare_texture_file_names(char *tex_name, size_t len)
+static void	prepare_tex_names(t_object *sphere, char *tex_name, size_t len)
 {
-	ft_memmove(tex_name, "./textures/", 11);
-	ft_memmove(tex_name + 11, tex_name, len);
-	ft_memmove(tex_name + 11 + len, "_color.png", 10);
+	ft_memmove(sphere->tex_file, "./textures/", 11);
+	ft_memmove(sphere->tex_file + 11, tex_name, len);
+	ft_memmove(sphere->tex_file + 11 + len, "_color.png", 10);
 
-	ft_memmove(tex_name, "./textures/", 11);
-	ft_memmove(tex_name + 11, tex_name, len);
-	ft_memmove(tex_name + 11 + len, "_normal.png", 11);
+	ft_memmove(sphere->normal_file, "./textures/", 11);
+	ft_memmove(sphere->normal_file + 11, tex_name, len);
+	ft_memmove(sphere->normal_file + 11 + len, "_normal.png", 11);
 }
 
 static int	load_textures_and_free_them_upon_failure(t_object *sphere)
