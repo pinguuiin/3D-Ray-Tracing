@@ -24,7 +24,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	size_t	len;
 
 	// parse axis vector
-	if (parse_3d_vector(str, sphere->axis, line_num) == -1)
+	if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
 		return (-1);
 
 	// set the z value of the sphere's axis to 0, and normalize the vector.
@@ -93,11 +93,11 @@ static int	allocate_texture_file_names(t_object *sphere, size_t len)
 static void	prepare_texture_file_names(char *tex_name, size_t len)
 {
 	ft_memmove(tex_name, "./textures/", 11);
-	ft_memmove(tex_name + 11, str, len);
+	ft_memmove(tex_name + 11, tex_name, len);
 	ft_memmove(tex_name + 11 + len, "_color.png", 10);
 
 	ft_memmove(tex_name, "./textures/", 11);
-	ft_memmove(tex_name + 11, str, len);
+	ft_memmove(tex_name + 11, tex_name, len);
 	ft_memmove(tex_name + 11 + len, "_normal.png", 11);
 }
 
