@@ -24,7 +24,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	size_t	len;
 
 	// parse axis vector
-	if (parse_3d_vector(str, &sphere->normal, line_num) == -1)
+	if (parse_3d_vector(str, sphere->normal, line_num) == -1)
 		return (-1);
 
 	// set the z value of the sphere's axis to 0, and normalize the vector.
@@ -46,7 +46,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	len = strlen_texture_name(*str);
 	if (allocate_texture_file_names(sphere, len) == -1)
 		return (ALLOCATION_FAILURE);
-	prepare_texture_file_names(*str);
+	prepare_texture_file_names(*str, len);
 
 	// TESTING: PLEASE FORCE THE ERROR INSIDE LOAD_TEXTURES_AND_FREE....(),
 	// and check that it is clean, with Valgrind and also that you are actually
@@ -92,13 +92,13 @@ static int	allocate_texture_file_names(t_object *sphere, size_t len)
 
 static void	prepare_texture_file_names(const char *tex_name, size_t len)
 {
-	ft_memmove(obj->tex_file, "./textures/", 11);
-	ft_memmove(obj->tex_file + 11, str, len);
-	ft_memmove(obj->tex_file + 11 + len, "_color.png", 10);
+	ft_memmove(tex_name, "./textures/", 11);
+	ft_memmove(tex_name + 11, str, len);
+	ft_memmove(tex_name + 11 + len, "_color.png", 10);
 
-	ft_memmove(obj->normal_file, "./textures/", 11);
-	ft_memmove(obj->normal_file + 11, str, len);
-	ft_memmove(obj->normal_file + 11 + len, "_normal.png", 11);
+	ft_memmove(tex_name, "./textures/", 11);
+	ft_memmove(tex_name + 11, str, len);
+	ft_memmove(tex_name + 11 + len, "_normal.png", 11);
 }
 
 static int	load_textures_and_free_them_upon_failure(t_object *sphere)
