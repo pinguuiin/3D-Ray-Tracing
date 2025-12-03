@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/30 01:28:44 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/03 08:22:20 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,30 @@ inline t_color	px_loc_to_color(mlx_texture_t *map, int i, int j)
 	return (c);
 }
 
+/* Map pixel location to corresponding normal vector in tangent space */
+inline t_vec	px_loc_to_normal(mlx_texture_t *map, int i, int j)
+{
+	int		idx;
+	t_vec	normal;
+
+	idx = (map->height - j - 1) * map->width + i;
+	idx = idx * map->bytes_per_pixel;
+	normal.x = (map->pixels[idx] / 255.0 - 0.5) * 2.0;
+	normal.y = (map->pixels[idx + 1] / 255.0 - 0.5) * 2.0;
+	normal.z = (map->pixels[idx + 2] / 255.0 - 0.5) * 2.0;
+	return (normalize(normal));
+}
+
+/* Convert normal map from tangent space to world space */
+inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
+{
+	double	rot[3][3];
+	
+	get_rotation_matrix(rot, scale(normalize(hit->op), -1), obj->axis);
+	hit->normal.z = -hit->normal.z;
+	rotate(rot, &hit->normal);
+}
+
 /* Parse the texture and normal maps for each object, could be inserted into parser later idk*/
 inline void	parse_texture(t_object *obj, char *name)
 {
@@ -68,6 +92,8 @@ inline void	parse_texture(t_object *obj, char *name)
 		exit(free_exit("Loading normal map failed", 1));
 	}
 	obj->has_tex = true;
-	get_object_rot_matrix(obj->rot, normalize(vec3(0.43, 1.0, 0.0)));
+	if (obj->type == SPHERE)
+		obj->axis = normalize(vec3(0.43, 1.0, 0.0));
+	get_object_rot_matrix(obj->rot, obj->axis);
 }
 #endif

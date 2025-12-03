@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/30 01:05:57 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/03 07:52:53 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 
 	sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
 	hit->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
-	hit->normal = normalize(px_loc_to_color(obj->normal, tex_loc[0], tex_loc[1]));
+	hit->normal = px_loc_to_normal(obj->normal, tex_loc[0], tex_loc[1]);
 	// printf("x:%f  y:%f  z:%f\n",hit->normal.x, hit->normal.y, hit->normal.z);
 }
 
