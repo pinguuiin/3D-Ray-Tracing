@@ -12,13 +12,14 @@
 
 #include "parser.h"
 
+#ifndef BONUS
+#else
+
 static size_t	strlen_texture_name(char *s);
 static int		allocate_texture_file_names(t_object *sphere, size_t len);
 static void		prepare_tex_names(t_object *sphere, char *tex_name, size_t len);
 static int		load_textures_and_free_them_upon_failure(t_object *sphere);
 
-#ifndef BONUS
-#else
 int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 {
 	size_t	len;
@@ -38,7 +39,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 		display_parsing_error("Unexpected texture input for sphere. If you'd "
 			"like a sphere to be rendered with a texture,\nplease provide "
 			"a valid axis vector for it, followed by the texture's .png file "
-			"name. Error on line:", line_num);
+			"name (without the extension).\nError on line:", line_num);
 		return (INVALID_INPUT);
 	}
 
@@ -48,20 +49,12 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 		return (ALLOCATION_FAILURE);
 	prepare_tex_names(sphere, *str, len);
 
-	// TESTING: PLEASE FORCE THE ERROR INSIDE LOAD_TEXTURES_AND_FREE....(),
-	// and check that it is clean, with Valgrind and also that you are actually
-	// getting the correct exit value -> meaning, 1, for MLX_FAILURE.
-	// also printf() inside the right else-if scope in handle_parsing_error(),
-	// for LOAD_TEXTURE_FAIL.
 	if (load_textures_and_free_them_upon_failure(sphere) == -1)
 		return (LOAD_TEXTURE_FAIL);
 
 	*str += len;
 	return (0);
 }
-// FIXME: try to flip the order of initialize_mlx() and preprocessor() in main(),
-// if you manage, it would need some tweaking...
-// FIXME: remember to check that the values are transferred correctly to the final array of objects...
 
 // this will always be greater than 0, since there is a check for null terminator
 // and newline BEFORE calling it.

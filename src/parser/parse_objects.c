@@ -129,33 +129,10 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	if (parse_color(&str, &sphere->color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
 
-
-
-	// WARN: we need both elements - IF there IS a TEXTURE.
-	// Accept: - no texture.
-	//	- texture starting with the 'normal/ axis' vector + string (texture file). no extension.
-	//	NOTE: if there is an axis vector but not the string : refuse input.
-	//	NOTE: if the string is first: refuse input.
-	// WARN: what if the file provided already has a file extension? shouldn't we
-	// overwrite that extension, and replace it with the required suffix (_color.png || _normal.png)???
-
 	skip_whitespace_but_not_newline(&str);
 
-
-	// FIXME: the line below is a better idea than the previous implementation:
-	// use it, and only call the 'retval' + parse_texture_for_sphere() within
-	// its scope (if it returns true) ----> this way you can simply put the rest of the code
-	// afterwards, only once!!!! This is implemented right now, but it needs review.
 	if (*str && *str != '\n')
 	{
-
-		// TODO: parse texture string.
-		// NOTE: consider a sphere without an axis but without the string!
-		// TODO: write this function, that will combine both parsing parts - AXIS & STRING, since we want them both to show up.
-
-		// WARN: if we do not handle a wrong file name,  and then call
-		// mlx_load_png() ---> check that it does not segfault. Probably not, though.
-
 		int	retval;
 
 		retval = parse_texture_for_sphere(&str, sphere, line_num);
@@ -165,24 +142,6 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 			return (retval);
 		}
 	}
-
-	/*
-	 * WARN: if the rest of the code works, after testing different cases ->
-	 * this block can be safely deleted.
-
-	if (!*str || *str == '\n') // no texture was provided, which is accepted! a texture is EXTRA stuff.
-	{
-		// check that not too many objects were provided by the user, before
-		// incrementing their counter.
-		if (!is_valid_n_elements(parser, OBJECT))
-			return (INVALID_INPUT);
-		parser->n_spheres++; // validate sphere
-		return (NO_ERROR);
-	}
-	*/
-
-
-	// FIXME: new draft is up until here.
 
 	if (!is_valid_end_of_line(str, line_num))
 		return (INVALID_INPUT);
