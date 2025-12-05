@@ -52,6 +52,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	if (load_textures_and_free_them_upon_failure(sphere) == -1)
 		return (LOAD_TEXTURE_FAIL);
 
+	get_object_rot_matrix(sphere->rot, sphere->axis);
 	*str += len;
 	return (0);
 }
