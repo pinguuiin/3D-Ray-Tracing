@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/03 07:52:53 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/04 21:36:27 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	}
 	obj = &info->obj[hit.obj_id];
 	ray = scale(ray, k);
-	hit.pos = add(info->cam.pos, ray);
+	hit.pos = add(info->cam_curr_frame.pos, ray);
 	if (obj->type == SPHERE && obj->has_tex == true)
 		get_texture_color_and_normal(&hit, obj);
 	else
