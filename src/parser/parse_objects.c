@@ -207,7 +207,7 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 		return (INVALID_INPUT);
 
 	if (fabs(plane->axis.x) < EPSILON && fabs(plane->axis.y) < EPSILON
-		&& fabs(plane->axis.y) < EPSILON)
+		&& fabs(plane->axis.z) < EPSILON)
 	{
 		display_parsing_error("Provided normal vector for plane has a "
 			"magnitude of zero; Unable to render object. See line:", line_num);
