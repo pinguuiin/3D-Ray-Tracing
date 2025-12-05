@@ -1,0 +1,84 @@
+
+# CAMERA:
+
+#camera				camera's location					camera's direction			Field of View
+C					0,0,-60								0.,0.22,+1					90
+
+
+
+
+
+
+
+
+# LIGHTS:
+
+#ambient light		ratio (brightness)					color (RGB)
+A					0.9 								240,240,255
+
+
+
+
+
+
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					0,100,15							0.6                    							255,0,100
+
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					-12.99,15,-7.5						0.4												0,255,0
+
+
+#light source		light's location					ratio (brightness)								color (RGB)
+# L					12.99,15,-7.5						1												0,0,255
+
+#light source		light's location					ratio (brightness)								color (RGB)
+# L					12.99,15,-7.5						1												0,0,255
+
+
+
+
+
+
+
+
+
+
+# OBJECTS:
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					0,0,8								5												128,128,128
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					5,5,8								5												255,10,255
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					9,12,8								5												0,255,255
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					12,20,8								5												255,0,0
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					14.7,28.5,8							5												1,1,233
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					16.7,37.1,8							5												255,120,88
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					18.7,45.2,8							5												255,255,40
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					20.5,53.4,8							5												2,4,80
+
+
+
+
+#plane				location of a point on the plane	normal to the plane (perpendicular vector)		color (RGB)
+pl					0,0,80								0,0,1											0,125,200
+
+
+
+
+#cylinder			cylinder's center location			axis vector		diameter		height			color (RGB)
+ # cy					5.0,0.4,20.6						0.0,0.0,1.0		14.2			21.42			10,0,255
