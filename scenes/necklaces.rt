@@ -2,7 +2,7 @@
 # CAMERA:
 
 #camera				camera's location					camera's direction			Field of View
-C					0,0,-90								-.1,0.22,+1					90
+C					45,10,-110							-.4,0.22,+1					90
 
 # LIGHTS:
 
@@ -17,6 +17,8 @@ L					0,100,15							0.6                    							255,0,100
 #light source		light's location					ratio (brightness)								color (RGB)
 L					-12.99,15,-7.5						0.4												0,255,0
 
+#light source		light's location					ratio (brightness)								color (RGB)
+L					-80.140,15,-1.5						0.8												255,19,123
 
 # OBJECTS:
 
@@ -122,4 +124,4 @@ sp						50,61, 45							70												230,0,110
 pl					0,0,80								0,0,1												0,125,200
 
 #cylinder			cylinder's center location			axis vector			diameter		height			color (RGB)
-cy					-20.9,68,8							0.9,-0.08,0.0		10.2			90.42			255,0,10
+cy					-20.9,68,8							0.9,-0.08,0.0		10.2			90.42			165,20,40
