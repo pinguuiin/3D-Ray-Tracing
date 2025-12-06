@@ -13,6 +13,7 @@
 #include "parser.h"
 
 static t_status	init_parser(t_parser *parser, char **line, char *filename);
+static void		prepare_next_line(t_parser *parser, char **line);
 static int		parse_line(t_parser *parser, char *line);
 static int		check_validity_of_scene(t_parser *parser);
 
@@ -45,12 +46,7 @@ void	parse_scene(t_info *info, char *filename)
 			{
 				status = parse_line(&parser, line);
 				if (status == NO_ERROR)
-				{
-					free(line);
-					line = NULL;
-					if (parser.line_num < SIZE_MAX) // just to avoid overflow
-						parser.line_num++;
-				}
+					prepare_next_line(&parser, &line);
 			}
 			else	// file has been fully read.
 			{
@@ -94,12 +90,7 @@ void	parse_scene(t_info *info, char *filename)
 			{
 				status = parse_line(&parser, line);
 				if (status == NO_ERROR)
-				{
-					free(line);
-					line = NULL;
-					if (parser.line_num < SIZE_MAX) // just to avoid overflow
-						parser.line_num++;
-				}
+					prepare_next_line(&parser, &line);
 			}
 			else	// file has been fully read.
 			{
@@ -135,6 +126,14 @@ static t_status	init_parser(t_parser *parser, char **line, char *filename)
 	if (parser->fd == -1)
 		return (OPEN_FAILURE);
 	return (NO_ERROR);
+}
+
+static void	prepare_next_line(t_parser *parser, char **line)
+{
+	free(*line);
+	*line = NULL;
+	if (parser->line_num < SIZE_MAX)
+		parser->line_num++;
 }
 
 
