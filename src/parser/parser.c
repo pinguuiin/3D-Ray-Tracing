@@ -19,10 +19,8 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info);
 static int		check_validity_of_scene(t_parser *parser);
 
 #ifndef BONUS
-
 static int	transfer_obj_list_to_array(t_parser *parser, t_info *info);
 #else
-
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
 static void	copy_light(t_parser *parser, t_info *info);
 #endif
@@ -30,6 +28,7 @@ static void	copy_light(t_parser *parser, t_info *info);
 static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
 
 #ifndef BONUS
+
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
@@ -48,7 +47,7 @@ void	parse_scene(t_info *info, char *filename)
 				if (status == NO_ERROR)
 					prepare_next_line(&parser, &line);
 			}
-			else	// file has been fully read.
+			else
 			{
 				status = finalize_parsing(&parser, info);
 				if (status == NO_ERROR)
@@ -76,6 +75,7 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info)
 }
 
 #else
+
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
@@ -120,7 +120,6 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info)
 	}
 	return (status);
 }
-
 #endif
 
 static t_status	init_parser(t_parser *parser, char **line, char *filename)
@@ -234,26 +233,14 @@ static int	transfer_obj_list_to_array(t_parser *parser, t_info *info)
 {
 	int	i;
 
-	// update n_obj in 'info'
 	info->n_obj = parser->n_spheres + parser->n_planes + parser->n_cylinders;
-
-	// allocate array of objects. make ft_calloc() failure check!
 	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
 	if (!info->obj)
 		return (ALLOCATION_FAILURE);
-
 	i = 0;
-
-	// copy all spheres' data to the START of the array.
 	copy_obj(SPHERE, parser, &i, parser->n_spheres);
-
-	// copy all planes' data to the MIDDLE of the array.
-	// do NOT reset i, it keeps incrementing through the array.
 	copy_obj(PLANE, parser, &i, parser->n_planes);
-
-	// copy all cylinders' data to the END of the array.
 	copy_obj(CYLINDER, parser, &i, parser->n_cylinders);
-
 	return (NO_ERROR);
 }
 #else
@@ -261,43 +248,22 @@ static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
 	int	i;
 
-	// update n_light in 'info'
 	info->n_light = parser->n_lights;
-
-	// allocate array of lights in 'info'
-
 	info->light = (t_light *) ft_calloc(parser->n_lights, sizeof (t_light));
 	if (!info->light)
 		return (ALLOCATION_FAILURE);
-
-
-	// copy 'light' linked list data into the new 'light' array
 	copy_light(parser, info);
-
-	// update n_obj in 'info'
 	info->n_obj = parser->n_spheres + parser->n_planes + parser->n_cylinders;
-
-	// allocate array of objects. make ft_calloc() failure check!
 	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
 	if (!info->obj)
 	{
 		free (info->light);
 		return (ALLOCATION_FAILURE);
 	}
-
-
 	i = 0;
-
-	// copy all spheres' data to the START of the array.
 	copy_obj(SPHERE, parser, &i, parser->n_spheres);
-
-	// copy all planes' data to the MIDDLE of the array.
-	// do NOT reset i, it keeps incrementing through the array.
 	copy_obj(PLANE, parser, &i, parser->n_planes);
-
-	// copy all cylinders' data to the END of the array.
 	copy_obj(CYLINDER, parser, &i, parser->n_cylinders);
-
 	return (NO_ERROR);
 }
 #endif
