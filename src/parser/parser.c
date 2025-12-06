@@ -12,9 +12,9 @@
 
 #include "parser.h"
 
-static t_status	init_parser(t_parser *parser, char **line, char *filename);
-static void		prepare_next_line(t_parser *parser, char **line);
-static int		parse_line(t_parser *parser, char *line);
+static t_status	init_parser(t_parser *parser, char *filename);
+static void		prepare_next_line(t_parser *parser);
+static int		parse_line(t_parser *parser, char *str, t_info *info);
 static t_status	finalize_parsing(t_parser *parser, t_info *info);
 static int		check_validity_of_scene(t_parser *parser);
 
@@ -28,24 +28,22 @@ static void	copy_light(t_parser *parser, t_info *info);
 static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
 
 #ifndef BONUS
-
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
-	char		*line;
 	t_status	status;
 
-	status = init_parser(&parser, &line, filename);
+	status = init_parser(&parser, filename);
 	while (status == NO_ERROR)
 	{
-		status = get_next_line_revised(parser.fd, &line);
+		status = get_next_line_revised(parser.fd, &parser.line);
 		if (status == NO_ERROR)
 		{
-			if (line)
+			if (parser.line)
 			{
-				status = parse_line(&parser, line);
+				status = parse_line(&parser, parser.line, info);
 				if (status == NO_ERROR)
-					prepare_next_line(&parser, &line);
+					prepare_next_line(&parser);
 			}
 			else
 			{
@@ -56,7 +54,7 @@ void	parse_scene(t_info *info, char *filename)
 		}
 	}
 	if (status != NO_ERROR)
-		exit(handle_parsing_error(status, line, &parser));
+		exit(handle_parsing_error(status, &parser));
 }
 
 static t_status	finalize_parsing(t_parser *parser, t_info *info)
@@ -68,31 +66,28 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info)
 		status = transfer_obj_list_to_array(parser, info);
 	if (status == NO_ERROR)
 	{
-		if (clean_up_parser(parser, NULL) == CLOSE_FAILURE)
+		if (clean_up_parser(parser) == CLOSE_FAILURE)
 			exit (SYSTEM_FAILURE);
 	}
 	return (status);
 }
-
 #else
-
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
-	char		*line;
 	t_status	status;
 
-	status = init_parser(&parser, &line, filename);
+	status = init_parser(&parser, filename);
 	while (status == NO_ERROR)
 	{
-		status = get_next_line_revised(parser.fd, &line);
+		status = get_next_line_revised(parser.fd, &parser.line);
 		if (status == NO_ERROR)
 		{
-			if (line)
+			if (parser.line)
 			{
-				status = parse_line(&parser, line);
+				status = parse_line(&parser, parser.line, info);
 				if (status == NO_ERROR)
-					prepare_next_line(&parser, &line);
+					prepare_next_line(&parser);
 			}
 			else
 			{
@@ -103,7 +98,7 @@ void	parse_scene(t_info *info, char *filename)
 		}
 	}
 	if (status != NO_ERROR)
-		exit(handle_parsing_error(status, line, &parser));
+		exit(handle_parsing_error(status, &parser));
 }
 
 static t_status	finalize_parsing(t_parser *parser, t_info *info)
@@ -115,16 +110,16 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info)
 		status = transfer_lists_to_arrays(parser, info);
 	if (status == NO_ERROR)
 	{
-		if (clean_up_parser(parser, NULL) == CLOSE_FAILURE)
+		if (clean_up_parser(parser) == CLOSE_FAILURE)
 			exit (SYSTEM_FAILURE);
 	}
 	return (status);
 }
 #endif
 
-static t_status	init_parser(t_parser *parser, char **line, char *filename)
+static t_status	init_parser(t_parser *parser, char *filename)
 {
-	*line = NULL;
+	parser->line = NULL;
 	ft_bzero(parser, sizeof (t_parser));
 	parser->line_num = 1;
 	parser->fd = open(filename, O_RDONLY);
@@ -133,10 +128,10 @@ static t_status	init_parser(t_parser *parser, char **line, char *filename)
 	return (NO_ERROR);
 }
 
-static void	prepare_next_line(t_parser *parser, char **line)
+static void	prepare_next_line(t_parser *parser)
 {
-	free(*line);
-	*line = NULL;
+	free(parser->line);
+	parser->line = NULL;
 	if (parser->line_num < SIZE_MAX)
 		parser->line_num++;
 }
@@ -147,14 +142,8 @@ static void	prepare_next_line(t_parser *parser, char **line)
 // "atoi()" type logic....
 
 #ifndef BONUS
-static int	parse_line(t_parser *parser, char *line)
+static int	parse_line(t_parser *parser, char *str, t_info *info)
 {
-	t_info	*info;
-	char	*str;	// used to be able to free 'line'
-
-	info = get_info();
-	str = line;
-
 	skip_whitespace_but_not_newline(&str);
 
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
@@ -187,14 +176,8 @@ static int	parse_line(t_parser *parser, char *line)
 	return (NO_ERROR);
 }
 #else
-static int	parse_line(t_parser *parser, char *line)
+static int	parse_line(t_parser *parser, char *str, t_info *info)
 {
-	t_info	*info;
-	char	*str;	// used to be able to free 'line'
-
-	info = get_info();
-	str = line;
-
 	skip_whitespace_but_not_newline(&str);
 
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid

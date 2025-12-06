@@ -30,7 +30,7 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd);
 * defined, a failure to load a texture by an MLX function returns MLX_FAILURE.
 */
 #ifndef BONUS
-int	handle_parsing_error(t_status status, char *line, t_parser *parser)
+int	handle_parsing_error(t_status status, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
 	{
@@ -42,7 +42,7 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	}
 
 	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
-	if (clean_up_parser(parser, line) == CLOSE_FAILURE)
+	if (clean_up_parser(parser) == CLOSE_FAILURE)
 		return (SYSTEM_FAILURE);
 
 	if (status == INVALID_INPUT)
@@ -59,7 +59,7 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	return (SYSTEM_FAILURE);
 }
 #else
-int	handle_parsing_error(t_status status, char *line, t_parser *parser)
+int	handle_parsing_error(t_status status, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
 	{
@@ -71,7 +71,7 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	}
 
 	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
-	if (clean_up_parser(parser, line) == CLOSE_FAILURE)
+	if (clean_up_parser(parser) == CLOSE_FAILURE)
 		return (SYSTEM_FAILURE);
 
 	if (status == INVALID_INPUT)
@@ -154,12 +154,11 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd)
 *		failed. It is safe to end the program.
 */
 #ifndef BONUS
-int	clean_up_parser(t_parser *parser, char *line)
+int	clean_up_parser(t_parser *parser)
 {
 	t_node_obj	*current;
 	t_node_obj	*next;
 
-	// free linked list of objects
 	current = parser->head;
 	while (current)
 	{
@@ -167,10 +166,8 @@ int	clean_up_parser(t_parser *parser, char *line)
 		free(current);
 		current = next;
 	}
-
-	// free the returned line obtained by get_next_line_revised()
-	if (line)
-		free(line);
+	if (parser->line)
+		free(parser->line);
 
 	if (close(parser->fd) == -1)
 	{
@@ -180,7 +177,7 @@ int	clean_up_parser(t_parser *parser, char *line)
 	return (0);
 }
 #else
-int	clean_up_parser(t_parser *parser, char *line)
+int	clean_up_parser(t_parser *parser)
 {
 	t_node_obj		*current;
 	t_node_obj		*next;
@@ -206,8 +203,8 @@ int	clean_up_parser(t_parser *parser, char *line)
 	}
 
 	// free the returned line obtained by get_next_line_revised()
-	if (line)
-		free(line);
+	if (parser->line)
+		free(parser->line);
 
 	if (close(parser->fd) == -1)
 	{

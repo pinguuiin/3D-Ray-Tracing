@@ -58,6 +58,7 @@ typedef struct s_node_obj
 typedef struct s_parser
 {
 	int			fd;
+	char		*line;
 	size_t		line_num;
 	int			n_lights;
 	int			n_spheres;
@@ -74,6 +75,7 @@ typedef struct s_parser
 typedef struct s_parser
 {
 	int				fd;
+	char			*line;
 	size_t			line_num;
 	int				n_lights;
 	int				n_spheres;
@@ -123,8 +125,8 @@ bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 
 /* error messaging and memory management */
-int		handle_parsing_error(t_status status, char *line, t_parser *parser);
+int		handle_parsing_error(t_status status, t_parser *parser);
 void	display_parsing_error(char *msg, size_t line_num);
-int		clean_up_parser(t_parser *parser, char *line);
+int		clean_up_parser(t_parser *parser);
 
 #endif
