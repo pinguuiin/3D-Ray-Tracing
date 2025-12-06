@@ -12,14 +12,19 @@
 
 #include "parser.h"
 
-static int	parse_line(t_parser *parser, char *line);
-static int	check_validity_of_scene(t_parser *parser);
+static t_status	init_parser(t_parser *parser, char **line, char *filename);
+static int		parse_line(t_parser *parser, char *line);
+static int		check_validity_of_scene(t_parser *parser);
+
 #ifndef BONUS
+
 static int	transfer_obj_list_to_array(t_parser *parser, t_info *info);
 #else
+
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
 static void	copy_light(t_parser *parser, t_info *info);
 #endif
+
 static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
 
 #ifndef BONUS
@@ -29,16 +34,7 @@ void	parse_scene(t_info *info, char *filename)
 	char		*line;
 	t_status	status;
 
-	line = NULL;
-	status = NO_ERROR;
-
-	// initialize parser struct
-	ft_bzero(&parser, sizeof (t_parser));
-	parser.line_num = 1;
-
-	parser.fd = open(filename, O_RDONLY);
-	if (parser.fd == -1)
-		status = OPEN_FAILURE;
+	status = init_parser(&parser, &line, filename);
 	while (status == NO_ERROR)
 	{
 		status = get_next_line_revised(parser.fd, &line);
@@ -79,6 +75,7 @@ void	parse_scene(t_info *info, char *filename)
 	if (status != NO_ERROR)
 		exit(handle_parsing_error(status, line, &parser));
 }
+
 #else
 void	parse_scene(t_info *info, char *filename)
 {
@@ -86,16 +83,7 @@ void	parse_scene(t_info *info, char *filename)
 	char		*line;
 	t_status	status;
 
-	line = NULL;
-	status = NO_ERROR;
-
-	// initialize parser struct
-	ft_bzero(&parser, sizeof (t_parser));
-	parser.line_num = 1;
-
-	parser.fd = open(filename, O_RDONLY);
-	if (parser.fd == -1)
-		status = OPEN_FAILURE;
+	status = init_parser(&parser, &line, filename);
 	while (status == NO_ERROR)
 	{
 		status = get_next_line_revised(parser.fd, &line);
@@ -137,6 +125,18 @@ void	parse_scene(t_info *info, char *filename)
 		exit(handle_parsing_error(status, line, &parser));
 }
 #endif
+
+static t_status	init_parser(t_parser *parser, char **line, char *filename)
+{
+	*line = NULL;
+	ft_bzero(parser, sizeof (t_parser));
+	parser->line_num = 1;
+	parser->fd = open(filename, O_RDONLY);
+	if (parser->fd == -1)
+		return (OPEN_FAILURE);
+	return (NO_ERROR);
+}
+
 
 // FIXME: consider doing the isspace_but_not_newline() checks from the specific
 // parsing functions, to make this look more clean -> and to go with the general
@@ -329,7 +329,6 @@ static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj)
 	{
 		if (current->object.type == id)
 		{
-			// copy whole object struct data
 			info->obj[j] = current->object;
 			j++;
 			n_obj--;
