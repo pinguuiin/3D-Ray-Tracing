@@ -21,14 +21,13 @@
 typedef enum e_status
 {
 	NO_ERROR			=	0,
-	INVALID_INPUT		= 	-1,
+	INVALID_INPUT		=	-1,
 	ALLOCATION_FAILURE	=	-2,
 	OPEN_FAILURE		=	-3,
 	CLOSE_FAILURE		=	-4,
 	READ_FAILURE		=	-5,
 	BUFFER_SIZE_ERROR	=	-6,
 	LOAD_TEXTURE_FAIL	=	-7
-
 }	t_status;
 
 typedef enum e_list_id
@@ -42,7 +41,7 @@ typedef enum e_list_id
 /* wrapper for each t_light node, only needed in parsing */
 typedef struct s_node_light
 {
-	t_light				light; // current 'light' element
+	t_light				light;
 	struct s_node_light	*next;
 }	t_node_light;
 # endif
@@ -55,6 +54,7 @@ typedef struct s_node_obj
 }	t_node_obj;
 
 # ifndef BONUS
+
 typedef struct s_parser
 {
 	int			fd;
@@ -65,17 +65,12 @@ typedef struct s_parser
 	int			n_cylinders;
 	int			n_ambs;
 	int			n_cams;
-
-	// objects linked list
-	// 'current' allows creation of nodes to happen faster, without walking
-	// through the list on each iteration, since it always points at the 'hole'
-	// for the node to be created (except at the very first iteration, but in
-	// that case 'head' is already pointing there).
 	t_node_obj	*head;
 	t_node_obj	*current;
 
 }	t_parser;
 # else
+
 typedef struct s_parser
 {
 	int				fd;
@@ -86,16 +81,8 @@ typedef struct s_parser
 	int				n_cylinders;
 	int				n_ambs;
 	int				n_cams;
-
-	// objects linked list
-	// 'current' allows creation of nodes to happen faster, without walking
-	// through the list on each iteration, since it always points at the 'hole'
-	// for the node to be created (except at the very first iteration, but in
-	// that case 'head' is already pointing there).
 	t_node_obj		*head;
 	t_node_obj		*current;
-
-	// light linked list
 	t_node_light	*head_light;
 	t_node_light	*curr_light;
 
@@ -110,9 +97,12 @@ int		parse_camera(t_cam *cam, char *str, t_parser *parser);
 int		parse_sphere(t_parser *parser, char *str, size_t line_num);
 int		parse_plane(t_parser *parser, char *str, size_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
+
 # ifndef BONUS
+
 int		parse_light(t_parser *parser, char *str, t_light *light);
 # else
+
 int		parse_light(t_parser *parser, char *str);
 int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num);
 # endif
