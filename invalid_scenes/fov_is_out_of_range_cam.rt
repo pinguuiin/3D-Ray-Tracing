@@ -22,12 +22,12 @@ L					0,15,15								1                    							255,0,0
 
 
 #light source		light's location					ratio (brightness)								color (RGB)
-L					-12.99,15,-7.5						1												0,255,0
+#L					-12.99,15,-7.5						1												0,255,0
 
 
 
 #light source		light's location					ratio (brightness)								color (RGB)
-L					12.99,15,-7.5						1												0,0,255
+#L					12.99,15,-7.5						1												0,0,255
 
 
 

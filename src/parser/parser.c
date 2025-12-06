@@ -15,6 +15,7 @@
 static t_status	init_parser(t_parser *parser, char **line, char *filename);
 static void		prepare_next_line(t_parser *parser, char **line);
 static int		parse_line(t_parser *parser, char *line);
+static t_status	finalize_parsing(t_parser *parser, t_info *info);
 static int		check_validity_of_scene(t_parser *parser);
 
 #ifndef BONUS
@@ -39,7 +40,6 @@ void	parse_scene(t_info *info, char *filename)
 	while (status == NO_ERROR)
 	{
 		status = get_next_line_revised(parser.fd, &line);
-
 		if (status == NO_ERROR)
 		{
 			if (line)
@@ -50,26 +50,29 @@ void	parse_scene(t_info *info, char *filename)
 			}
 			else	// file has been fully read.
 			{
-				status = check_validity_of_scene(&parser);
-
-				// transfer the lights and all objects linked lists into their respective arrays;
+				status = finalize_parsing(&parser, info);
 				if (status == NO_ERROR)
-					status = transfer_obj_list_to_array(&parser, info);
-
-				// destroy the lists and return (unless malloc() failure has occured,
-				// in which case status is ALLOCATION_FAILURE, which will be handled after the loop.
-				if (status == NO_ERROR)
-				{
-					// destroy both linked lists, and close the file descriptor
-					if (clean_up_parser(&parser, NULL) == CLOSE_FAILURE) // if true, close() failed, but memory has been freed. Time to exit.
-						exit (SYSTEM_FAILURE);
 					return ;
-				}
 			}
 		}
 	}
 	if (status != NO_ERROR)
 		exit(handle_parsing_error(status, line, &parser));
+}
+
+static t_status	finalize_parsing(t_parser *parser, t_info *info)
+{
+	t_status	status;
+
+	status = check_validity_of_scene(parser);
+	if (status == NO_ERROR)
+		status = transfer_obj_list_to_array(parser, info);
+	if (status == NO_ERROR)
+	{
+		if (clean_up_parser(parser, NULL) == CLOSE_FAILURE)
+			exit (SYSTEM_FAILURE);
+	}
+	return (status);
 }
 
 #else
@@ -83,7 +86,6 @@ void	parse_scene(t_info *info, char *filename)
 	while (status == NO_ERROR)
 	{
 		status = get_next_line_revised(parser.fd, &line);
-
 		if (status == NO_ERROR)
 		{
 			if (line)
@@ -92,29 +94,33 @@ void	parse_scene(t_info *info, char *filename)
 				if (status == NO_ERROR)
 					prepare_next_line(&parser, &line);
 			}
-			else	// file has been fully read.
+			else
 			{
-				status = check_validity_of_scene(&parser);
-
-				// transfer the lights and all objects linked lists into their respective arrays;
+				status = finalize_parsing(&parser, info);
 				if (status == NO_ERROR)
-					status = transfer_lists_to_arrays(&parser, info);
-
-				// destroy the lists and return (unless malloc() failure has occured,
-				// in which case status is ALLOCATION_FAILURE, which will be handled after the loop.
-				if (status == NO_ERROR)
-				{
-					// destroy both linked lists, and close the file descriptor
-					if (clean_up_parser(&parser, NULL) == CLOSE_FAILURE) // if true, close() failed, but memory has been freed. Time to exit.
-						exit (SYSTEM_FAILURE);
 					return ;
-				}
 			}
 		}
 	}
 	if (status != NO_ERROR)
 		exit(handle_parsing_error(status, line, &parser));
 }
+
+static t_status	finalize_parsing(t_parser *parser, t_info *info)
+{
+	t_status	status;
+
+	status = check_validity_of_scene(parser);
+	if (status == NO_ERROR)
+		status = transfer_lists_to_arrays(parser, info);
+	if (status == NO_ERROR)
+	{
+		if (clean_up_parser(parser, NULL) == CLOSE_FAILURE)
+			exit (SYSTEM_FAILURE);
+	}
+	return (status);
+}
+
 #endif
 
 static t_status	init_parser(t_parser *parser, char **line, char *filename)
