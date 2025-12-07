@@ -10,15 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BONUS
-#else
-# ifndef MULTITHREADING_H
-#  define MULTITHREADING_H
+#ifndef MULTITHREADING_H
+# define MULTITHREADING_H
 
-# include <pthread.h>
-# include <stdatomic.h>
+# ifndef BONUS
+# else
 
-# define N_THREADS 5
+#  include <pthread.h>
+#  include <stdatomic.h>
+
+#  define N_THREADS 5
 
 /*
 * NOTE: uint32_t is used for the 'x' axis values to avoid casting, because they
