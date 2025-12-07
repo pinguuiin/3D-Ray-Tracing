@@ -28,65 +28,60 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd);
 * passing its call as an argument to exit(). Invalid input returns the macro
 * INPUT_ERROR, while a system error returns SYSTEM_FAILURE, and, if BONUS is
 * defined, a failure to load a texture by an MLX function returns MLX_FAILURE.
+*
+* Note that if 'status' holds the macro value for OPEN_FAILURE, opening the
+* input file has failed, meaning that no dynamic allocation has taken place, and
+* therefore, calling clean_up_parser() is not necessary and even dangerous.
+*
+* Furthermore, in cases where 'status' holds INVALID_INPUT, CLOSE_FAILURE,
+* ALLOCATION_FAILURE or LOAD_TEXTURE_FAIL, an error message has already been
+* printed to the standard error, and this function does not need to handle that.
 */
 #ifndef BONUS
+
 int	handle_parsing_error(t_status status, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
 	{
-		// open() failed: No need to call close(), and nothing has been
-		// dynamically allocated yet, so no need to clean_up_parser().
 		ft_putstr_fd("Failed to open input file. Please make sure the file "
 			"exists and that the correct path is provided.\n", 2);
 		return (SYSTEM_FAILURE);
 	}
-
-	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
 	if (clean_up_parser(parser) == CLOSE_FAILURE)
 		return (SYSTEM_FAILURE);
-
 	if (status == INVALID_INPUT)
 		return (INPUT_ERROR);
-
 	if (status == ALLOCATION_FAILURE)
 		ft_putstr_fd("Dynamic memory allocation request has failed. ", 2);
 	else if (status == READ_FAILURE)
 		ft_putstr_fd("System call failed; Unable to read input file data. ", 2);
 	else if (status == BUFFER_SIZE_ERROR)
 		ft_putstr_fd("Failed to process input file; buffer size is empty. ", 2);
-
 	ft_putstr_fd("Aborting miniRT.\n", 2);
 	return (SYSTEM_FAILURE);
 }
 #else
+
 int	handle_parsing_error(t_status status, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
 	{
-		// open() failed: No need to call close(), and nothing has been
-		// dynamically allocated yet, so no need to clean_up_parser().
 		ft_putstr_fd("Failed to open input file. Please make sure the file "
 			"exists and that the correct path is provided.\n", 2);
 		return (SYSTEM_FAILURE);
 	}
-
-	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
 	if (clean_up_parser(parser) == CLOSE_FAILURE)
 		return (SYSTEM_FAILURE);
-
 	if (status == INVALID_INPUT)
 		return (INPUT_ERROR);
-
 	if (status == LOAD_TEXTURE_FAIL)
 		return (MLX_FAILURE);
-
 	if (status == ALLOCATION_FAILURE)
 		ft_putstr_fd("Dynamic memory allocation request has failed. ", 2);
 	else if (status == READ_FAILURE)
 		ft_putstr_fd("System call failed; Unable to read input file data. ", 2);
 	else if (status == BUFFER_SIZE_ERROR)
 		ft_putstr_fd("Failed to process input file; buffer size is empty. ", 2);
-
 	ft_putstr_fd("Aborting miniRT.\n", 2);
 	return (SYSTEM_FAILURE);
 }
@@ -103,39 +98,36 @@ void	display_parsing_error(char *msg, size_t line_num)
 /*
 * Writes to the file descriptor 'fd' the number 'n', followed by a period and
 * a newline character.
-* 'n' should only be a non-negative value.
+*
+* WARN: Parameter 'n' should ONLY be a non-negative value, when passed to this
+* function. This function does NOT check for overflow of negative values, on
+* purpose.
+*
+* Regarding the allocation of 21 for 'str': Since SIZE_MAX can only be up to 20
+* digits long, it is safe to allocate 21 bytes for its converted string - 20
+* bytes plus room for the null terminator.
 */
 static inline void	put_pos_nbr_endl_fd(size_t n, int fd)
 {
 	size_t	x;
 	int		len;
 	int		temp_len;
-	char	str[21];	// max length for SIZE_MAX is 20 digits.
-
-	// only non-negative numbers shall be passed to this function,
-	// so there is no need to check for overflow of the negative value
+	char	str[21];
 
 	x = n / 10;
 	len = 1;
-
-	// calculate number of digits ('len')
 	while (x > 0)
 	{
 		len++;
 		x /= 10;
 	}
 	temp_len = len;
-
-	// store the digits conversion into the string 'str',
-	// from the last digit to the first.
 	while (temp_len)
 	{
 		temp_len--;
 		str[temp_len] = n % 10 + '0';
 		n /= 10;
 	}
-
-	// put: the converted string -> a dot and a newline charactaer
 	write(fd, str, len);
 	write(fd, ".\n", 2);
 }
@@ -154,6 +146,7 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd)
 *		failed. It is safe to end the program.
 */
 #ifndef BONUS
+
 int	clean_up_parser(t_parser *parser)
 {
 	t_node_obj	*current;
@@ -168,7 +161,6 @@ int	clean_up_parser(t_parser *parser)
 	}
 	if (parser->line)
 		free(parser->line);
-
 	if (close(parser->fd) == -1)
 	{
 		ft_putstr_fd("Failed to close input file. Aborting miniRT.\n", 2);
@@ -177,6 +169,7 @@ int	clean_up_parser(t_parser *parser)
 	return (0);
 }
 #else
+
 int	clean_up_parser(t_parser *parser)
 {
 	t_node_obj		*current;
