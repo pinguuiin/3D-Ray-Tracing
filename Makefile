@@ -43,12 +43,13 @@ SRC_FILES = main.c \
 			parser/parsing_utils_1.c \
 			parser/parsing_utils_2.c \
 			parser/light_and_obj_utils.c \
-			parser/error_handling.c \
 			parser/ft_strtod.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
 			parser/parse_texture.c \
+			parser/error_handling.c \
+			parser/clean_up_parser.c \
 			color/color.c \
 			color/texture_mapping.c \
 			hooks/camera_hooks.c \
