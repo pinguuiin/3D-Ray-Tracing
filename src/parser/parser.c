@@ -19,15 +19,18 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info);
 static int		check_validity_of_scene(t_parser *parser);
 
 #ifndef BONUS
-static int	transfer_obj_list_to_array(t_parser *parser, t_info *info);
+
+static int		transfer_obj_list_to_array(t_parser *parser, t_info *info);
 #else
-static int	transfer_lists_to_arrays(t_parser *parser, t_info *info);
-static void	copy_light(t_parser *parser, t_info *info);
+
+static int		transfer_lists_to_arrays(t_parser *parser, t_info *info);
+static void		copy_light(t_parser *parser, t_info *info);
 #endif
 
-static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
+static void		copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
 
 #ifndef BONUS
+
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
@@ -72,6 +75,7 @@ static t_status	finalize_parsing(t_parser *parser, t_info *info)
 	return (status);
 }
 #else
+
 void	parse_scene(t_info *info, char *filename)
 {
 	t_parser	parser;
@@ -136,16 +140,15 @@ static void	prepare_next_line(t_parser *parser)
 		parser->line_num++;
 }
 
-
 // FIXME: consider doing the isspace_but_not_newline() checks from the specific
 // parsing functions, to make this look more clean -> and to go with the general
 // "atoi()" type logic....
 
 #ifndef BONUS
+
 static int	parse_line(t_parser *parser, char *str, t_info *info)
 {
 	skip_whitespace_but_not_newline(&str);
-
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
 		return (0);
 	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))
@@ -176,10 +179,10 @@ static int	parse_line(t_parser *parser, char *str, t_info *info)
 	return (NO_ERROR);
 }
 #else
+
 static int	parse_line(t_parser *parser, char *str, t_info *info)
 {
 	skip_whitespace_but_not_newline(&str);
-
 	if (*str == '#' || *str == '\n')	// ignore comments in .rt file || line is 'empty' but valid
 		return (0);
 	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))
@@ -212,6 +215,7 @@ static int	parse_line(t_parser *parser, char *str, t_info *info)
 #endif
 
 #ifndef BONUS
+
 static int	transfer_obj_list_to_array(t_parser *parser, t_info *info)
 {
 	int	i;
@@ -227,6 +231,7 @@ static int	transfer_obj_list_to_array(t_parser *parser, t_info *info)
 	return (NO_ERROR);
 }
 #else
+
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
 	int	i;
@@ -253,6 +258,7 @@ static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 
 #ifndef BONUS
 #else
+
 static void	copy_light(t_parser *parser, t_info *info)
 {
 	t_node_light	*current;
@@ -278,7 +284,6 @@ static void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj)
 	info = get_info();
 	j = *i;
 	current = parser->head;
-
 	while (current && n_obj)
 	{
 		if (current->object.type == id)
