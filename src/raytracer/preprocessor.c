@@ -35,7 +35,6 @@ inline void	get_viewport_data(t_info *info)
 	info->px = info->viewport_w / info->img->width;
 }
 
-#ifndef BONUS
 void	preprocessor(t_info *info)
 {
 	info->cam_curr_frame = info->cam;
@@ -43,20 +42,3 @@ void	preprocessor(t_info *info)
 	get_rotation_matrix(info->rot, info->cam_curr_frame.direction, vec3(0, 1, 0));
 	get_viewport_data(info);
 }
-#else
-void	preprocessor(t_info *info)
-{
-	int	i;
-
-	i = 0;
-	info->cam_curr_frame = info->cam;
-	update_oc_and_plane_normal(info);
-	get_rotation_matrix(info->rot, info->cam_curr_frame.direction, vec3(0, 1, 0));
-	get_viewport_data(info);
-	while (i < info->n_obj)
-	{
-		parse_texture(&info->obj[i], "limestone3");   // name will later be passed from input ==========================c:=====c:=====c:=====c:=================
-		i++;
-	}
-}
-#endif

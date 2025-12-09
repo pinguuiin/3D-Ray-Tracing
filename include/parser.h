@@ -26,7 +26,8 @@ typedef enum e_status
 	OPEN_FAILURE		=	-3,
 	CLOSE_FAILURE		=	-4,
 	READ_FAILURE		=	-5,
-	BUFFER_SIZE_ERROR	=	-6
+	BUFFER_SIZE_ERROR	=	-6,
+	LOAD_TEXTURE_FAIL	=	-7
 
 }	t_status;
 
@@ -56,22 +57,22 @@ typedef struct s_node_obj
 # ifndef BONUS
 typedef struct s_parser
 {
-	int		fd;
-	size_t	line_num;
-	int		n_lights;
-	int		n_spheres;
-	int		n_planes;
-	int		n_cylinders;
-	int		n_ambs;
-	int		n_cams;
+	int			fd;
+	size_t		line_num;
+	int			n_lights;
+	int			n_spheres;
+	int			n_planes;
+	int			n_cylinders;
+	int			n_ambs;
+	int			n_cams;
 
 	// objects linked list
 	// 'current' allows creation of nodes to happen faster, without walking
 	// through the list on each iteration, since it always points at the 'hole'
 	// for the node to be created (except at the very first iteration, but in
 	// that case 'head' is already pointing there).
-	t_node_obj		*head;
-	t_node_obj		*current;
+	t_node_obj	*head;
+	t_node_obj	*current;
 
 }	t_parser;
 # else
@@ -101,21 +102,22 @@ typedef struct s_parser
 }	t_parser;
 # endif
 
-// scene and elements parsing
+/* scene and elements parsing */
 void	parse_argument(int argc, char *argv[]);
 void	parse_scene(t_info *info, char *filename);
 int		parse_ambient_lighting(t_color *amb, char *str, t_parser *parser);
 int		parse_camera(t_cam *cam, char *str, t_parser *parser);
-# ifndef BONUS
-int	parse_light(t_parser *parser, char *str, t_light *light);
-# else
-int		parse_light(t_parser *parser, char *str);
-# endif
 int		parse_sphere(t_parser *parser, char *str, size_t line_num);
 int		parse_plane(t_parser *parser, char *str, size_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
+# ifndef BONUS
+int		parse_light(t_parser *parser, char *str, t_light *light);
+# else
+int		parse_light(t_parser *parser, char *str);
+int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num);
+# endif
 
-// parsing utilities
+/* parsing utilities */
 bool	ft_isspace(int c);
 bool	isspace_but_not_newline(int c);
 void	skip_whitespace(char **str);
@@ -130,7 +132,7 @@ bool	is_valid_end_of_line(char *s, size_t line_num);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 
-// error messaging and memory management
+/* error messaging and memory management */
 int		handle_parsing_error(t_status status, char *line, t_parser *parser);
 void	display_parsing_error(char *msg, size_t line_num);
 int		clean_up_parser(t_parser *parser, char *line);

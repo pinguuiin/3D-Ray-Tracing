@@ -65,35 +65,4 @@ inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);
 }
-
-/* Parse the texture and normal maps for each object, could be inserted into parser later idk*/
-inline void	parse_texture(t_object *obj, char *name)
-{
-	int	len;
-
-	len = ft_strlen(name);
-	obj->tex_file = calloc(len + 22, sizeof(char));
-	obj->normal_file = calloc(len + 23, sizeof(char));
-	if (!obj->tex_file || !obj->normal_file)
-		exit(free_exit("Malloc failed", 1));
-	ft_memmove(obj->tex_file, "./textures/", 11);
-	ft_memmove(obj->normal_file, "./textures/", 11);
-	ft_memmove(obj->tex_file + 11, name, len);
-	ft_memmove(obj->normal_file + 11, name, len);
-	ft_memmove(obj->tex_file + 11 + len, "_color.png", 10);
-	ft_memmove(obj->normal_file + 11 + len, "_normal.png", 11);
-	obj->texture = mlx_load_png(obj->tex_file);
-	if (!obj->texture)
-		exit(free_exit("Loading texture map failed", 1));
-	obj->normal = mlx_load_png(obj->normal_file);
-	if (!obj->normal)
-	{
-		mlx_delete_texture(obj->texture);
-		exit(free_exit("Loading normal map failed", 1));
-	}
-	obj->has_tex = true;
-	if (obj->type == SPHERE)
-		obj->axis = normalize(vec3(0.43, 1.0, 0.0));
-	get_object_rot_matrix(obj->rot, obj->axis);
-}
 #endif

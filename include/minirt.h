@@ -118,8 +118,6 @@ typedef struct s_cam
 		double			h;  // Half height of the cylinder
 
 		// texture
-		bool			has_tex;
-		char			*tex_name;
 		char			*tex_file;
 		char			*normal_file;
 		mlx_texture_t	*texture;
@@ -179,10 +177,11 @@ typedef struct s_cam
 	}	t_info;
 # endif
 
+/* utils */
 t_info		*get_info(void);
-void		resize(int32_t width, int32_t height, void *param);
 int			free_exit(char *s, int exit_code);
 
+/* color */
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 // t_vec		color_to_vec(int r, int g, int b);
@@ -197,6 +196,7 @@ void		rotate_object(mlx_key_data_t keydata, t_info *info);
 void		sphere_tbn_to_xyz(t_object *obj, t_hit *hit);
 #endif
 
+/* ray tracing */
 double		ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc);
 double		ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
 double		ray_hit_cylinder(t_info *info, t_vec ray, t_object *cy, t_vec oc);
@@ -204,19 +204,23 @@ void		renderer(void *param);
 void		render_column(int x, t_info *info);
 void		update_data_for_new_frame(t_info *info);
 
+/* reflection */
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
+/* rotation, rotation matrix */
 // void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
 // void		rotate_z(t_vec *vec, double theta);
 void		get_rotation_matrix(double (*rot)[3], t_vec f, t_vec up);
 void		rotate(double rot[3][3], t_vec *v1);
 
+/* key hooks */
 void		key_handler(mlx_key_data_t keydata, void *param);
+void		resize(int32_t width, int32_t height, void *param);
 
+/* preprocessing */
 void		update_oc_and_plane_normal(t_info *info);
 void		get_viewport_data(t_info *info);
 void		preprocessor(t_info *info);
-
 
 #endif

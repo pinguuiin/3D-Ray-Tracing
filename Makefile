@@ -14,10 +14,12 @@ FLAGS = -Wall -Wextra -Werror -g -O3 -ffast-math -march=native -flto
 
 LIBS = -ldl -lglfw -pthread -lm
 
-LIBMLX_DIR = ./MLX42
+LIB_DIR = ./libs
+
+LIBMLX_DIR = $(LIB_DIR)/MLX42
 LIBMLX = $(LIBMLX_DIR)/build/libmlx42.a
 
-LIBFT_DIR = ./libft
+LIBFT_DIR = $(LIB_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_GIT = git@github.com:pinguuiin/Libft.git
 
@@ -43,6 +45,7 @@ SRC_FILES = main.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
+			parser/parse_texture.c \
 			color/color.c \
 			color/texture_mapping.c \
 			hooks/camera_hooks.c \
@@ -69,10 +72,12 @@ BONUS_OBJS = $(addprefix $(BONUS_OBJ_DIR)/, $(SRC_FILES:.c=.o))
 all: $(NAME)
 
 $(LIBMLX):
+	@mkdir -p $(LIB_DIR)
 	@if [ ! -d "$(LIBMLX_DIR)" ]; then git clone https://github.com/codam-coding-college/MLX42.git $(LIBMLX_DIR); fi
 	@cmake $(LIBMLX_DIR) -B $(LIBMLX_DIR)/build && make --no-print-directory -C $(LIBMLX_DIR)/build -j4
 
 $(LIBFT): phony
+	@mkdir -p $(LIB_DIR)
 	@if [ ! -d "$(LIBFT_DIR)" ]; then git clone $(LIBFT_GIT) $(LIBFT_DIR); fi
 	@make --no-print-directory -C $(LIBFT_DIR)
 
@@ -101,8 +106,7 @@ fclean:
 	@if [ -f "$(NAME)" ] || [ -d "$(OBJ_DIR)" ] || [ -d "$(BONUS_OBJ_DIR)" ] || [ -d "$(LIBFT_DIR)" ] || [ -d "$(LIBMLX_DIR)" ]; then \
 		if [ -d "$(OBJ_DIR)" ]; then rm -rf "$(OBJ_DIR)"; fi; \
 		if [ -d "$(BONUS_OBJ_DIR)" ]; then rm -rf "$(BONUS_OBJ_DIR)"; fi; \
-		if [ -d "$(LIBFT_DIR)" ]; then make -s fclean -C "$(LIBFT_DIR)"; rm -rf "$(LIBFT_DIR)"; fi; \
-		if [ -d "$(LIBMLX_DIR)" ]; then make -s clean -C "$(LIBMLX_DIR)/build"; rm -rf "$(LIBMLX_DIR)"; fi; \
+		if [ -d "$(LIB_DIR)" ]; then rm -rf "$(LIB_DIR)"; fi; \
 		if [ -f "$(NAME)" ]; then rm -rf "$(NAME)"; fi; \
 		rm -f .bonus; \
 		echo "$(BBLUE) Cleaned all $(RESET_COLOR)"; \

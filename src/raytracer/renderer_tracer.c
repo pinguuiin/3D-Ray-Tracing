@@ -90,7 +90,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	obj = &info->obj[hit.obj_id];
 	ray = scale(ray, k);
 	hit.pos = add(info->cam_curr_frame.pos, ray);
-	if (obj->type == SPHERE && obj->has_tex == true)
+	if (obj->type == SPHERE && obj->tex_file)
 		get_texture_color_and_normal(&hit, obj);
 	else
 		hit.color = obj->color;

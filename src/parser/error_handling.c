@@ -26,8 +26,10 @@ static inline void	put_pos_nbr_endl_fd(size_t n, int fd);
 * input errors.
 * This function can serve in providing the exit status for the program, by
 * passing its call as an argument to exit(). Invalid input returns the macro
-* INVALID_INPUT, while a system error returns SYSTEM_FAILURE.
+* INPUT_ERROR, while a system error returns SYSTEM_FAILURE, and, if BONUS is
+* defined, a failure to load a texture by an MLX function returns MLX_FAILURE.
 */
+#ifndef BONUS
 int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 {
 	if (status == OPEN_FAILURE)
@@ -56,6 +58,39 @@ int	handle_parsing_error(t_status status, char *line, t_parser *parser)
 	ft_putstr_fd("Aborting miniRT.\n", 2);
 	return (SYSTEM_FAILURE);
 }
+#else
+int	handle_parsing_error(t_status status, char *line, t_parser *parser)
+{
+	if (status == OPEN_FAILURE)
+	{
+		// open() failed: No need to call close(), and nothing has been
+		// dynamically allocated yet, so no need to clean_up_parser().
+		ft_putstr_fd("Failed to open input file. Please make sure the file "
+			"exists and that the correct path is provided.\n", 2);
+		return (SYSTEM_FAILURE);
+	}
+
+	// if true: close() has failed, but all the memory has been already freed, it is safe to exit
+	if (clean_up_parser(parser, line) == CLOSE_FAILURE)
+		return (SYSTEM_FAILURE);
+
+	if (status == INVALID_INPUT)
+		return (INPUT_ERROR);
+
+	if (status == LOAD_TEXTURE_FAIL)
+		return (MLX_FAILURE);
+
+	if (status == ALLOCATION_FAILURE)
+		ft_putstr_fd("Dynamic memory allocation request has failed. ", 2);
+	else if (status == READ_FAILURE)
+		ft_putstr_fd("System call failed; Unable to read input file data. ", 2);
+	else if (status == BUFFER_SIZE_ERROR)
+		ft_putstr_fd("Failed to process input file; buffer size is empty. ", 2);
+
+	ft_putstr_fd("Aborting miniRT.\n", 2);
+	return (SYSTEM_FAILURE);
+}
+#endif
 
 void	display_parsing_error(char *msg, size_t line_num)
 {

@@ -64,7 +64,7 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 
 	if (obj->type == SPHERE)
 	{
-		if (obj->has_tex == true)
+		if (obj->tex_file)
 			sphere_tbn_to_xyz(obj, hit);
 		else
 			hit->normal = normalize(hit->op);

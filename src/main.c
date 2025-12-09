@@ -54,13 +54,13 @@ int	free_exit(char *s, int exit_code)
 	}
 	while (i < info->n_obj)
 	{
-		// free(info->obj[i].tex_name);
-		free(info->obj[i].tex_file);
-		free(info->obj[i].normal_file);
-		if (info->obj[i].has_tex == true)
+		if (info->obj[i].tex_file)
 		{
+			free(info->obj[i].tex_file);
+			free(info->obj[i].normal_file);
 			mlx_delete_texture(info->obj[i].texture);  //need to make sure MLX provides NULL check
-			mlx_delete_texture(info->obj[i].normal);
+			if (info->obj[i].normal)
+				mlx_delete_texture(info->obj[i].normal);
 		}
 		i++;
 	}
