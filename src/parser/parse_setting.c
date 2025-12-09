@@ -44,60 +44,48 @@ int	parse_ambient_lighting(t_color *amb, char *str, t_parser *parser)
 
 int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 {
-	// check if we already have a camera: Only 1 is accepted
 	if (parser->n_cams)
 	{
 		display_parsing_error("Too many cameras suggested by the input file; "
 			"Invalid input at line number", parser->line_num);
 		return (INVALID_INPUT);
 	}
-
 	skip_whitespace_but_not_newline(&str);
-
 	if (parse_3d_vector(&str, &cam->pos, parser->line_num) == -1)
 		return (INVALID_INPUT);
-
 	if (!is_valid_tail_when_expecting_more_data(&str, parser->line_num))
 		return (INVALID_INPUT);
-
 	skip_whitespace_but_not_newline(&str);
-
 	if (parse_3d_vector(&str, &cam->direction, parser->line_num) == -1)
 		return (INVALID_INPUT);
-
 	if (!is_within_range_vector(&cam->direction, parser->line_num))
 		return (INVALID_INPUT);
-
-	// if {0.0,0.0,0.0} is provided, set it to the default direction: {0.0,0.0,1.0}
 	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
 		&& fabs(cam->direction.z) < EPSILON)
 		cam->direction.z = 1.0;
-	cam->direction = normalize(cam->direction); // normalize
-	
+	cam->direction = normalize(cam->direction);
 	if (!is_valid_tail_when_expecting_more_data(&str, parser->line_num))
 		return (INVALID_INPUT);
-
 	skip_whitespace_but_not_newline(&str);
-
 	cam->fov = str_degrees_to_radians(&str, parser->line_num);
 	if (cam->fov < 0.0)
 		return (INVALID_INPUT);
-
 	if (!is_valid_end_of_line(str, parser->line_num))
 		return (INVALID_INPUT);
-	parser->n_cams++;	// validate the camera
+	parser->n_cams++;
 	return (NO_ERROR);
 }
 
-// TODO: When working on the bonus part:
-// Set 'light' as an array, like the object array.
-// This will be useful for the bonus part, since it could allow several key
-// light sources. It would be easier to transform to it if lights (not ambient
-// lights) are stored as an array
-// NOTE: note the other important distinction beetween mandatory and bonus
-// parts: the color data is unused in the mandatory, but perhaps could still
-// be accepted -> while the bonus (or is it only some bonus parts) require/s it!
-
+/*
+* NOTE: While miniRT's mandatory assignment only accepts a single fixed light
+* source (in addition to the ambient light), the so-called 'bonus' part can
+* accept multiple lights. This is why there are two different versions for this
+* function: for the base implementation, the light source is a single 't_light'
+* struct, and if a light has already been parsed, a second gets rejected here.
+* In the more elaborated version, lights are allocated into a linked list, just
+* like the objects - before being transferred into an array, once parsing is
+* complete and rendering is about to start.
+*/
 #ifndef BONUS
 int	parse_light(t_parser *parser, char *str, t_light *light)
 {
