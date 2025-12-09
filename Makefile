@@ -37,6 +37,7 @@ BONUS_OBJ_DIR = ./obj_bonus
 SRC_FILES = main.c \
 			parser/handle_argv.c \
 			parser/parser.c \
+			parser/finalize_parsing.c \
 			parser/parse_setting.c \
 			parser/parse_objects.c \
 			parser/parsing_utils.c \

@@ -99,6 +99,7 @@ int		parse_camera(t_cam *cam, char *str, t_parser *parser);
 int		parse_sphere(t_parser *parser, char *str, size_t line_num);
 int		parse_plane(t_parser *parser, char *str, size_t line_num);
 int		parse_cylinder(t_parser *parser, char *str, size_t line_num);
+int		finalize_parsing(t_parser *parser, t_info *info);
 
 # ifndef BONUS
 
@@ -123,6 +124,13 @@ bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
+void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
+
+# ifndef BONUS
+# else
+
+void	copy_light(t_parser *parser, t_info *info);
+# endif
 
 /* error messaging and memory management */
 int		handle_parsing_error(t_status status, t_parser *parser);
