@@ -124,11 +124,13 @@ bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
+int		create_new_object_node(t_parser *parser);
 void	copy_obj(t_type id, t_parser *parser, int *i, int n_obj);
 
 # ifndef BONUS
 # else
 
+int		create_new_light_node(t_parser *parser);
 void	copy_light(t_parser *parser, t_info *info);
 # endif
 

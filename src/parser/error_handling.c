@@ -100,8 +100,7 @@ void	display_parsing_error(char *msg, size_t line_num)
 * a newline character.
 *
 * WARN: Parameter 'n' should ONLY be a non-negative value, when passed to this
-* function. This function does NOT check for overflow of negative values, on
-* purpose.
+* function. This function does NOT check for overflow of negative values.
 *
 * Regarding the allocation of 21 for 'str': Since SIZE_MAX can only be up to 20
 * digits long, it is safe to allocate 21 bytes for its converted string - 20

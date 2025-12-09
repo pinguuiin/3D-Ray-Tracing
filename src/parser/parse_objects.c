@@ -12,8 +12,6 @@
 
 #include "parser.h"
 
-static int	create_new_object_node(t_parser *parser);
-
 #ifndef BONUS
 #else
 static void	free_all_textures_from_linked_list(t_node_obj *p_head);
@@ -329,19 +327,4 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 	parser->n_cylinders++; // validate cylinder
 
 	return (NO_ERROR);
-}
-
-static int	create_new_object_node(t_parser *parser)
-{
-	t_node_obj	*new_node;
-
-	new_node = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
-	if (!new_node)
-		return (-1);
-	if (!parser->head)
-		parser->head = new_node;
-	else
-		parser->current->next = new_node;
-	parser->current = new_node;
-	return (0);
 }

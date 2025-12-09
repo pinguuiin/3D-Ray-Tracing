@@ -13,10 +13,6 @@
 #include "parser.h"
 
 static inline double	str_degrees_to_radians(char **str, size_t line_num);
-#ifndef BONUS
-#else
-static int	create_new_light_node(t_parser *parser);
-#endif
 
 // NOTE: In all functions of parse_setting.c and parse_objects.c:
 // The pointer 'str' is always pointing one byte past the scene's type
@@ -266,21 +262,3 @@ static inline double	str_degrees_to_radians(char **str, size_t line_num)
 	*str = s;
 	return (angle * M_PI / 180.0);
 }
-
-#ifndef BONUS
-#else
-static int	create_new_light_node(t_parser *parser)
-{
-	t_node_light	*new_node;
-
-	new_node = (t_node_light *) ft_calloc(1, sizeof (t_node_light));
-	if (!new_node)
-		return (-1);
-	if (!parser->head_light)
-		parser->head_light = new_node;
-	else
-		parser->curr_light->next = new_node;
-	parser->curr_light = new_node;
-	return (0);
-}
-#endif

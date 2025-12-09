@@ -42,7 +42,7 @@ SRC_FILES = main.c \
 			parser/parse_objects.c \
 			parser/parsing_utils_1.c \
 			parser/parsing_utils_2.c \
-			parser/parsing_utils_3.c \
+			parser/light_and_obj_utils.c \
 			parser/error_handling.c \
 			parser/ft_strtod.c \
 			parser/parse_triad.c \
