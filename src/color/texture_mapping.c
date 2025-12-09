@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/05 02:57:59 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/10 00:22:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 {
 	double	phi;
 	double	theta;
+	double	oc;
 
 	p = subtract(p, sphere->pos);
 	rotate(sphere->rot, &p);
+	oc = norm(sphere->oc);
 	phi = fmod(atan2(p.z, p.x) + M_PI + sphere->phase, 2 * M_PI);
 	theta = acos(-p.y / sphere->r);
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1); // can also test if floor() looks better
@@ -60,7 +62,7 @@ inline t_vec	px_loc_to_normal(mlx_texture_t *map, int i, int j)
 inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
 {
 	double	rot[3][3];
-	
+
 	get_rotation_matrix(rot, normalize(scale(hit->op, -1)), obj->axis);
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/04 22:37:56 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/09 22:53:13 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # define HEIGHT 1000
 # define EPSILON 1e-8
 # define KS 0.5
-# define KD 0.5
+# define KD 0.9
 # define SHININESS 30
 
 # include "../libft/libft.h"
@@ -149,7 +149,6 @@ typedef struct s_cam
 		bool		has_moved;
 		bool		has_rotated;
 
-
 	}	t_info;
 # else
 	// Struct that includes everything, as well as data for multithreading
@@ -172,6 +171,7 @@ typedef struct s_cam
 		bool			is_inside;
 		bool			has_moved;
 		bool			has_rotated;
+		bool			auto_rotate;
 		t_thread_system	thread_system;
 
 	}	t_info;
