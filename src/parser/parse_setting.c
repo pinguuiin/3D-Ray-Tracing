@@ -12,18 +12,13 @@
 
 #include "parser.h"
 
+static int				validate_ratio(double ratio, size_t line_num);
 static inline double	str_degrees_to_radians(char **str, size_t line_num);
 
-// NOTE: In all functions of parse_setting.c and parse_objects.c:
-// The pointer 'str' is always pointing one byte past the scene's type
-// identifier ('A', 'C', 'L', "sp", "pl" or "cy") AND the whitespace
-// (non-newline) character that follows it! So you still need to parse
-// through potential isspace_but_not_newline().
 int	parse_ambient_lighting(t_color *amb, char *str, t_parser *parser)
 {
 	double	ratio;
 
-	// check if we already have ambient lighting: Only 1 is accepted
 	if (parser->n_ambs)
 	{
 		display_parsing_error("Too many ambient lighting sources provided; "
@@ -31,29 +26,19 @@ int	parse_ambient_lighting(t_color *amb, char *str, t_parser *parser)
 		return (INVALID_INPUT);
 	}
 	skip_whitespace_but_not_newline(&str);
-
 	ratio = 0.0;
 	if (ft_strtod(&str, &ratio, parser->line_num) == -1)
 		return (INVALID_INPUT);
-	if (ratio < 0.0 || ratio > 1.0)
-	{
-		display_parsing_error("Value provided for ambient lighting's brightness "
-			"is out of range. Allowed range: 0.0 to 1.0. See line", parser->line_num);
+	if (!validate_ratio(ratio, parser->line_num))
 		return (INVALID_INPUT);
-	}
-
-
 	if (!is_valid_tail_when_expecting_more_data(&str, parser->line_num))
 		return (INVALID_INPUT);
-
 	skip_whitespace_but_not_newline(&str);
-
 	if (parse_color(&str, amb, &ratio, parser->line_num) == -1)
 		return (INVALID_INPUT);
-
 	if (!is_valid_end_of_line(str, parser->line_num))
 		return (INVALID_INPUT);
-	parser->n_ambs++;	// validate the ambient lighting
+	parser->n_ambs++;
 	return (NO_ERROR);
 }
 
@@ -142,12 +127,8 @@ int	parse_light(t_parser *parser, char *str, t_light *light)
 	ratio = 0.0;
 	if (ft_strtod(&str, &ratio, parser->line_num) == -1)
 		return (INVALID_INPUT);
-	if (ratio < 0.0 || ratio > 1.0)
-	{
-		display_parsing_error("Value provided for light source's brightness "
-			"is out of range. Allowed range: 0.0 to 1.0. See line", parser->line_num);
+	if (!validate_ratio(ratio, parser->line_num))
 		return (INVALID_INPUT);
-	}
 
 	// WARN:
 	// the next data is unused in the mandatory part.
@@ -204,12 +185,8 @@ int	parse_light(t_parser *parser, char *str)
 	ratio = 0.0;
 	if (ft_strtod(&str, &ratio, parser->line_num) == -1)
 		return (INVALID_INPUT);
-	if (ratio < 0.0 || ratio > 1.0)
-	{
-		display_parsing_error("Value provided for light source's brightness "
-			"is out of range. Allowed range: 0.0 to 1.0. See line", parser->line_num);
+	if (!validate_ratio(ratio, parser->line_num))
 		return (INVALID_INPUT);
-	}
 	if (!*str || ft_isspace(*str))
 	{
 		skip_whitespace(&str);
@@ -233,6 +210,17 @@ int	parse_light(t_parser *parser, char *str)
 }
 #endif
 
+static int	validate_ratio(double ratio, size_t line_num)
+{
+	if (ratio < 0.0 || ratio > 1.0)
+	{
+		display_parsing_error("Value provided for light's brightness is out "
+			"of range. Allowed range: 0.0 to 1.0. See line", line_num);
+		return (0);
+	}
+	return (1);
+}
+
 static inline double	str_degrees_to_radians(char **str, size_t line_num)
 {
 	uint32_t	angle;
@@ -250,14 +238,13 @@ static inline double	str_degrees_to_radians(char **str, size_t line_num)
 	}
 	while (ft_isdigit(*s))
 	{
-		angle = angle * 10 + *s - '0';
+		angle = angle * 10 + *s++ - '0';
 		if (angle > 180)
 		{
 			display_parsing_error("Camera's field of view is beyond accepted "
 				"range [0,180], on line", line_num);
 			return (-1.0);
 		}
-		s++;
 	}
 	*str = s;
 	return (angle * M_PI / 180.0);
