@@ -8,4 +8,7 @@ Movement of camera's position: `WASD` and `QZ`
 
 Press `arrow keys` to rotate the camera view.
 
+Press `1` to automate rotation for all spheres with a texture.
+Press `2` to stop the autorotation.
+
 Press `Esc` or click on the cross on the window frame to close the window and quit the program.
