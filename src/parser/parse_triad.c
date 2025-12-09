@@ -12,6 +12,7 @@
 
 #include "parser.h"
 
+static int	convert_and_validate(uint16_t *conversion, char s, size_t line_num);
 static int	str_to_linear_color(char **str, double *result, size_t line_num);
 
 /*
@@ -61,18 +62,25 @@ static int	str_to_linear_color(char **str, double *result, size_t line_num)
 	}
 	while (ft_isdigit(*s))
 	{
-		conversion = conversion * 10 + *s - '0';
-		if (conversion > 255)
-		{
-			display_parsing_error("Invalid input provided for color value. "
-				"Please use integers between 0 and 255. See line", line_num);
+		if (!convert_and_validate(&conversion, *s, line_num))
 			return (-1);
-		}
 		s++;
 	}
 	*result = (double) conversion / 255.0;
 	*str = s;
 	return (0);
+}
+
+static int	convert_and_validate(uint16_t *conversion, char s, size_t line_num)
+{
+	*conversion = *conversion * 10 + s - '0';
+	if (*conversion > 255)
+	{
+		display_parsing_error("Invalid input provided for color value. "
+			"Please use integers between 0 and 255. See line", line_num);
+		return (0);
+	}
+	return (1);
 }
 
 /*
