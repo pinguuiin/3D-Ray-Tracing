@@ -1,80 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_utils.c                                    :+:      :+:    :+:   */
+/*   parsing_utils_2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/03 08:07:59 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/03 19:26:57 by ykadosh          ###   ########.fr       */
+/*   Created: 2025/12/09 17:23:47 by ykadosh           #+#    #+#             */
+/*   Updated: 2025/12/09 17:28:52 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
 /*
-* returns true if the character is: space, newline ('\n'), form-feed ('\f'),
-* horizontal tab ('\t'), vertical tab ('\v')  or carriage return ('\r')
+* Checks the character to which str is pointing at, advances it by one byte
+* and returns 1 if the character is expected, or 0 if it is not.
+* The use case for this function should respect both of the following aspects:
+* - It should be deployed right after a call to ft_strtod(), parse_color() or
+*   parse_3d_vector()
+* - when miniRT expects yet more data after the last value that has been parsed
 */
-bool	ft_isspace(int c)
-{
-	if (c == ' ' || (c >= '\t' && c <= '\r'))
-		return (1);
-	return (0);
-}
-
-/*
-* returns true if the character is one of the following: space, form-feed
-* ('\f'), horizontal tab ('\t'), vertical tab ('\v') or carriage return ('\r')
-*/
-bool	isspace_but_not_newline(int c)
-{
-	if (c == ' ' || c == '\t' || (c >= '\v' && c <= '\r'))
-		return (1);
-	return (0);
-}
-
-void	skip_whitespace(char **str)
-{
-	char	*s;
-
-	s = *str;
-	while (*s == ' ' || (*s >= '\t' && *s <= '\r'))
-		s++;
-	*str = s;
-}
-
-void	skip_whitespace_but_not_newline(char **str)
-{
-	char	*s;
-
-	s = *str;
-	while (*s == ' ' || *s == '\t' || (*s >= '\v' && *s <= '\r'))
-		s++;
-	*str = s;
-}
-
-bool	is_valid_separator(char	**str, size_t line_num)
-{
-	if (**str == ',')
-		(*str)++;
-	else
-	{
-		display_parsing_error("Invalid input when expecting a comma to "
-			"separate between elements of a triad of values.\n"
-			"See line number", line_num);
-		return (0);
-	}
-	if (**str == ' ')
-		(*str)++;
-	return (1);
-}
-
-// Checks the character to which str is pointing at, advances it by one byte
-// and returns 1 if the character is expected, or returns 0 if it is unexpected.
-// The use case for this function should respect both of the following aspects:
-// - right after a call to ft_strtod(), parse_color() or parse_3d_vector()
-// - when miniRT expects yet more data after the last value that has been parsed
 bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num)
 {
 	if (isspace_but_not_newline(**str))
