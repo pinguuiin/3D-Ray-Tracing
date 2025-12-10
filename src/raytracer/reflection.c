@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/09 16:58:04 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/10 22:24:40 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,9 +150,10 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		hit->incoming = subtract(light->pos, hit->pos);
 		hit->k_light = norm(hit->incoming);
 		hit->incoming = normalize(hit->incoming);
+		if (i == 0)
+			get_hit_normal(obj, hit);
 		if (is_shadow(info, hit->incoming, hit->pos, hit))
 			continue ;
-		get_hit_normal(obj, hit);
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 		hit->outgoing = subtract(hit->outgoing, hit->incoming);
 		add_diffuse_and_specular(hit, light);
