@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/03 07:38:04 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/10 00:27:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,26 @@ void	update_data_for_new_frame(t_info *info)
 	info->is_inside = false;
 }
 #else
+static inline void	update_sphere_phase_for_new_frame(t_info *info)
+{
+	int	i;
+
+	i = 0;
+	while (i < info->n_obj)
+	{
+		if (info->obj[i].type == SPHERE)
+			info->obj[i].phase -= 0.01;
+		i++;
+	}
+}
+
 void	update_data_for_new_frame(t_info *info)
 {
 	int	i;
 
 	update_camera_for_new_frame(info);
+	if (info->auto_rotate == true)
+		update_sphere_phase_for_new_frame(info);
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
 	{
