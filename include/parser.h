@@ -128,7 +128,7 @@ bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
 
-/* three dimensional vector parsing */
+/* vector parsing */
 int		ft_strtod(char **str, double *result, size_t line_num);
 int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
 int		parse_color(char **str, t_color *color, double *ratio, size_t line_num);
