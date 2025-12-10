@@ -67,6 +67,7 @@ typedef struct s_parser
 {
 	int			fd;
 	char		*line;
+	double		ratio;
 	size_t		line_num;
 	int			n_lights;
 	int			n_spheres;
@@ -84,6 +85,7 @@ typedef struct s_parser
 {
 	int				fd;
 	char			*line;
+	double			ratio;
 	size_t			line_num;
 	int				n_lights;
 	int				n_spheres;
@@ -133,8 +135,11 @@ int		ft_strtod(char **str, double *result, size_t line_num);
 int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
 int		parse_color(char **str, t_color *color, double *ratio, size_t line_num);
 void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
+// FIXME: these next ones could probably go into the same file, no?
 bool	is_within_range_vector(t_vec *vec, size_t line_num);
 int		validate_vector(t_vec *vector, size_t line_num, t_vector_id id);
+int		parse_and_normalize_vector(char **str, t_vec *vector, size_t line_num,
+			t_vector_id id);
 
 /* object and light lists */
 int		create_new_object_node(t_parser *parser);

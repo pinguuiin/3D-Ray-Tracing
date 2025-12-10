@@ -198,17 +198,10 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 
 	// parse 3d normalized axis vector. In range [-1,1] for each x,y,z axis (t_vec 'axis')
 
-	if (parse_3d_vector(&str, &plane->axis, line_num) == -1)
+	if (parse_and_normalize_vector(&str, &plane->axis, line_num,
+		PLANE_NORMAL) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_within_range_vector(&plane->axis, line_num))
-		return (INVALID_INPUT);
-
-	if (!validate_vector(&plane->axis, line_num, PLANE_NORMAL))
-		return (INVALID_INPUT);
-
-	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
-		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(&str);
 
 	// parse R,G,B colors in range [0-255]
@@ -254,15 +247,11 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 
 	// parse three dimensional normalized vector of the cylinder's axis (t_vec 'axis')
 	// it is not an actual normal, but the direction of the central axis of the cylinder.
-	if (parse_3d_vector(&str, &cylinder->axis, line_num) == -1)
-		return (INVALID_INPUT);
-	if (!is_within_range_vector(&cylinder->axis, line_num))
-		return (INVALID_INPUT);
-	if (!validate_vector(&cylinder->axis, line_num, CYLINDER_AXIS))
+
+	if (parse_and_normalize_vector(&str, &cylinder->axis, line_num,
+		CYLINDER_AXIS) == -1)
 		return (INVALID_INPUT);
 
-	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
-		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(&str);
 
 	// parse the cylinder's diameter, and halve it, storing the RADIUS instead
@@ -342,4 +331,18 @@ int	validate_vector(t_vec *vector, size_t line_num, t_vector_id id)
 	}
 	*vector = normalize(*vector);
 	return (1);
+}
+
+int	parse_and_normalize_vector(char **str, t_vec *vector, size_t line_num,
+		t_vector_id id)
+{
+	if (parse_3d_vector(str, vector, line_num) == -1)
+		return (-1);
+	if (!is_within_range_vector(vector, line_num))
+		return (-1);
+	if (!validate_vector(vector, line_num, id))
+		return (-1);
+	if (!is_valid_tail_when_expecting_more_data(str, line_num))
+		return (-1);
+	return (0);
 }
