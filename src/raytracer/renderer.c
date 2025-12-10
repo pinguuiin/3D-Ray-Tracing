@@ -35,42 +35,6 @@ inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 }
 
 #ifndef BONUS
-#else
-/*
-* Since pthread_barrier_wait() can only fail if the barrier is not initialized
-* beforehand, this program does no error handling for that failure: The barrier
-* is initialized in the init_barrier() function, and if that initialization does
-* not succeed, no thread is created and rendering happens a single process.
-*/
-inline void	*rendering_routine(void *ptr)
-{
-	t_painter	*painter;
-	t_info		*info;
-	uint32_t	x;
-
-	painter = (t_painter *)ptr;
-	info = painter->p_info;
-	while (!atomic_load(&info->thread_system.is_done_init))
-	{
-		(void)usleep(1000);
-		if (atomic_load(&info->thread_system.exit_flag))
-			return (NULL);
-	}
-	while (1)
-	{
-		x = painter->start_x;
-		(void)pthread_barrier_wait(&info->thread_system.barrier);
-		if (atomic_load(&info->thread_system.exit_flag))
-			return (NULL);
-		while (x < painter->border_x)
-			render_column(x++, info);
-		atomic_fetch_add(&info->thread_system.n_done_painters, 1);
-	}
-	return (NULL);
-}
-#endif
-
-#ifndef BONUS
 
 void	renderer(void *param)
 {
@@ -105,5 +69,38 @@ void	renderer(void *param)
 	while (atomic_load(&thread_system->n_done_painters) < N_THREADS)
 		(void)usleep(200);
 	atomic_store(&thread_system->n_done_painters, 0);
+}
+
+/*
+* Since pthread_barrier_wait() can only fail if the barrier is not initialized
+* beforehand, this program does no error handling for that failure: The barrier
+* is initialized in the init_barrier() function, and if that initialization does
+* not succeed, no thread is created and rendering happens a single process.
+*/
+inline void	*rendering_routine(void *ptr)
+{
+	t_painter	*painter;
+	t_info		*info;
+	uint32_t	x;
+
+	painter = (t_painter *)ptr;
+	info = painter->p_info;
+	while (!atomic_load(&info->thread_system.is_done_init))
+	{
+		(void)usleep(1000);
+		if (atomic_load(&info->thread_system.exit_flag))
+			return (NULL);
+	}
+	while (1)
+	{
+		x = painter->start_x;
+		(void)pthread_barrier_wait(&info->thread_system.barrier);
+		if (atomic_load(&info->thread_system.exit_flag))
+			return (NULL);
+		while (x < painter->border_x)
+			render_column(x++, info);
+		atomic_fetch_add(&info->thread_system.n_done_painters, 1);
+	}
+	return (NULL);
 }
 #endif

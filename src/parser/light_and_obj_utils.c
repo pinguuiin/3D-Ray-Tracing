@@ -82,3 +82,14 @@ void	copy_light(t_parser *parser, t_info *info)
 	}
 }
 #endif
+
+int	validate_ratio(double ratio, size_t line_num)
+{
+	if (ratio < 0.0 || ratio > 1.0)
+	{
+		display_parsing_error("Value provided for light's brightness is out "
+			"of range. Allowed range: 0.0 to 1.0. See line", line_num);
+		return (0);
+	}
+	return (1);
+}

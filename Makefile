@@ -38,7 +38,8 @@ SRC_FILES = main.c \
 			parser/handle_argv.c \
 			parser/parser.c \
 			parser/finalize_parsing.c \
-			parser/parse_setting.c \
+			parser/parse_light.c \
+			parser/parse_camera.c \
 			parser/parse_objects.c \
 			parser/parsing_utils_1.c \
 			parser/parsing_utils_2.c \
