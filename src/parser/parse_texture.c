@@ -29,8 +29,8 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 		return (-1);
 
 	// set the z value of the sphere's axis to 0, and normalize the vector.
-	sphere->axis.z = 0.0;
-	sphere->axis = normalize(sphere->axis);
+	if (!validate_vector(&sphere->axis, line_num, SPHERE_AXIS))
+		return (INVALID_INPUT);
 
 	skip_whitespace_but_not_newline(str);
 

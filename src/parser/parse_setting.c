@@ -60,10 +60,8 @@ int	parse_camera(t_cam *cam, char *str, t_parser *parser)
 		return (INVALID_INPUT);
 	if (!is_within_range_vector(&cam->direction, parser->line_num))
 		return (INVALID_INPUT);
-	if (fabs(cam->direction.x) < EPSILON && fabs(cam->direction.y) < EPSILON
-		&& fabs(cam->direction.z) < EPSILON)
-		cam->direction.z = 1.0;
-	cam->direction = normalize(cam->direction);
+	if (!validate_vector(&cam->direction, parser->line_num, CAM_DIRECTION))
+		return (INVALID_INPUT);
 	if (!is_valid_tail_when_expecting_more_data(&str, parser->line_num))
 		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(&str);

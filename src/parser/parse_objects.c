@@ -204,14 +204,8 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 	if (!is_within_range_vector(&plane->axis, line_num))
 		return (INVALID_INPUT);
 
-	if (fabs(plane->axis.x) < EPSILON && fabs(plane->axis.y) < EPSILON
-		&& fabs(plane->axis.z) < EPSILON)
-	{
-		display_parsing_error("Provided normal vector for plane has a "
-			"magnitude of zero; Unable to render object. See line:", line_num);
+	if (!validate_vector(&plane->axis, line_num, PLANE_NORMAL))
 		return (INVALID_INPUT);
-	}
-	plane->axis = normalize(plane->axis);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (INVALID_INPUT);
@@ -264,14 +258,8 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 		return (INVALID_INPUT);
 	if (!is_within_range_vector(&cylinder->axis, line_num))
 		return (INVALID_INPUT);
-	if (fabs(cylinder->axis.x) < EPSILON && fabs(cylinder->axis.y) < EPSILON
-		&& fabs(cylinder->axis.z) < EPSILON)
-	{
-		display_parsing_error("Provided vector for cylinder's axis has a "
-			"magnitude of zero; Unable to render object. See line:", line_num);
+	if (!validate_vector(&cylinder->axis, line_num, CYLINDER_AXIS))
 		return (INVALID_INPUT);
-	}
-	cylinder->axis = normalize(cylinder->axis);
 
 	if (!is_valid_tail_when_expecting_more_data(&str, line_num))
 		return (INVALID_INPUT);
@@ -327,4 +315,31 @@ int	parse_cylinder(t_parser *parser, char *str, size_t line_num)
 	parser->n_cylinders++; // validate cylinder
 
 	return (NO_ERROR);
+}
+
+int	validate_vector(t_vec *vector, size_t line_num, t_vector_id id)
+{
+	if (id == SPHERE_AXIS)
+		vector->z = 0.0;
+	if (fabs(vector->x) < EPSILON && fabs(vector->y) < EPSILON
+		&& fabs(vector->z) < EPSILON)
+	{
+		if (id == CAM_DIRECTION)
+			display_parsing_error("Vector normalization failed: cannot accept "
+				"a zero-length camera direction. Error on line", line_num);
+		else if (id == PLANE_NORMAL)
+			display_parsing_error("Vector normalization failed: cannot "
+				"normalize a zero-length plane normal. See line:", line_num);
+		else if (id == CYLINDER_AXIS)
+			display_parsing_error("Vector normalization failed: cannot "
+				"normalize a zero-length cylinder axis. See line:", line_num);
+		else if (id == SPHERE_AXIS)
+			display_parsing_error("Vector normalization failed: cannot accept "
+				"a zero-length sphere axis.\n"
+				"Please note that the z-component is ignored and parsed as 0.0 "
+				"when the vector belongs to a sphere.\nSee line:", line_num);
+		return (0);
+	}
+	*vector = normalize(*vector);
+	return (1);
 }
