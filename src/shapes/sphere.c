@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:05:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/03 05:33:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 00:42:49 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-inline double	ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc)
+inline double	ray_hit_sphere(t_vec ray, t_object *sphere, t_vec oc, bool from_cam)
 {
 	t_discrim	f;
 
@@ -28,7 +28,8 @@ inline double	ray_hit_sphere(t_info *info, t_vec ray, t_object *sphere, t_vec oc
 		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
 		if (f.root2 >= EPSILON)
 		{
-			info->is_inside = true;
+			if (from_cam)
+				get_info()->is_inside = true;
 			return (f.root2);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/09 17:00:10 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 00:31:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 	{
 		obj = &info->obj[id];
 		if (obj->type == SPHERE)
-			k = ray_hit_sphere(info, ray, obj, obj->oc);
+			k = ray_hit_sphere(ray, obj, obj->oc, true);
 		else if (obj->type == PLANE)
 			k = ray_hit_plane(ray, obj, obj->oc);
 		else
-			k = ray_hit_cylinder(info, ray, obj, obj->oc);
+			k = ray_hit_cylinder(ray, obj, obj->oc, true);
 		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
 			k_min = k;

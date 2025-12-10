@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/10 22:24:40 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 00:44:13 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 			continue ;
 		obj = &info->obj[id];
 		if (obj->type == SPHERE)
-			k = ray_hit_sphere(info, ray, obj, subtract(pos, obj->pos));
+			k = ray_hit_sphere(ray, obj, subtract(pos, obj->pos), false);
 		else if (obj->type == PLANE)
 			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
 		else
-			k = ray_hit_cylinder(info, ray, obj, subtract(pos, obj->pos));
+			k = ray_hit_cylinder(ray, obj, subtract(pos, obj->pos), false);
 		if (k > EPSILON && hit->k_light - k > EPSILON)
 			return (true);
 	}
