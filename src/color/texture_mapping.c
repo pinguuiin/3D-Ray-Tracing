@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/10 22:22:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/10 22:31:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,6 @@ inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
 	get_rotation_matrix(rot, normalize(scale(hit->op, -1)), obj->axis);
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);
-	// hit->normal = normalize(hit->normal);
+	hit->normal = normalize(hit->normal);
 }
 #endif
