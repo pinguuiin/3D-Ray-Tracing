@@ -129,12 +129,13 @@ bool	is_valid_separator(char	**str, size_t line_num);
 bool	is_valid_tail_when_expecting_more_data(char **str, size_t line_num);
 bool	is_valid_end_of_line(char *s, size_t line_num);
 bool	is_valid_n_elements(t_parser *parser, t_list_id id);
+int		set_radius_or_height(char **str, t_parser *parser, double *r_or_h,
+			bool is_radius);
+int		validate_object(char *str, t_parser *parser);
 
 /* vector parsing */
 int		ft_strtod(char **str, double *result, size_t line_num);
 int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
-// FIXME: these next ones could probably go into the same file, no?
-bool	is_within_range_vector(t_vec *vec, size_t line_num);
 int		validate_vector(t_vec *vector, size_t line_num, t_vector_id id);
 int		parse_and_normalize_vector(char **str, t_vec *vector, size_t line_num,
 			t_vector_id id);

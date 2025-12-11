@@ -85,20 +85,20 @@ static int	parse_line(t_parser *parser, char *str, t_info *info)
 	skip_whitespace_but_not_newline(&str);
 	if (*str == '#' || *str == '\n')
 		return (0);
-	else if (*str == 'A' && isspace_but_not_newline(*(str + 1)))
+	else if (*str == 'A' && isspace_but_not_newline(str[1]))
 		return (parse_ambient_lighting(&info->amb, str + 2, parser));
-	else if (*str == 'C' && isspace_but_not_newline(*(str + 1)))
+	else if (*str == 'C' && isspace_but_not_newline(str[1]))
 		return (parse_camera(&info->cam, str + 2, parser));
-	else if (*str == 'L' && isspace_but_not_newline(*(str + 1)))
+	else if (*str == 'L' && isspace_but_not_newline(str[1]))
 		return (parse_light(parser, str + 2, &info->light));
-	else if (*str == 's' && *(str + 1) == 'p'
-		&& isspace_but_not_newline(*(str + 2)))
+	else if (*str == 's' && str[1] == 'p'
+		&& isspace_but_not_newline(str[2]))
 		return (parse_sphere(parser, str + 3, parser->line_num));
-	else if (*str == 'p' && *(str + 1) == 'l'
-		&& isspace_but_not_newline(*(str + 2)))
+	else if (*str == 'p' && str[1] == 'l'
+		&& isspace_but_not_newline(str[2]))
 		return (parse_plane(parser, str + 3, parser->line_num));
-	else if (*str == 'c' && *(str + 1) == 'y'
-		&& isspace_but_not_newline(*(str + 2)))
+	else if (*str == 'c' && str[1] == 'y'
+		&& isspace_but_not_newline(str[2]))
 		return (parse_cylinder(parser, str + 3, parser->line_num));
 	if (*str)
 	{

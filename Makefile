@@ -40,11 +40,14 @@ SRC_FILES = main.c \
 			parser/finalize_parsing.c \
 			parser/parse_light.c \
 			parser/parse_camera.c \
-			parser/parse_objects.c \
+			parser/parse_sphere.c \
+			parser/parse_plane.c \
+			parser/parse_cylinder.c \
 			parser/parsing_utils_1.c \
 			parser/parsing_utils_2.c \
 			parser/light_and_obj_utils.c \
 			parser/ft_strtod.c \
+			parser/parse_vector.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \

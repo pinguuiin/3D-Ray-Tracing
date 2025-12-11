@@ -6,7 +6,7 @@
 /*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:23:47 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/09 17:28:52 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/12/11 23:02:44 by ykadosh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,28 +79,59 @@ bool	is_valid_n_elements(t_parser *parser, t_list_id id)
 	return (1);
 }
 
-bool	is_within_range_vector(t_vec *vec, size_t line_num)
+/*
+* parses the given object's diameter or height, checks whether it is valid (only
+* positive values which are not too close to zero are accepted), and converts
+* it to a radius (by halving the value), since the radius (or half the height)
+* is more useful for miniRT's rendering calculations.
+*/
+int	set_radius_or_height(char **str, t_parser *parser,
+				double *r_or_h, bool is_diameter)
 {
-	if (vec->x < -1.0 || vec->x > +1.0)
+	if (ft_strtod(str, r_or_h, parser->line_num) == -1)
+		return (-1);
+	if (*r_or_h < EPSILON)
 	{
-		display_parsing_error("x axis of vector has to be within range "
-			"[-1,+1] for miniRT to accept this file.\n"
-			"This invalid input was detected on line number:", line_num);
-		return (0);
+		if (parser->current->object.type == SPHERE)
+			display_parsing_error("Unable to render sphere: diameter provided "
+				"has to be a positive value, not too close to zero. See line:",
+				parser->line_num);
+		else
+		{
+			if (is_diameter)
+				display_parsing_error("Unable to render cylinder: diameter "
+					"provided has to be a positive value, not too close to "
+					"zero. See line:", parser->line_num);
+			else
+				display_parsing_error("Height of cylinder is practically "
+					"nonexistent; Unable to render object. See line:",
+					parser->line_num);
+		}
+		return (-1);
 	}
-	if (vec->y < -1.0 || vec->y > +1.0)
-	{
-		display_parsing_error("y axis of vector has to be within range "
-			"[-1,+1] for miniRT to accept this file.\n"
-			"This invalid input was detected on line number:", line_num);
-		return (0);
-	}
-	if (vec->z < -1.0 || vec->z > +1.0)
-	{
-		display_parsing_error("z axis of vector has to be within range "
-			"[-1,+1] for miniRT to accept this file.\n"
-			"This invalid input was detected on line number:", line_num);
-		return (0);
-	}
-	return (1);
+	*r_or_h *= 0.5;
+	if (!is_valid_tail_when_expecting_more_data(str, parser->line_num))
+		return (-1);
+	return (0);
+}
+
+/*
+* Unlike the many parsing functions of this ray tracer program, this function
+* (and is_valid_end_of_line(), which it calls) do not take a double pointer to
+* the string, because they only serve to validate (or invalidate) the end of the
+* line, and no more parsing of any elements is actually done.
+*/
+int	validate_object(char *str, t_parser *parser)
+{
+	if (!is_valid_end_of_line(str, parser->line_num))
+		return (-1);
+	if (!is_valid_n_elements(parser, OBJECT))
+		return (-1);
+	if (parser->current->object.type == SPHERE)
+		parser->n_spheres++;
+	else if (parser->current->object.type == PLANE)
+		parser->n_planes++;
+	else if (parser->current->object.type == CYLINDER)
+		parser->n_cylinders++;
+	return (0);
 }
