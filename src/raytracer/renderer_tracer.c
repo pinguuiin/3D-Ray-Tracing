@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/11 00:31:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 19:46:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 	{
 		obj = &info->obj[id];
 		if (obj->type == SPHERE)
-			k = ray_hit_sphere(ray, obj, obj->oc, true);
+			k = ray_hit_sphere(ray, obj, obj->oc);
 		else if (obj->type == PLANE)
 			k = ray_hit_plane(ray, obj, obj->oc);
 		else
-			k = ray_hit_cylinder(ray, obj, obj->oc, true);
+			k = ray_hit_cylinder(ray, obj, obj->oc);
 		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
 			k_min = k;
@@ -58,8 +58,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	obj = &info->obj[hit.obj_id];
 	hit.color = obj->color;
 	color = dot_elem(info->amb, hit.color);
-	if (!info->is_inside)
-		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
+	color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 #else
@@ -96,8 +95,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	else
 		hit.color = obj->color;
 	color = dot_elem(info->amb, hit.color);
-	if (!info->is_inside)
-		color = add(color, reflection(info, obj, ray, &hit));  // when camera on the object, k=0, the return will only include diffuse
+	color = add(color, reflection(info, obj, ray, &hit));  // when camera on the object, k=0, the return will only include diffuse
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 #endif

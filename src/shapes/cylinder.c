@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 00:42:41 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 19:43:53 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,13 @@ static inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_ve
 }
 
 /* ray shooting from inside the infinite cylinder */
-static inline double	hit_from_inside(t_object *cy, t_vec o_side, t_discrim f, bool from_cam)
+static inline double	hit_from_inside(t_object *cy, t_vec o_side, t_discrim f)
 {
 	double	hit_h;
 
 	hit_h = dot(o_side, cy->axis);
 	if (fabs(f.oc_n) - cy->h < -EPSILON)  // inside the actual cylinder
 	{
-		if (from_cam)
-			get_info()->is_inside = true;
 		if (fabs(hit_h) - cy->h < EPSILON)
 			return (f.root2);
 		return (hit_flat_disk(hit_h, f.oc_n, f.ray_n, cy->h));
@@ -59,14 +57,12 @@ static inline double	hit_from_inside(t_object *cy, t_vec o_side, t_discrim f, bo
 	return (hit_flat_disk(f.oc_n, f.oc_n, f.ray_n, cy->h));
 }
 
-static inline double	ray_parallel_axis(t_object *cy, t_discrim f, bool from_cam)
+static inline double	ray_parallel_axis(t_object *cy, t_discrim f)
 {
 	if (f.c > -EPSILON)  // shooting outside
 		return (-1.0);
 	if (fabs(f.oc_n) - cy->h < -EPSILON)  // camera inside the cylinder
 	{
-		if (from_cam)
-			get_info()->is_inside = true;
 		if (f.oc_n * f.ray_n < 0.0)
 			return (cy->h + fabs(f.oc_n));
 		return (cy->h - fabs(f.oc_n));
@@ -78,7 +74,7 @@ static inline double	ray_parallel_axis(t_object *cy, t_discrim f, bool from_cam)
 	return (-1.0);
 }
 
-inline double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc, bool from_cam)
+inline double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc)
 {
 	t_discrim	f;
 
@@ -88,7 +84,7 @@ inline double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc, bool from_cam)
 	f.b = 2 * (dot(oc, ray) - f.oc_n * f.ray_n);
 	f.c = dot(oc, oc) - f.oc_n * f.oc_n - cy->r * cy->r;
 	if (f.a < EPSILON)  // ray parallel with the cylinder axis
-		return (ray_parallel_axis(cy, f, from_cam));
+		return (ray_parallel_axis(cy, f));
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
 	if (f.delta >= EPSILON)  // delta = 0, ray is tangent to the cylinder, hit; root = 0, camera on the cylinder, ray hit
 	{
@@ -97,7 +93,7 @@ inline double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc, bool from_cam)
 			return (hit_from_outside(cy, ray, f, oc));
 		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
 		if (f.root2 > -EPSILON)  // ray from inside the infinitely long cylinder
-			return (hit_from_inside(cy, add(oc, scale(ray, f.root2)), f, from_cam));
+			return (hit_from_inside(cy, add(oc, scale(ray, f.root2)), f));
 	}
 	return (-1.0);
 }

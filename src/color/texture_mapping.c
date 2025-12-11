@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/10 22:31:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 21:38:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,18 @@ inline t_vec	px_loc_to_normal(mlx_texture_t *map, int i, int j)
 inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
 {
 	double	rot[3][3];
+	t_vec	geo_normal;
 
+	geo_normal = normalize(hit->op);
 	get_rotation_matrix(rot, normalize(scale(hit->op, -1)), obj->axis);
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);
 	hit->normal = normalize(hit->normal);
+	if (dot(geo_normal, subtract(get_info()->cam.pos, hit->pos)) < 0)
+	{
+		hit->normal = scale(hit->normal, -1);
+		geo_normal = scale(geo_normal, -1);
+	}
+	hit->pos = add(hit->pos, scale(geo_normal, 0.0001));
 }
 #endif

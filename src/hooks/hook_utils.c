@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 19:27:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 19:41:13 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ void	update_data_for_new_frame(t_info *info)
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
 		resize(info->mlx->width, info->mlx->height, info);
-	info->is_inside = false;
 }
 #else
 static inline void	update_sphere_phase_for_new_frame(t_info *info)
@@ -83,6 +82,5 @@ void	update_data_for_new_frame(t_info *info)
 			}
 		}
 	}
-	info->is_inside = false;
 }
 #endif

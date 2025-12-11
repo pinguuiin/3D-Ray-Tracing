@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 00:44:13 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 21:41:00 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,15 @@ static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 	id = -1;
 	while (id++ < info->n_obj - 1)
 	{
-		if (id == hit->obj_id)
-			continue ;
+		// if (id == hit->obj_id)
+		// 	continue ;
 		obj = &info->obj[id];
 		if (obj->type == SPHERE)
-			k = ray_hit_sphere(ray, obj, subtract(pos, obj->pos), false);
+			k = ray_hit_sphere(ray, obj, subtract(pos, obj->pos));
 		else if (obj->type == PLANE)
 			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
 		else
-			k = ray_hit_cylinder(ray, obj, subtract(pos, obj->pos), false);
+			k = ray_hit_cylinder(ray, obj, subtract(pos, obj->pos));
 		if (k > EPSILON && hit->k_light - k > EPSILON)
 			return (true);
 	}
@@ -37,7 +37,7 @@ static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
 }
 
 #ifndef BONUS
-static inline void	get_hit_normal(t_object *obj, t_hit *hit)
+static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
@@ -56,19 +56,22 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
+	if (dot(hit->normal, subtract(info->cam.pos, hit->pos)) < 0)
+		hit->normal = scale(hit->normal, -1);
+	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
 #else
-static inline void	get_hit_normal(t_object *obj, t_hit *hit)
+static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
-	if (obj->type == SPHERE)
+	if (obj->type == SPHERE && obj->normal)
 	{
-		if (obj->normal)
-			sphere_tbn_to_xyz(obj, hit);
-		else
-			hit->normal = normalize(hit->op);
+		sphere_tbn_to_xyz(obj, hit);
+		return ;
 	}
+	if (obj->type == SPHERE)
+		hit->normal = normalize(hit->op);
 	else if (obj->type == CYLINDER)
 	{
 		hit_h = dot(hit->op, obj->axis);
@@ -82,6 +85,9 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
+	if (dot(hit->normal, subtract(info->cam.pos, hit->pos)) < 0)
+		hit->normal = scale(hit->normal, -1);
+	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
 #endif
 
@@ -126,9 +132,9 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	hit->incoming = subtract(light->pos, hit->pos);
 	hit->k_light = norm(hit->incoming);
 	hit->incoming = normalize(hit->incoming);
+	get_hit_normal(info, obj, hit);
 	if (is_shadow(info, hit->incoming, hit->pos, hit))
 		return (hit->intensity);
-	get_hit_normal(obj, hit);
 	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 	hit->outgoing = subtract(hit->outgoing, hit->incoming);
 	add_diffuse_and_specular(hit, light);
@@ -151,7 +157,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		hit->k_light = norm(hit->incoming);
 		hit->incoming = normalize(hit->incoming);
 		if (i == 0)
-			get_hit_normal(obj, hit);
+			get_hit_normal(info, obj, hit);
 		if (is_shadow(info, hit->incoming, hit->pos, hit))
 			continue ;
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));

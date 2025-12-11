@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 00:03:24 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/11 19:45:53 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ typedef struct s_cam
 		t_object	*obj;  	// array of objects
 		int			n_obj;
 		t_light		light;	// one single light
-		bool		is_inside;
 		bool		has_moved;
 		bool		has_rotated;
 
@@ -168,7 +167,6 @@ typedef struct s_cam
 		int				n_obj;
 		t_light			*light;	// array of lights
 		int				n_light;
-		bool			is_inside;
 		bool			has_moved;
 		bool			has_rotated;
 		bool			auto_rotate;
@@ -197,9 +195,9 @@ void		sphere_tbn_to_xyz(t_object *obj, t_hit *hit);
 #endif
 
 /* ray tracing */
-double	ray_hit_sphere(t_vec ray, t_object *sphere, t_vec oc, bool from_cam);
-double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc, bool from_cam);
+double	ray_hit_sphere(t_vec ray, t_object *sphere, t_vec oc);
 double	ray_hit_plane(t_vec ray, t_object *plane, t_vec oc);
+double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc);
 void	renderer(void *param);
 void	render_column(int x, t_info *info);
 void	update_data_for_new_frame(t_info *info);
