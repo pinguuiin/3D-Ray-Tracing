@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 19:43:53 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:48:02 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f, t_ve
 	hit_h[0] = dot(add(oc, scale(ray, f.root)), cy->axis);
 	if (fabs(hit_h[0]) - cy->h > EPSILON)  // closer intersection point P is out of boundary
 	{
-		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
+		f.root2 = (-f.b + sqrt(f.delta)) / (2 * f.a);
 		hit_h[1] = dot(add(oc, scale(ray, f.root2)), cy->axis);
 		if (hit_h[0] * hit_h[1] > EPSILON && fabs(hit_h[1]) - cy->h > EPSILON)  // ray is out of boundaries
 			return (-1.0);
@@ -88,10 +88,10 @@ inline double	ray_hit_cylinder(t_vec ray, t_object *cy, t_vec oc)
 	f.delta = f.b * f.b - 4.0 * f.a * f.c;
 	if (f.delta >= EPSILON)  // delta = 0, ray is tangent to the cylinder, hit; root = 0, camera on the cylinder, ray hit
 	{
-		f.root = (- f.b - sqrt(f.delta)) / (2 * f.a);
+		f.root = (-f.b - sqrt(f.delta)) / (2 * f.a);
 		if (f.root > -EPSILON)  // ray hit from outside the infinitely long cylinder
 			return (hit_from_outside(cy, ray, f, oc));
-		f.root2 = (- f.b + sqrt(f.delta)) / (2 * f.a);
+		f.root2 = (-f.b + sqrt(f.delta)) / (2 * f.a);
 		if (f.root2 > -EPSILON)  // ray from inside the infinitely long cylinder
 			return (hit_from_inside(cy, add(oc, scale(ray, f.root2)), f));
 	}

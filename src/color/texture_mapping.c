@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 21:38:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 00:32:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #ifndef BONUS
 #else
-/* Convert hit point coordinates to pixel location on the texture or normal map */
+/* Convert hit point coordinates to pixel location on the texture map */
 inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 {
 	double	phi;
@@ -24,7 +24,7 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	rotate(sphere->rot, &p);
 	phi = fmod(atan2(p.z, p.x) + M_PI + sphere->phase, 2 * M_PI);
 	theta = acos(-p.y / sphere->r);
-	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1); // can also test if floor() looks better
+	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1);
 	*j = theta / M_PI * (sphere->texture->height - 1);
 }
 

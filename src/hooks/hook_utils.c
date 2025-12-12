@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 19:41:13 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:09:54 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static inline void	update_camera_for_new_frame(t_info *info)
 	{
 		info->has_rotated = 0;
 		info->cam_curr_frame.direction = info->cam.direction;
-		get_rotation_matrix(info->rot, info->cam_curr_frame.direction, vec3(0, 1, 0));
+		get_rotation_matrix(info->rot, info->cam_curr_frame.direction,
+			vec3(0, 1, 0));
 	}
 	if (info->has_moved)
 	{
@@ -39,6 +40,7 @@ static inline void	update_camera_for_new_frame(t_info *info)
 }
 
 #ifndef BONUS
+
 void	update_data_for_new_frame(t_info *info)
 {
 	update_camera_for_new_frame(info);
@@ -47,6 +49,7 @@ void	update_data_for_new_frame(t_info *info)
 		resize(info->mlx->width, info->mlx->height, info);
 }
 #else
+
 static inline void	update_sphere_phase_for_new_frame(t_info *info)
 {
 	int	i;

@@ -6,11 +6,33 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:34:48 by piyu              #+#    #+#             */
-/*   Updated: 2025/11/26 22:08:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:30:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+
+inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
+{
+	int			id;
+	double		k;
+	t_object	*obj;
+
+	id = -1;
+	while (id++ < info->n_obj - 1)
+	{
+		obj = &info->obj[id];
+		if (obj->type == SPHERE)
+			k = ray_hit_sphere(ray, obj, subtract(pos, obj->pos));
+		else if (obj->type == PLANE)
+			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
+		else
+			k = ray_hit_cylinder(ray, obj, subtract(pos, obj->pos));
+		if (k > EPSILON && hit->k_light - k > EPSILON)
+			return (true);
+	}
+	return (false);
+}
 
 #ifndef BONUS
 #else
@@ -49,6 +71,7 @@ inline void	*rendering_routine(void *ptr)
 #endif
 
 #ifndef BONUS
+
 void	renderer(void *param)
 {
 	t_info		*info;
@@ -61,6 +84,7 @@ void	renderer(void *param)
 		render_column(x++, info);
 }
 #else
+
 void	renderer(void *param)
 {
 	t_info			*info;
@@ -72,7 +96,6 @@ void	renderer(void *param)
 	thread_system = &info->thread_system;
 	if (!atomic_load(&thread_system->is_multithreaded))
 	{
-		// fallback to single_threaded rendering!
 		x = 0;
 		while (x < info->img->width)
 			render_column(x++, info);

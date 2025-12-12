@@ -6,37 +6,14 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/11 21:41:00 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:34:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
-{
-	int			id;
-	double		k;
-	t_object	*obj;
-
-	id = -1;
-	while (id++ < info->n_obj - 1)
-	{
-		// if (id == hit->obj_id)
-		// 	continue ;
-		obj = &info->obj[id];
-		if (obj->type == SPHERE)
-			k = ray_hit_sphere(ray, obj, subtract(pos, obj->pos));
-		else if (obj->type == PLANE)
-			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
-		else
-			k = ray_hit_cylinder(ray, obj, subtract(pos, obj->pos));
-		if (k > EPSILON && hit->k_light - k > EPSILON)
-			return (true);
-	}
-	return (false);
-}
-
 #ifndef BONUS
+
 static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 {
 	double	hit_h;
@@ -52,7 +29,7 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 			hit->normal = scale(obj->axis, -1);
 		else
 			hit->normal = normalize(subtract(hit->op,
-				scale(obj->axis, hit_h)));
+						scale(obj->axis, hit_h)));
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
@@ -61,6 +38,7 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
 #else
+
 static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 {
 	double	hit_h;
@@ -81,7 +59,7 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 			hit->normal = scale(obj->axis, -1);
 		else
 			hit->normal = normalize(subtract(hit->op,
-				scale(obj->axis, hit_h)));
+						scale(obj->axis, hit_h)));
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
@@ -120,6 +98,7 @@ Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 */
 #ifndef BONUS
+
 inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	t_light		*light;
@@ -141,6 +120,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	return (hit->intensity);
 }
 #else
+
 inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	int			i;
