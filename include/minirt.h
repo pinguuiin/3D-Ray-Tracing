@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/14 05:20:06 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/14 08:07:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # define HEIGHT 1000
 # define EPSILON 1e-8
 # define KS 0.5
-# define KD 0.9
+# define KD 0.5
 # define SHININESS 30
 
 # include "../libft/libft.h"
