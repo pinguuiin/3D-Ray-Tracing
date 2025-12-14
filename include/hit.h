@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 00:51:02 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 01:11:37 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/14 05:18:21 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_hit
 	t_vec	diffuse; // diffuse reflection intensity
 	t_vec	specular; // specular reflection intensity
 	t_vec	intensity; // intensity = diffuse + specular
+	t_vec	bounce; // ray direction of the secondary bounce
 }	t_hit;
 
 #endif

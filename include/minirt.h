@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 01:32:03 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/14 05:20:06 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ typedef struct s_cam
 		double		viewport_h;
 		double		rot[3][3];
 		double		px;
+		int			ray_depth;
 		t_color		amb;
 		t_cam		cam;
 		t_cam		cam_curr_frame;
@@ -160,6 +161,7 @@ typedef struct s_cam
 		double			viewport_h;
 		double			rot[3][3];
 		double			px;
+		int				ray_depth;
 		t_color			amb;
 		t_cam			cam;
 		t_cam			cam_curr_frame;

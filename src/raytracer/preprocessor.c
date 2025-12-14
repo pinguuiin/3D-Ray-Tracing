@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 01:23:52 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/14 05:16:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ inline void	get_viewport_data(t_info *info)
 
 void	preprocessor(t_info *info)
 {
+	info->ray_depth = 2;
 	info->cam_curr_frame = info->cam;
 	update_oc_and_plane_normal(info);
 	get_rotation_matrix(info->rot, info->cam_curr_frame.direction,
