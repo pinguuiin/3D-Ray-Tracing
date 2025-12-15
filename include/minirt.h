@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/15 04:37:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/15 05:47:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,7 @@ void		parse_texture(t_object *obj, char *name);
 void		get_object_rot_matrix(double (*rot)[3], t_vec u);
 void		rotate_object(mlx_key_data_t keydata, t_info *info);
 void		sphere_tbn_to_xyz(t_object *obj, t_hit *hit);
+void		adjust_ray_depth(mlx_key_data_t keydata, void *param);
 #endif
 
 /* ray tracing */

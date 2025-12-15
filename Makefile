@@ -54,6 +54,7 @@ SRC_FILES = main.c \
 			raytracer/preprocessor.c \
 			raytracer/reflection.c \
 			raytracer/renderer_tracer.c \
+			raytracer/renderer_utils.c \
 			raytracer/renderer.c \
 			shapes/cylinder.c \
 			shapes/plane.c \
