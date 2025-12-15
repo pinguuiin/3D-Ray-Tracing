@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 00:32:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/15 02:52:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);
 	hit->normal = normalize(hit->normal);
-	if (dot(geo_normal, subtract(get_info()->cam.pos, hit->pos)) < 0)
+	if (dot(geo_normal, subtract(hit->emit_pos, hit->pos)) < 0)
 	{
 		hit->normal = scale(hit->normal, -1);
 		geo_normal = scale(geo_normal, -1);

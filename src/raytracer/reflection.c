@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/14 05:16:10 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/15 02:53:33 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 }
 #else
 
-static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
+static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
@@ -63,7 +63,7 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
-	if (dot(hit->normal, subtract(info->cam.pos, hit->pos)) < 0)
+	if (dot(hit->normal, subtract(hit->emit_pos, hit->pos)) < 0)
 		hit->normal = scale(hit->normal, -1);
 	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
@@ -137,7 +137,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		hit->k_light = norm(hit->incoming);
 		hit->incoming = normalize(hit->incoming);
 		if (i == 0)
-			get_hit_normal(info, obj, hit);
+			get_hit_normal(obj, hit);
 		if (is_shadow(info, hit->incoming, hit->pos, hit))
 			continue ;
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));

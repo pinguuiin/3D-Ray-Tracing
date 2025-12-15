@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/14 08:20:49 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/15 02:49:57 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
+static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit)
 {
 	int			id;
 	double		k;
@@ -26,11 +26,11 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec pos, t_hit *
 	{
 		obj = &info->obj[id];
 		if (obj->type == SPHERE)
-			k = ray_hit_sphere(ray, obj, subtract(pos, obj->pos));
+			k = ray_hit_sphere(ray, obj, subtract(emit_pos, obj->pos));
 		else if (obj->type == PLANE)
-			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
+			k = ray_hit_plane(ray, obj, subtract(emit_pos, obj->pos));
 		else
-			k = ray_hit_cylinder(ray, obj, subtract(pos, obj->pos));
+			k = ray_hit_cylinder(ray, obj, subtract(emit_pos, obj->pos));
 		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
 			k_min = k;
@@ -85,12 +85,12 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	info = get_info();
 	if (depth <= 0)
 		return (vec3(0.0, 0.0, 0.0));
-	k = nearest_ray_hit(info, ray, hit->pos, hit);
+	k = nearest_ray_hit(info, ray, hit->emit_pos, hit);
 	if (k == -1)
 		return (vec3(0.0, 0.0, 0.0)) ;
 	obj = &info->obj[hit->obj_id];
 	ray = scale(ray, k);
-	hit->pos = add(hit->pos, ray);
+	hit->pos = add(hit->emit_pos, ray);
 	if (obj->type == SPHERE && obj->tex_file)
 		get_texture_color_and_normal(hit, obj);
 	else
@@ -98,6 +98,7 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	color = dot_elem(overlay, reflection(info, obj, ray, hit));
 	overlay = scale(dot_elem(overlay, hit->color), 0.2);  ///define parameter?
 	ray = normalize(hit->bounce);
+	hit->emit_pos = hit->pos;
 	color = add(color, trace_ray(ray, hit, depth - 1, overlay));
 	return (color);
 }
@@ -117,7 +118,7 @@ inline void	render_column(int x, t_info *info)
 				-(y * info->px - info->viewport_h / 2.0), 0);
 		rotate(info->rot, &ray);
 		ray = normalize(add(info->cam_curr_frame.direction, ray));
-		hit.pos = info->cam_curr_frame.pos;
+		hit.emit_pos = info->cam_curr_frame.pos;
 		color = trace_ray(ray, &hit, info->ray_depth, vec3(1.0, 1.0, 1.0));
 		mlx_put_pixel(info->img, x, y, vec_to_color(color));
 		y++;
