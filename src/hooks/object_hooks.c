@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:36:08 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 00:58:21 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 01:51:25 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,55 @@ inline void	rotate_object(mlx_key_data_t keydata, t_info *info)
 		info->auto_rotate = true;
 	else
 		info->auto_rotate = false;
+}
+
+inline void	move_selected_object(t_info *info)
+{
+	int32_t		cursor[2];
+	double		depth;
+	double		(*rot)[3];
+	t_object	*obj;
+
+	obj = info->selected_obj;
+	rot = info->rot;
+	if (obj)
+	{
+		mlx_get_mouse_pos(info->mlx, &cursor[0], &cursor[1]);
+		if (info->prev_mouse == true)
+		{
+			depth = - dot(obj->oc, vec3(rot[0][2], rot[1][2], rot[2][2])) * info->px;
+			obj->pos = add(obj->pos, scale(vec3(rot[0][0], rot[1][0], rot[2][0]), (cursor[0] - info->prev_x) * depth));
+			obj->pos = subtract(obj->pos, scale(vec3(rot[0][1], rot[1][1], rot[2][1]), (cursor[1] - info->prev_y) * depth));
+		}
+		info->prev_x = cursor[0];
+		info->prev_y = cursor[1];
+		info->prev_mouse = true;
+	}
+	else
+		info->prev_mouse = false;
+}
+
+inline void	mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void *param)
+{
+	t_info	*info;
+	int32_t	cursor[2];
+	t_vec	ray;
+	t_hit	hit;
+
+	(void)mods;
+	info = (t_info *)param;
+	if (button == MLX_MOUSE_BUTTON_LEFT && action == MLX_PRESS)
+	{
+		mlx_get_mouse_pos(info->mlx, &cursor[0], &cursor[1]);
+		ray = vec3(cursor[0] * info->px - info->viewport_w / 2.0,
+				-(cursor[1] * info->px - info->viewport_h / 2.0), 0);
+		rotate(info->rot, &ray);
+		ray = normalize(add(info->cam_curr_frame.direction, ray));
+		hit.emit_pos = info->cam_curr_frame.pos;
+		if (nearest_ray_hit(info, ray, hit.emit_pos, &hit) + 1.0 > EPSILON)
+			info->selected_obj = &info->obj[hit.obj_id];
+	}
+	else if (button == MLX_MOUSE_BUTTON_LEFT && action == MLX_RELEASE)
+		info->selected_obj = NULL;
 }
 #endif

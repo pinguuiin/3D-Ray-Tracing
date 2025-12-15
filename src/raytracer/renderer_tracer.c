@@ -6,13 +6,13 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/15 04:37:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 00:44:01 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit)
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit)
 {
 	int			id;
 	double		k;
@@ -55,7 +55,7 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	(void)overlay;
 	info = get_info();
 	k = nearest_ray_hit(info, ray, info->cam_curr_frame.pos, hit);
-	if (k == -1)
+	if (k + 1.0 <= EPSILON)
 		return (vec3(0.0, 0.0, 0.0));
 	obj = &info->obj[hit->obj_id];
 	hit->color = obj->color;
@@ -86,7 +86,7 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	if (depth <= 0)
 		return (vec3(0.0, 0.0, 0.0));
 	k = nearest_ray_hit(info, ray, hit->emit_pos, hit);
-	if (k == -1)
+	if (k + 1.0 <= EPSILON)
 		return (vec3(0.0, 0.0, 0.0)) ;
 	obj = &info->obj[hit->obj_id];
 	ray = scale(ray, k);

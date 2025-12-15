@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 05:33:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/15 05:34:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 00:58:37 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	update_data_for_new_frame(t_info *info)
 	update_camera_for_new_frame(info);
 	if (info->auto_rotate == true)
 		update_sphere_phase_for_new_frame(info);
+	move_selected_object(info);
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
 	{
