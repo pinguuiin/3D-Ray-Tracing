@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/15 06:04:31 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/15 06:14:05 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	resize(int32_t width, int32_t height, void *param)
 
 #ifndef BONUS
 #else
-#include <stdio.h>
 void	adjust_ray_depth(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -36,6 +35,5 @@ void	adjust_ray_depth(mlx_key_data_t keydata, void *param)
 		info->ray_depth++;
 	else if (keydata.key == MLX_KEY_N && info->ray_depth > 1)
 		info->ray_depth--;
-	printf("%d\n",info->ray_depth);
 }
 #endif
