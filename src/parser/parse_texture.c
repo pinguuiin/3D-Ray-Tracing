@@ -16,10 +16,8 @@
 #else
 
 static int	parse_texture_name(char **str, t_object *sphere, size_t line_num);
-// static size_t	strlen_texture_name(char *s);
-static int		allocate_texture_file_names(t_object *sphere, size_t len);
-// static void		prepare_tex_names(t_object *sphere, char *tex_name, size_t len);
-static int		load_textures(t_object *sphere, char *tex_name, size_t len);
+static int	allocate_texture_file_names(t_object *sphere, size_t len);
+static int	load_textures(t_object *sphere, char *tex_name, size_t len);
 
 /*
  * older, deprecated version?
@@ -63,7 +61,7 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 
 int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 {
-	size_t	len;
+	int	retval;
 
 	if (parse_and_normalize_vector(str, &sphere->axis, line_num, SPHERE_AXIS))
 		return (INVALID_INPUT);
@@ -89,7 +87,6 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 		return (INVALID_INPUT);
 	}
 
-	// FIXME: adapt this into quotation marks!
 	/*
 	if (**str != '\"')
 	{
@@ -105,10 +102,15 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 	if (load_textures_and_free_them_upon_failure(sphere) == -1)
 		return (LOAD_TEXTURE_FAIL);
 	*/
-	// get_object_rot_matrix(sphere->rot, sphere->axis);
+
+	retval = parse_texture_name(str, sphere, line_num);
+	if (retval)
+		return (retval);
+
+	get_object_rot_matrix(sphere->rot, sphere->axis);
+	return (0);
 	// *str += len;
-	return (parse_texture_name(str, sphere, line_num));
-	// return (0);
+	// return (parse_texture_name(str, sphere, line_num));
 }
 
 static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
@@ -137,7 +139,6 @@ static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
 	if (load_textures(sphere, *str, len) == -1)
 		return (LOAD_TEXTURE_FAIL);
 	*str += len + 1;
-	get_object_rot_matrix(sphere->rot, sphere->axis);
 	return (0);
 }
 
@@ -194,7 +195,7 @@ static void	prepare_tex_names(t_object *sphere, char *tex_name, size_t len)
 * texture, mlx_load_png() fails, but rendering still occurs, as miniRT handles
 * it gracefully.
 */
-static int	load_textures(t_object *sphere)
+static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
 {
 	ft_memmove(sphere->tex_file, "./textures/", 11);
 	ft_memmove(sphere->tex_file + 11, tex_name, len);
