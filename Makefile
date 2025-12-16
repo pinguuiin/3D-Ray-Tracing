@@ -47,6 +47,7 @@ SRC_FILES = main.c \
 			parser/parsing_utils_2.c \
 			parser/light_and_obj_utils.c \
 			parser/ft_strtod.c \
+			parser/exponent.c \
 			parser/parse_vector.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \

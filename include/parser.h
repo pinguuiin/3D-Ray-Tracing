@@ -135,6 +135,8 @@ int		validate_object(char *str, t_parser *parser);
 
 /* vector parsing */
 int		ft_strtod(char **str, double *result, size_t line_num);
+int		parse_exponent(char **str, size_t n_digits, double *result,
+			size_t line_num);
 int		parse_3d_vector(char **str, t_vec *vector, size_t line_num);
 int		validate_vector(t_vec *vector, size_t line_num, t_vector_id id);
 int		parse_and_normalize_vector(char **str, t_vec *vector, size_t line_num,
