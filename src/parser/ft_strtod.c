@@ -13,7 +13,7 @@
 #include "parser.h"
 
 static int		parse_plus_or_minus_sign(char **str);
-static int		convert_whole(char **str, double *result, size_t n_digits,
+static int		convert_whole(char **str, double *result, size_t *n_digits,
 					size_t line_num);
 static int64_t	extract_unsigned_integer(char **ptr, size_t *n_digits);
 static double	extract_fraction(char **str, size_t n_digits);
@@ -72,14 +72,14 @@ static int	parse_plus_or_minus_sign(char **str)
 // after this function returns,
 // but it does not seem to be covered all the time. Double check.
 
-static int	convert_whole(char **str, double *result, size_t n_digits,
+static int	convert_whole(char **str, double *result, size_t *n_digits,
 				size_t line_num)
 {
 	int64_t	whole;
 
 	if (ft_isdigit(**str))
 	{
-		whole = extract_unsigned_integer(str, &n_digits);
+		whole = extract_unsigned_integer(str, n_digits);
 		if (whole == -1)
 		{
 			display_parsing_error("Floating point number provided is too "
@@ -88,7 +88,7 @@ static int	convert_whole(char **str, double *result, size_t n_digits,
 		}
 		*result = (double) whole;
 	}
-	else if (**str == '.' && ft_isdigit(*str)[1])
+	else if (**str == '.' && ft_isdigit((*str)[1]))
 		return (0);
 	else
 	{

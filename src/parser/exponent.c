@@ -91,5 +91,5 @@ static double	calculate_exponent_factor(int64_t exponent, int sign)
 			exponent--;
 		}
 	}
-	return (facotr);
+	return (factor);
 }
