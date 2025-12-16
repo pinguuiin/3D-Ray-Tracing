@@ -195,7 +195,7 @@ static void	prepare_tex_names(t_object *sphere, char *tex_name, size_t len)
 * texture, mlx_load_png() fails, but rendering still occurs, as miniRT handles
 * it gracefully.
 */
-static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
+static int	load_textures(t_object *sphere, char *tex_name, size_t len)
 {
 	ft_memmove(sphere->tex_file, "./textures/", 11);
 	ft_memmove(sphere->tex_file + 11, tex_name, len);
