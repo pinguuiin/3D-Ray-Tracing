@@ -26,6 +26,8 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 
 	if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
 		return (-1);
+	if (!is_valid_tail_when_expecting_more_data(str, line_num))
+		return (INVALID_INPUT);
 	if (!validate_vector(&sphere->axis, line_num, SPHERE_AXIS))
 		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(str);
