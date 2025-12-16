@@ -19,9 +19,22 @@ static int64_t	extract_unsigned_integer(char **ptr, size_t *n_digits);
 static double	extract_fraction(char **str, size_t n_digits);
 
 /*
+* Converts the portion of the string pointed to by 'str' to a floating point
+* value of 'double' data type, and stores the conversion in the memory pointed
+* at by 'result'. At the end of the function, 'str' points one byte past the
+* last digit detected (or past the radix point).
+*
 * 'result', which points at the principal output of this function - meaning the
 * floating point value stored at 'str', has to point at a zero value before
 * calling this function.
+*
+* This function also handles positive and negative exponents to the value -
+* provided that these start with the character 'e' (in lowercase or uppercase).
+*
+* Please note that this function does not check for the character that follows
+* the last digit (or after the radix point, if no digits follow it).
+* It ignores that character and does not handle it as an error if that character
+* would not be a digit or a space, for example.
 */
 int	ft_strtod(char **str, double *result, size_t line_num)
 {
@@ -64,13 +77,6 @@ static int	parse_plus_or_minus_sign(char **str)
 	}
 	return (sign);
 }
-
-
-// FIXME: Is the next case handled:
-// if there are characters after the very last digit of the number in string form?
-// This function seems to not handle that - so a check should always be made
-// after this function returns,
-// but it does not seem to be covered all the time. Double check.
 
 static int	convert_whole(char **str, double *result, size_t *n_digits,
 				size_t line_num)
