@@ -141,16 +141,8 @@ static double	extract_fraction(char **str, size_t n_digits)
 					(*str)++;
 			}
 		}
-		// FIXME: double check if those next blocks are identical!
 		while (i-- > 0)
 			fraction *= 0.1;
-		/*
-		while (i)
-		{
-			fraction *= 0.1;
-			i--;
-		}
-		*/
 	}
 	return (fraction);
 }

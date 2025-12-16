@@ -58,7 +58,6 @@ static int	extract_exponent_and_update_result(char **str, size_t n_digits,
 		sign = -1;
 		(*str)++;
 	}
-
 	while (ft_isdigit(**str))
 	{
 		exponent = exponent * 10 + (**str - '0');
