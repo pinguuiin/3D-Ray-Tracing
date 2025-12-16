@@ -13,7 +13,7 @@
 #include "parser.h"
 
 #ifndef BONUS
-// #else // FIXME: uncomment this line.
+#else
 
 static int	parse_texture_name(char **str, t_object *sphere, size_t line_num);
 // static size_t	strlen_texture_name(char *s);
