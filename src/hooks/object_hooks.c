@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:36:08 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 01:51:25 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 04:09:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ inline void	rotate_object(mlx_key_data_t keydata, t_info *info)
 inline void	move_selected_object(t_info *info)
 {
 	int32_t		cursor[2];
-	double		depth;
 	double		(*rot)[3];
+	double		depth;
 	t_object	*obj;
 
 	obj = info->selected_obj;
@@ -37,9 +37,12 @@ inline void	move_selected_object(t_info *info)
 		mlx_get_mouse_pos(info->mlx, &cursor[0], &cursor[1]);
 		if (info->prev_mouse == true)
 		{
-			depth = - dot(obj->oc, vec3(rot[0][2], rot[1][2], rot[2][2])) * info->px;
-			obj->pos = add(obj->pos, scale(vec3(rot[0][0], rot[1][0], rot[2][0]), (cursor[0] - info->prev_x) * depth));
-			obj->pos = subtract(obj->pos, scale(vec3(rot[0][1], rot[1][1], rot[2][1]), (cursor[1] - info->prev_y) * depth));
+			depth = -dot(obj->oc, vec3(rot[0][2], rot[1][2], rot[2][2]))
+					* info->px;
+			obj->pos = add(obj->pos, scale(vec3(rot[0][0], rot[1][0],
+						rot[2][0]), (cursor[0] - info->prev_x) * depth));
+			obj->pos = subtract(obj->pos, scale(vec3(rot[0][1], rot[1][1],
+						rot[2][1]), (cursor[1] - info->prev_y) * depth));
 		}
 		info->prev_x = cursor[0];
 		info->prev_y = cursor[1];

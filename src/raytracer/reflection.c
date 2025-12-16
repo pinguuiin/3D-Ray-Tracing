@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/15 02:53:33 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 06:59:15 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
-	if (obj->type == SPHERE && obj->normal)
+	if (obj->normal)
 	{
-		sphere_tbn_to_xyz(obj, hit);
+		normal_tbn_to_xyz(obj, hit);
 		return ;
 	}
 	if (obj->type == SPHERE)

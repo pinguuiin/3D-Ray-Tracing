@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/16 00:44:01 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 06:57:52 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 {
 	int	tex_loc[2];
 
-	sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
+	if (obj->type == SPHERE)
+		sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
+	else
+		plane_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
 	hit->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
 	if (obj->normal)
 		hit->normal = px_loc_to_normal(obj->normal, tex_loc[0], tex_loc[1]);
@@ -91,7 +94,7 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	obj = &info->obj[hit->obj_id];
 	ray = scale(ray, k);
 	hit->pos = add(hit->emit_pos, ray);
-	if (obj->type == SPHERE && obj->tex_file)
+	if (obj->tex_file)
 		get_texture_color_and_normal(hit, obj);
 	else
 		hit->color = obj->color;

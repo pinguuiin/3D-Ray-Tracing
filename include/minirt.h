@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 00:59:17 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 06:56:09 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,7 @@ uint32_t	vec_to_color(t_vec color);
 #else
 double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
+void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
 t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
 t_vec		px_loc_to_normal(mlx_texture_t *map, int i, int j);
 void		parse_texture(t_object *obj, char *name);
@@ -200,7 +201,7 @@ void		get_object_rot_matrix(double (*rot)[3], t_vec u);
 void		rotate_object(mlx_key_data_t keydata, t_info *info);
 void		move_selected_object(t_info *info);
 void		mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void *param);
-void		sphere_tbn_to_xyz(t_object *obj, t_hit *hit);
+void		normal_tbn_to_xyz(t_object *obj, t_hit *hit);
 void		adjust_ray_depth(mlx_key_data_t keydata, void *param);
 #endif
 
