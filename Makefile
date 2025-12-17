@@ -60,7 +60,8 @@ SRC_FILES = main.c \
 			shapes/sphere.c \
 			thread/init_threads.c \
 			thread/thread_cleanup.c \
-			vector/operations.c \
+			vector/operations_1.c \
+			vector/operations_2.c \
 			vector/rotation.c
 
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

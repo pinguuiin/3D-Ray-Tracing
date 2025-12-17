@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/09 17:00:10 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:41:14 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 	{
 		obj = &info->obj[id];
 		if (obj->type == SPHERE)
-			k = ray_hit_sphere(info, ray, obj, obj->oc);
+			k = ray_hit_sphere(ray, obj, obj->oc);
 		else if (obj->type == PLANE)
 			k = ray_hit_plane(ray, obj, obj->oc);
 		else
-			k = ray_hit_cylinder(info, ray, obj, obj->oc);
+			k = ray_hit_cylinder(ray, obj, obj->oc);
 		if (k >= 0.0 && (k_min < -EPSILON || k < k_min))
 		{
 			k_min = k;
@@ -42,6 +42,8 @@ static inline double	nearest_ray_hit(t_info *info, t_vec ray, t_hit *hit)
 }
 
 #ifndef BONUS
+/* Color pixel to black when ray doesn't hit.
+k = 0 means camera on the object, ray hits */
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 {
 	double		k;
@@ -50,7 +52,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	t_hit		hit;
 
 	k = nearest_ray_hit(info, ray, &hit);
-	if (k == -1) // not hit
+	if (k == -1)
 	{
 		mlx_put_pixel(info->img, x, y, 0x000000FF);
 		return ;
@@ -58,11 +60,11 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	obj = &info->obj[hit.obj_id];
 	hit.color = obj->color;
 	color = dot_elem(info->amb, hit.color);
-	if (!info->is_inside)
-		color = add(color, reflection(info, obj, scale(ray, k), &hit));  // when camera on the object, k=0, the return will only include diffuse
+	color = add(color, reflection(info, obj, scale(ray, k), &hit));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 #else
+
 // #include <stdio.h>
 static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 {
@@ -72,7 +74,6 @@ static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 	hit->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
 	if (obj->normal)
 		hit->normal = px_loc_to_normal(obj->normal, tex_loc[0], tex_loc[1]);
-	// printf("x:%f  y:%f  z:%f\n",hit->normal.x, hit->normal.y, hit->normal.z);
 }
 
 static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
@@ -83,7 +84,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	t_hit		hit;
 
 	k = nearest_ray_hit(info, ray, &hit);
-	if (k == -1) // not hit
+	if (k == -1)
 	{
 		mlx_put_pixel(info->img, x, y, 0x000000FF);
 		return ;
@@ -96,8 +97,7 @@ static inline void	draw_pixel(t_info *info, t_vec ray, int x, int y)
 	else
 		hit.color = obj->color;
 	color = dot_elem(info->amb, hit.color);
-	if (!info->is_inside)
-		color = add(color, reflection(info, obj, ray, &hit));  // when camera on the object, k=0, the return will only include diffuse
+	color = add(color, reflection(info, obj, ray, &hit));
 	mlx_put_pixel(info->img, x, y, vec_to_color(color));
 }
 #endif
@@ -111,7 +111,7 @@ inline void	render_column(int x, t_info *info)
 	while (y < info->img->height)
 	{
 		ray = vec3(x * info->px - info->viewport_w / 2.0,
-		-(y * info->px - info->viewport_h / 2.0), 0);
+				-(y * info->px - info->viewport_h / 2.0), 0);
 		rotate(info->rot, &ray);
 		ray = normalize(add(info->cam_curr_frame.direction, ray));
 		draw_pixel(info, ray, x, y);

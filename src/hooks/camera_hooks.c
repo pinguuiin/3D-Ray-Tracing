@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/09 21:51:11 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 00:58:03 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,44 +36,50 @@
 static inline void	move_camera(mlx_key_data_t keydata, t_info *info)
 {
 	double	(*rot)[3];
+	t_cam	*cam;
 
+	cam = &info->cam;
 	info->has_moved = 1;
 	if (info->has_rotated)
-		get_rotation_matrix(info->rot, info->cam.direction, vec3(0, 1, 0));
+		get_rotation_matrix(info->rot, cam->direction, vec3(0, 1, 0));
 	rot = info->rot;
 	if (keydata.key == MLX_KEY_W)
-		info->cam.pos = add(info->cam.pos, scale(info->cam.direction, 0.5));
+		cam->pos = add(cam->pos, scale(cam->direction, 0.5));
 	else if (keydata.key == MLX_KEY_S)
-		info->cam.pos = subtract(info->cam.pos, scale(info->cam.direction, 0.5));
+		cam->pos = subtract(cam->pos, scale(cam->direction, 0.5));
 	else if (keydata.key == MLX_KEY_D)
-		info->cam.pos = add(info->cam.pos,
-			scale(vec3(rot[0][0], rot[1][0], rot[2][0]), 0.5));
+		cam->pos = add(cam->pos,
+				vec3(rot[0][0] * 0.5, rot[1][0] * 0.5, rot[2][0] * 0.5));
 	else if (keydata.key == MLX_KEY_A)
-		info->cam.pos = subtract(info->cam.pos,
-			scale(vec3(rot[0][0], rot[1][0], rot[2][0]), 0.5));
+		cam->pos = subtract(cam->pos,
+				vec3(rot[0][0] * 0.5, rot[1][0] * 0.5, rot[2][0] * 0.5));
 	else if (keydata.key == MLX_KEY_Q)
-		info->cam.pos = add(info->cam.pos,
-			scale(vec3(rot[0][1], rot[1][1], rot[2][1]), 0.5));
+		cam->pos = add(cam->pos,
+				vec3(rot[0][1] * 0.5, rot[1][1] * 0.5, rot[2][1] * 0.5));
 	else if (keydata.key == MLX_KEY_Z)
-		info->cam.pos = subtract(info->cam.pos,
-			scale(vec3(rot[0][1], rot[1][1], rot[2][1]), 0.5));
+		cam->pos = subtract(cam->pos,
+				vec3(rot[0][1] * 0.5, rot[1][1] * 0.5, rot[2][1] * 0.5));
 }
 
 static inline void	rotate_camera(mlx_key_data_t keydata, t_info *info)
 {
+	t_cam	*cam;
+
+	cam = &info->cam;
 	info->has_rotated = 1;
-	if (keydata.key == MLX_KEY_UP && info->cam.direction.y < 0.98)
-		info->cam.direction.y += 0.05;
-	else if (keydata.key == MLX_KEY_DOWN && info->cam.direction.y > -0.98)
-		info->cam.direction.y -= 0.05;
+	if (keydata.key == MLX_KEY_UP && cam->direction.y < 0.98)
+		cam->direction.y += 0.05;
+	else if (keydata.key == MLX_KEY_DOWN && cam->direction.y > -0.98)
+		cam->direction.y -= 0.05;
 	else if (keydata.key == MLX_KEY_RIGHT)
-		rotate_y(&info->cam.direction, M_PI / 60.0);
+		rotate_y(&cam->direction, M_PI / 60.0);
 	else if (keydata.key == MLX_KEY_LEFT)
-		rotate_y(&info->cam.direction, -M_PI / 60.0);
-	info->cam.direction = normalize(info->cam.direction); // this has to be done from here!! before someone accesses it.
+		rotate_y(&cam->direction, -M_PI / 60.0);
+	cam->direction = normalize(cam->direction);
 }
 
 #ifndef BONUS
+
 void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;
@@ -90,6 +96,7 @@ void	key_handler(mlx_key_data_t keydata, void *param)
 		rotate_camera(keydata, info);
 }
 #else
+
 void	key_handler(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;

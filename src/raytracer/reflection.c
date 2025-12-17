@@ -6,38 +6,15 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/09 16:58:04 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:34:12 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static inline bool	is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit)
-{
-	int			id;
-	double		k;
-	t_object	*obj;
-
-	id = -1;
-	while (id++ < info->n_obj - 1)
-	{
-		if (id == hit->obj_id)
-			continue ;
-		obj = &info->obj[id];
-		if (obj->type == SPHERE)
-			k = ray_hit_sphere(info, ray, obj, subtract(pos, obj->pos));
-		else if (obj->type == PLANE)
-			k = ray_hit_plane(ray, obj, subtract(pos, obj->pos));
-		else
-			k = ray_hit_cylinder(info, ray, obj, subtract(pos, obj->pos));
-		if (k > EPSILON && hit->k_light - k > EPSILON)
-			return (true);
-	}
-	return (false);
-}
-
 #ifndef BONUS
-static inline void	get_hit_normal(t_object *obj, t_hit *hit)
+
+static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
@@ -52,23 +29,27 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 			hit->normal = scale(obj->axis, -1);
 		else
 			hit->normal = normalize(subtract(hit->op,
-				scale(obj->axis, hit_h)));
+						scale(obj->axis, hit_h)));
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
+	if (dot(hit->normal, subtract(info->cam.pos, hit->pos)) < 0)
+		hit->normal = scale(hit->normal, -1);
+	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
 #else
-static inline void	get_hit_normal(t_object *obj, t_hit *hit)
+
+static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
-	if (obj->type == SPHERE)
+	if (obj->type == SPHERE && obj->normal)
 	{
-		if (obj->normal)
-			sphere_tbn_to_xyz(obj, hit);
-		else
-			hit->normal = normalize(hit->op);
+		sphere_tbn_to_xyz(obj, hit);
+		return ;
 	}
+	if (obj->type == SPHERE)
+		hit->normal = normalize(hit->op);
 	else if (obj->type == CYLINDER)
 	{
 		hit_h = dot(hit->op, obj->axis);
@@ -78,10 +59,13 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 			hit->normal = scale(obj->axis, -1);
 		else
 			hit->normal = normalize(subtract(hit->op,
-				scale(obj->axis, hit_h)));
+						scale(obj->axis, hit_h)));
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
+	if (dot(hit->normal, subtract(info->cam.pos, hit->pos)) < 0)
+		hit->normal = scale(hit->normal, -1);
+	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
 #endif
 
@@ -114,6 +98,7 @@ Specular = Ks (Reflected ray · ray to camera) ^ Shininess
 Intensity = Diffuse + Specular (+ Ambient), and clamped to 0-255
 */
 #ifndef BONUS
+
 inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	t_light		*light;
@@ -126,15 +111,16 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	hit->incoming = subtract(light->pos, hit->pos);
 	hit->k_light = norm(hit->incoming);
 	hit->incoming = normalize(hit->incoming);
+	get_hit_normal(info, obj, hit);
 	if (is_shadow(info, hit->incoming, hit->pos, hit))
 		return (hit->intensity);
-	get_hit_normal(obj, hit);
 	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 	hit->outgoing = subtract(hit->outgoing, hit->incoming);
 	add_diffuse_and_specular(hit, light);
 	return (hit->intensity);
 }
 #else
+
 inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	int			i;
@@ -150,9 +136,10 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		hit->incoming = subtract(light->pos, hit->pos);
 		hit->k_light = norm(hit->incoming);
 		hit->incoming = normalize(hit->incoming);
+		if (i == 0)
+			get_hit_normal(info, obj, hit);
 		if (is_shadow(info, hit->incoming, hit->pos, hit))
 			continue ;
-		get_hit_normal(obj, hit);
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 		hit->outgoing = subtract(hit->outgoing, hit->incoming);
 		add_diffuse_and_specular(hit, light);

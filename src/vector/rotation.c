@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/04 23:42:08 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 02:12:42 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ inline void	rotate_z(t_vec *vec, double theta)
 
 #ifndef BONUS
 #else
-/* Get rotation matrix [r u f] for an object. We define the forward vector as +Z,
+/* Get rotation matrix [r u f] for an object. Define the forward vector as +Z,
 upward vector as the rotation axis and right vector accordingly*/
 inline void	get_object_rot_matrix(double (*rot)[3], t_vec u)
 {
@@ -64,13 +64,14 @@ inline void	get_object_rot_matrix(double (*rot)[3], t_vec u)
 
 /* For left-handed coordinate system (forward is +Z), Rot = [r u f]
 forward (f) is the new camera direction, right (r) is the unit vector of f x up
-new up (u) is the unit vector of r x f */
+new up (u) is the unit vector of r x f.
+When f and up are on the same or opposite directions, move up to (0,0,-1)
+to avoid cross product becoming zero vector */
 inline void	get_rotation_matrix(double (*rot)[3], t_vec f, t_vec up)
 {
 	t_vec	r;
 	t_vec	u;
 
-	// Avoid zero vector when f and up are on the same or opposite directions
 	if (fabs(dot(f, up)) > 1.0 - EPSILON)
 		up = vec3(0, 0, -1);
 	r = normalize(cross(f, up));

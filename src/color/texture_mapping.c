@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/10 00:32:04 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 00:32:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #ifndef BONUS
 #else
-/* Convert hit point coordinates to pixel location on the texture or normal map */
+/* Convert hit point coordinates to pixel location on the texture map */
 inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 {
 	double	phi;
@@ -24,7 +24,7 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	rotate(sphere->rot, &p);
 	phi = fmod(atan2(p.z, p.x) + M_PI + sphere->phase, 2 * M_PI);
 	theta = acos(-p.y / sphere->r);
-	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1); // can also test if floor() looks better
+	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1);
 	*j = theta / M_PI * (sphere->texture->height - 1);
 }
 
@@ -60,9 +60,18 @@ inline t_vec	px_loc_to_normal(mlx_texture_t *map, int i, int j)
 inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
 {
 	double	rot[3][3];
+	t_vec	geo_normal;
 
+	geo_normal = normalize(hit->op);
 	get_rotation_matrix(rot, normalize(scale(hit->op, -1)), obj->axis);
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);
+	hit->normal = normalize(hit->normal);
+	if (dot(geo_normal, subtract(get_info()->cam.pos, hit->pos)) < 0)
+	{
+		hit->normal = scale(hit->normal, -1);
+		geo_normal = scale(geo_normal, -1);
+	}
+	hit->pos = add(hit->pos, scale(geo_normal, 0.0001));
 }
 #endif

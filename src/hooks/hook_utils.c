@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/10 00:27:03 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/12 01:09:54 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static inline void	update_camera_for_new_frame(t_info *info)
 	{
 		info->has_rotated = 0;
 		info->cam_curr_frame.direction = info->cam.direction;
-		get_rotation_matrix(info->rot, info->cam_curr_frame.direction, vec3(0, 1, 0));
+		get_rotation_matrix(info->rot, info->cam_curr_frame.direction,
+			vec3(0, 1, 0));
 	}
 	if (info->has_moved)
 	{
@@ -39,15 +40,16 @@ static inline void	update_camera_for_new_frame(t_info *info)
 }
 
 #ifndef BONUS
+
 void	update_data_for_new_frame(t_info *info)
 {
 	update_camera_for_new_frame(info);
 	if ((uint32_t) info->mlx->height != info->img->height
 		|| (uint32_t)info->mlx->width != info->img->width)
 		resize(info->mlx->width, info->mlx->height, info);
-	info->is_inside = false;
 }
 #else
+
 static inline void	update_sphere_phase_for_new_frame(t_info *info)
 {
 	int	i;
@@ -56,7 +58,7 @@ static inline void	update_sphere_phase_for_new_frame(t_info *info)
 	while (i < info->n_obj)
 	{
 		if (info->obj[i].type == SPHERE)
-			info->obj[i].phase -= 0.01;
+			info->obj[i].phase -= 0.5 * info->mlx->delta_time;
 		i++;
 	}
 }
@@ -83,6 +85,5 @@ void	update_data_for_new_frame(t_info *info)
 			}
 		}
 	}
-	info->is_inside = false;
 }
 #endif
