@@ -49,7 +49,7 @@ static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
 	if (**str != '\"')
 	{
 		display_parsing_error("Texture name has to be delimited by double "
-			"quotes\nError on line:", line_num);
+			"quotes.\nError on line:", line_num);
 		return (INVALID_INPUT);
 	}
 	(*str)++;
@@ -59,7 +59,7 @@ static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
 	if ((*str)[len] != '\"')
 	{
 		display_parsing_error("Texture name has to be delimited by double "
-			"quotes\nError on line:", line_num);
+			"quotes.\nError on line:", line_num);
 		return (INVALID_INPUT);
 	}
 	if (allocate_texture_file_names(sphere, len) == -1)
