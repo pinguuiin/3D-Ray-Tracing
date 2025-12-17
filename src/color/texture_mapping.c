@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 07:15:23 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/17 22:02:01 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,13 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1);
 	*j = theta / M_PI * (sphere->texture->height - 1);
 }
-// #include <stdio.h>
+
 inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 {
 	t_info	*info;
 
 	info = get_info();
 	p = subtract(p, plane->pos);
-	// printf("i:%f\t j:%f\n", p.x, p.y);
 	rotate(plane->rot, &p);
 	*i = fmod(p.x / info->px, plane->texture->width - 1);
 	*j = fmod(p.z / info->px, plane->texture->height - 1);
