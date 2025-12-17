@@ -14,6 +14,7 @@ Press `b` or `n` to add or reduce maximum bounces (range from 1 to 5).
 #### Object Control
 Press `1` to automate rotation for all spheres with a texture.
 Press `2` to stop the autorotation.
+
 Use `left mouse button` to drag the object to your preferred place.
 
 #### Window Control
