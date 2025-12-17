@@ -8,3 +8,7 @@ libft/
 mac_Makefile
 .cache
 compile_commands.json
+.mac
+mac_bonus_obj/
+.mac_mandatory
+mac_mandatory_obj/
