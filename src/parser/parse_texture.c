@@ -13,7 +13,7 @@
 #include "parser.h"
 
 #ifndef BONUS
-#else
+// #else   FIXME: uncomment this line
 
 static int	parse_texture_name(char **str, t_object *sphere, size_t line_num);
 static int	allocate_texture_file_names(t_object *sphere, size_t len);
@@ -23,8 +23,13 @@ int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
 {
 	int	retval;
 
-	if (parse_and_normalize_vector(str, &sphere->axis, line_num, SPHERE_AXIS))
+	if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
 		return (INVALID_INPUT);
+	sphere->axis.z = 0.0;
+	if (!validate_vector(&sphere->axis, line_num, SPHERE_AXIS))
+		return (INVALID_INPUT);
+	if (!is_valid_tail_when_expecting_more_data(str, line_num))
+		return (INVALID_INTPUT);
 	skip_whitespace_but_not_newline(str);
 	if (!**str || **str == '\n')
 	{

@@ -44,8 +44,6 @@ int	parse_and_normalize_vector(char **str, t_vec *vector, size_t line_num,
 {
 	if (parse_3d_vector(str, vector, line_num) == -1)
 		return (-1);
-	if (id == SPHERE_AXIS)
-		vector->z = 0.0;
 	if (!is_within_range_vector(vector, line_num))
 		return (-1);
 	if (!validate_vector(vector, line_num, id))
