@@ -140,7 +140,7 @@ typedef struct s_info
 	t_color		amb;
 	t_cam		cam;
 	t_cam		cam_curr_frame;
-	t_object	*obj;
+	t_object	*obj;	// array of objects
 	int			n_obj;
 	t_light		light;	// one single light
 	bool		has_moved;
@@ -165,7 +165,7 @@ typedef struct s_info
 	t_object		*selected_obj;
 	t_object		*obj;  	// array of objects
 	int				n_obj;
-	t_light			*light;	// pointer to an array of lights
+	t_light			*light;	// array of lights
 	int				n_light;
 	bool			has_moved;
 	bool			has_rotated;
