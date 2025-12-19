@@ -13,28 +13,28 @@
 #include "parser.h"
 
 #ifndef BONUS
-#else
+// #else // FIXME: uncomment
 
-static int	parse_texture_name(char **str, t_object *sphere, size_t line_num);
-static int	allocate_texture_file_names(t_object *sphere, size_t len);
-static int	load_textures(t_object *sphere, char *tex_name, size_t len);
+static int	parse_texture_name(char **str, t_object *object, size_t line_num);
+static int	allocate_texture_file_names(t_object *object, size_t len);
+static int	load_textures(t_object *object, char *tex_name, size_t len);
 
-int	parse_texture(char **str, t_object *sphere, size_t line_num)
+int	parse_texture(char **str, t_object *object, size_t line_num)
 {
 	int	retval;
 
-	if (sphere->type == SPHERE)
+	if (object->type == SPHERE)
 	{
-		if (parse_and_normalize_vector(str, &sphere->axis, line_num,
+		if (parse_and_normalize_vector(str, &object->axis, line_num,
 				SPHERE_AXIS) == -1)
 			return (INVALID_INPUT);
 
 		// TODO: delete this block
 		/*
-		if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
+		if (parse_3d_vector(str, &object->axis, line_num) == -1)
 			return (INVALID_INPUT);
-		sphere->axis.z = 0.0;
-		if (!validate_vector(&sphere->axis, line_num, SPHERE_AXIS))
+		object->axis.z = 0.0;
+		if (!validate_vector(&object->axis, line_num, SPHERE_AXIS))
 			return (INVALID_INPUT);
 		if (!is_valid_tail_when_expecting_more_data(str, line_num))
 			return (INVALID_INPUT);
@@ -51,14 +51,14 @@ int	parse_texture(char **str, t_object *sphere, size_t line_num)
 			return (INVALID_INPUT);
 		}
 	}
-	retval = parse_texture_name(str, sphere, line_num);
+	retval = parse_texture_name(str, object, line_num);
 	if (retval)
 		return (retval);
-	get_object_rot_matrix(sphere->rot, sphere->axis);
+	get_object_rot_matrix(object->rot, object->axis);
 	return (0);
 }
 
-static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
+static int	parse_texture_name(char **str, t_object *object, size_t line_num)
 {
 	size_t	len;
 
@@ -78,24 +78,24 @@ static int	parse_texture_name(char **str, t_object *sphere, size_t line_num)
 			"quotes.\nError on line:", line_num);
 		return (INVALID_INPUT);
 	}
-	if (allocate_texture_file_names(sphere, len) == -1)
+	if (allocate_texture_file_names(object, len) == -1)
 		return (ALLOCATION_FAILURE);
-	if (load_textures(sphere, *str, len) == -1)
+	if (load_textures(object, *str, len) == -1)
 		return (LOAD_TEXTURE_FAIL);
 	*str += len + 1;
 	return (0);
 }
 
-static int	allocate_texture_file_names(t_object *sphere, size_t len)
+static int	allocate_texture_file_names(t_object *object, size_t len)
 {
-	sphere->tex_file = ft_calloc(len + 22, sizeof (char));
-	if (!sphere->tex_file)
+	object->tex_file = ft_calloc(len + 22, sizeof (char));
+	if (!object->tex_file)
 		return (-1);
-	sphere->normal_file = ft_calloc(len + 23, sizeof (char));
-	if (!sphere->normal_file)
+	object->normal_file = ft_calloc(len + 23, sizeof (char));
+	if (!object->normal_file)
 	{
-		free(sphere->tex_file);
-		sphere->tex_file = NULL;
+		free(object->tex_file);
+		object->tex_file = NULL;
 		return (-1);
 	}
 	return (0);
@@ -107,25 +107,25 @@ static int	allocate_texture_file_names(t_object *sphere, size_t len)
 * texture, mlx_load_png() fails, but rendering still occurs, as miniRT handles
 * it gracefully.
 */
-static int	load_textures(t_object *sphere, char *tex_name, size_t len)
+static int	load_textures(t_object *object, char *tex_name, size_t len)
 {
-	ft_memmove(sphere->tex_file, "./textures/", 11);
-	ft_memmove(sphere->tex_file + 11, tex_name, len);
-	ft_memmove(sphere->tex_file + 11 + len, "_color.png", 10);
-	ft_memmove(sphere->normal_file, "./textures/", 11);
-	ft_memmove(sphere->normal_file + 11, tex_name, len);
-	ft_memmove(sphere->normal_file + 11 + len, "_normal.png", 11);
-	sphere->texture = mlx_load_png(sphere->tex_file);
-	if (!sphere->texture)
+	ft_memmove(object->tex_file, "./textures/", 11);
+	ft_memmove(object->tex_file + 11, tex_name, len);
+	ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
+	ft_memmove(object->normal_file, "./textures/", 11);
+	ft_memmove(object->normal_file + 11, tex_name, len);
+	ft_memmove(object->normal_file + 11 + len, "_normal.png", 11);
+	object->texture = mlx_load_png(object->tex_file);
+	if (!object->texture)
 	{
-		free(sphere->tex_file);
-		free(sphere->normal_file);
-		sphere->tex_file = NULL;
-		sphere->normal_file = NULL;
+		free(object->tex_file);
+		free(object->normal_file);
+		object->tex_file = NULL;
+		object->normal_file = NULL;
 		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
 		return (-1);
 	}
-	sphere->normal = mlx_load_png(sphere->normal_file);
+	object->normal = mlx_load_png(object->normal_file);
 	return (0);
 }
 #endif
