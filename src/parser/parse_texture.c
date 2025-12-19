@@ -13,7 +13,7 @@
 #include "parser.h"
 
 #ifndef BONUS
-// #else
+#else
 
 static int	parse_texture_name(char **str, t_object *sphere, size_t line_num);
 static int	allocate_texture_file_names(t_object *sphere, size_t len);
