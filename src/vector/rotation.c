@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 02:12:42 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 05:29:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,10 @@ inline void	get_object_rot_matrix(double (*rot)[3], t_vec u)
 	t_vec	f;
 
 	f = vec3(0, 0, 1);
+	if (fabs(dot(f, u)) > 1.0 - EPSILON)
+		f = vec3(0, 1, 0);
 	r = normalize(cross(f, u));
+	f = cross(u, r);
 	rot[0][0] = r.x;
 	rot[0][1] = r.y;
 	rot[0][2] = r.z;

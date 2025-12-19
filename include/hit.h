@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 00:51:02 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 01:11:37 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 05:54:08 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_hit
 {
 	int		obj_id; // hit object id
 	double	k_light; // distance from hit point to light
+	t_vec	emit_pos; // coordinates of the starting position of the ray
 	t_vec	pos; // coordinates of the hit point
 	t_vec	op; // vector from object center to intersection point
 	t_color	color; // texture color at the hit point;
@@ -44,6 +45,7 @@ typedef struct s_hit
 	t_vec	diffuse; // diffuse reflection intensity
 	t_vec	specular; // specular reflection intensity
 	t_vec	intensity; // intensity = diffuse + specular
+	t_vec	bounce; // ray direction of the secondary bounce
 }	t_hit;
 
 #endif

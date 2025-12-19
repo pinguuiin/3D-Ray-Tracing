@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:59:24 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/27 23:22:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 00:34:05 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ int	main(int argc, char *argv[])
 	initialize_multithreading(info);
 
 	mlx_key_hook(info->mlx, &key_handler, info);
+	mlx_mouse_hook(info->mlx, mouse_hook, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);
 

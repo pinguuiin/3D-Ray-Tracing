@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 01:34:12 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/16 06:59:15 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 }
 #else
 
-static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
+static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 {
 	double	hit_h;
 
-	if (obj->type == SPHERE && obj->normal)
+	if (obj->normal)
 	{
-		sphere_tbn_to_xyz(obj, hit);
+		normal_tbn_to_xyz(obj, hit);
 		return ;
 	}
 	if (obj->type == SPHERE)
@@ -63,7 +63,7 @@ static inline void	get_hit_normal(t_info *info, t_object *obj, t_hit *hit)
 	}
 	else if (obj->type == PLANE)
 		hit->normal = obj->axis;
-	if (dot(hit->normal, subtract(info->cam.pos, hit->pos)) < 0)
+	if (dot(hit->normal, subtract(hit->emit_pos, hit->pos)) < 0)
 		hit->normal = scale(hit->normal, -1);
 	hit->pos = add(hit->pos, scale(hit->normal, 0.0001));
 }
@@ -103,7 +103,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 {
 	t_light		*light;
 
-	hit->intensity = vec3(0.0, 0.0, 0.0);
+	hit->intensity = dot_elem(info->amb, hit->color);
 	hit->pos = add(info->cam_curr_frame.pos, ray);
 	hit->ray = normalize(scale(ray, -1));
 	hit->op = subtract(hit->pos, obj->pos);
@@ -127,7 +127,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 	t_light		*light;
 
 	i = -1;
-	hit->intensity = vec3(0.0, 0.0, 0.0);
+	hit->intensity = dot_elem(info->amb, hit->color);
 	hit->ray = normalize(scale(ray, -1));
 	hit->op = subtract(hit->pos, obj->pos);
 	while (i++ < info->n_light - 1)
@@ -137,13 +137,15 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		hit->k_light = norm(hit->incoming);
 		hit->incoming = normalize(hit->incoming);
 		if (i == 0)
-			get_hit_normal(info, obj, hit);
+			get_hit_normal(obj, hit);
 		if (is_shadow(info, hit->incoming, hit->pos, hit))
 			continue ;
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 		hit->outgoing = subtract(hit->outgoing, hit->incoming);
 		add_diffuse_and_specular(hit, light);
 	}
+	hit->bounce = scale(hit->normal, 2 * dot(hit->ray, hit->normal));
+	hit->bounce = subtract(hit->bounce, hit->ray);
 	return (hit->intensity);
 }
 #endif

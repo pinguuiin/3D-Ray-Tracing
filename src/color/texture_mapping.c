@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 00:32:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/17 22:02:01 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,21 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	theta = acos(-p.y / sphere->r);
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1);
 	*j = theta / M_PI * (sphere->texture->height - 1);
+}
+
+inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
+{
+	t_info	*info;
+
+	info = get_info();
+	p = subtract(p, plane->pos);
+	rotate(plane->rot, &p);
+	*i = fmod(p.x / info->px, plane->texture->width - 1);
+	*j = fmod(p.z / info->px, plane->texture->height - 1);
+	if (*i < 0)
+		*i += plane->texture->width;
+	if (*j < 0)
+		*j += plane->texture->height;
 }
 
 /* Map pixel location to corresponding color value (r, g, b) */
@@ -57,17 +72,25 @@ inline t_vec	px_loc_to_normal(mlx_texture_t *map, int i, int j)
 }
 
 /* Convert normal map from tangent space to world space */
-inline void	sphere_tbn_to_xyz(t_object *obj, t_hit *hit)
+inline void	normal_tbn_to_xyz(t_object *obj, t_hit *hit)
 {
 	double	rot[3][3];
 	t_vec	geo_normal;
 
-	geo_normal = normalize(hit->op);
-	get_rotation_matrix(rot, normalize(scale(hit->op, -1)), obj->axis);
+	if (obj->type == SPHERE)
+	{
+		geo_normal = normalize(hit->op);
+		get_rotation_matrix(rot, scale(geo_normal, -1), obj->axis);
+	}
+	else
+	{
+		geo_normal = obj->axis;
+		get_rotation_matrix(rot, scale(geo_normal, -1), vec3(0.0, 1.0, 0.0));
+	}
 	hit->normal.z = -hit->normal.z;
 	rotate(rot, &hit->normal);
 	hit->normal = normalize(hit->normal);
-	if (dot(geo_normal, subtract(get_info()->cam.pos, hit->pos)) < 0)
+	if (dot(geo_normal, subtract(hit->emit_pos, hit->pos)) < 0)
 	{
 		hit->normal = scale(hit->normal, -1);
 		geo_normal = scale(geo_normal, -1);

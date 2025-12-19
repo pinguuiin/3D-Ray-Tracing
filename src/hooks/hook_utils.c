@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/12 01:09:54 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/15 06:14:05 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,68 +22,18 @@ void	resize(int32_t width, int32_t height, void *param)
 	get_viewport_data(info);
 }
 
-static inline void	update_camera_for_new_frame(t_info *info)
-{
-	if (info->has_rotated)
-	{
-		info->has_rotated = 0;
-		info->cam_curr_frame.direction = info->cam.direction;
-		get_rotation_matrix(info->rot, info->cam_curr_frame.direction,
-			vec3(0, 1, 0));
-	}
-	if (info->has_moved)
-	{
-		info->has_moved = 0;
-		info->cam_curr_frame.pos = info->cam.pos;
-		update_oc_and_plane_normal(info);
-	}
-}
-
 #ifndef BONUS
-
-void	update_data_for_new_frame(t_info *info)
-{
-	update_camera_for_new_frame(info);
-	if ((uint32_t) info->mlx->height != info->img->height
-		|| (uint32_t)info->mlx->width != info->img->width)
-		resize(info->mlx->width, info->mlx->height, info);
-}
 #else
-
-static inline void	update_sphere_phase_for_new_frame(t_info *info)
+void	adjust_ray_depth(mlx_key_data_t keydata, void *param)
 {
-	int	i;
+	t_info	*info;
 
-	i = 0;
-	while (i < info->n_obj)
-	{
-		if (info->obj[i].type == SPHERE)
-			info->obj[i].phase -= 0.5 * info->mlx->delta_time;
-		i++;
-	}
-}
-
-void	update_data_for_new_frame(t_info *info)
-{
-	int	i;
-
-	update_camera_for_new_frame(info);
-	if (info->auto_rotate == true)
-		update_sphere_phase_for_new_frame(info);
-	if ((uint32_t) info->mlx->height != info->img->height
-		|| (uint32_t)info->mlx->width != info->img->width)
-	{
-		resize(info->mlx->width, info->mlx->height, info);
-		if (atomic_load(&info->thread_system.is_multithreaded))
-		{
-			i = 0;
-			while (i < N_THREADS)
-			{
-				init_chunk_borders(info->img->width,
-					&info->thread_system.threads[i], i);
-				i++;
-			}
-		}
-	}
+	if (keydata.action != MLX_PRESS)
+		return ;
+	info = (t_info *)param;
+	if (keydata.key == MLX_KEY_B && info->ray_depth < 5)
+		info->ray_depth++;
+	else if (keydata.key == MLX_KEY_N && info->ray_depth > 1)
+		info->ray_depth--;
 }
 #endif
