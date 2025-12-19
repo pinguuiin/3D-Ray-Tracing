@@ -60,7 +60,7 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 
 	// TODO: add parsing for texture here.
 	skip_whitespace_but_not_newline(&str);
-	retval =  handle_texture(&str, parser);
+	retval = handle_texture(&str, parser);
 	if (retval)
 		return (retval);
 	if (validate_object(str, parser) == -1)

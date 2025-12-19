@@ -55,7 +55,7 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	if (parse_color(&str, &parser->current->object.color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
 	skip_whitespace_but_not_newline(&str);
-	retval = handle_texture_for_sphere(&str, parser);
+	retval = handle_texture(&str, parser);
 	if (retval)
 		return (retval);
 	if (validate_object(str, parser) == -1)
