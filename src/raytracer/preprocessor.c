@@ -36,7 +36,8 @@ inline void	get_viewport_data(t_info *info)
 	info->px = info->viewport_w / info->img->width;
 }
 
-#ifndef BONUS
+// FIXME: delete this.
+// #ifndef BONUS
 
 void	preprocessor(t_info *info)
 {
@@ -50,7 +51,9 @@ void	preprocessor(t_info *info)
 
 
 /* ==========================to be deleted=========================== */
-#else
+// #else // FIXME: uncomment this line.
+// Changes have to be made here, since parse_plane_texture() stuff are here:
+/*
 static inline void	parse_plane_texture(t_object *obj, char *name)
 {
 	int	len;
@@ -92,5 +95,9 @@ void	preprocessor(t_info *info)
 	}
 }
 #endif
+*/
+
+
+
 
 

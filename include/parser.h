@@ -117,7 +117,8 @@ int		parse_light(t_parser *parser, char *str, t_light *light);
 # else
 
 int		parse_light(t_parser *parser, char *str);
-int		parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num);
+int		handle_texture(char **str, t_parser *parser);
+int		parse_texture(char **str, t_object *sphere, size_t line_num);
 # endif
 
 /* parsing utilities */

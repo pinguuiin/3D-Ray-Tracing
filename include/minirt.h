@@ -193,7 +193,6 @@ void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
 t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
 t_vec		px_loc_to_normal(mlx_texture_t *map, int i, int j);
-void		parse_texture(t_object *obj, char *name); // WARN: are we using this??
 void		get_object_rot_matrix(double (*rot)[3], t_vec u);
 void		rotate_object(mlx_key_data_t keydata, t_info *info);
 void		move_selected_object(t_info *info);

@@ -13,13 +13,6 @@
 #include "parser.h"
 
 #ifndef BONUS
-#else
-
-static int	handle_texture_for_sphere(char **str, t_parser *parser);
-static void	free_all_textures_from_linked_list(t_node_obj *p_head);
-#endif
-
-#ifndef BONUS
 
 int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 {
@@ -89,15 +82,14 @@ static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 	}
 }
 
-static int	handle_texture_for_sphere(char **str, t_parser *parser)
+int	handle_texture(char **str, t_parser *parser)
 {
 	int	retval;
 
 	retval = 0;
 	if (**str && **str != '\n')
 	{
-		retval = parse_texture_for_sphere(str, &parser->current->object,
-				parser->line_num);
+		retval = parse_texture(str, &parser->current->object, parser->line_num);
 		if (retval)
 			free_all_textures_from_linked_list(parser->head);
 	}

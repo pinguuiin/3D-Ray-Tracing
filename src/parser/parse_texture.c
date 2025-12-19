@@ -13,32 +13,43 @@
 #include "parser.h"
 
 #ifndef BONUS
-#else
+// #else
 
 static int	parse_texture_name(char **str, t_object *sphere, size_t line_num);
 static int	allocate_texture_file_names(t_object *sphere, size_t len);
 static int	load_textures(t_object *sphere, char *tex_name, size_t len);
 
-int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
+int	parse_texture(char **str, t_object *sphere, size_t line_num)
 {
 	int	retval;
 
-	if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
-		return (INVALID_INPUT);
-	sphere->axis.z = 0.0;
-	if (!validate_vector(&sphere->axis, line_num, SPHERE_AXIS))
-		return (INVALID_INPUT);
-	if (!is_valid_tail_when_expecting_more_data(str, line_num))
-		return (INVALID_INPUT);
-	skip_whitespace_but_not_newline(str);
-	if (!**str || **str == '\n')
+	if (sphere->type == SPHERE)
 	{
-		display_parsing_error("Unexpected texture input for sphere. If you'd "
-			"like a sphere to be rendered with a texture,\nplease provide "
-			"a valid axis vector for it, followed by the texture's .png file "
-			"name, without the extension and within double quotes.\n"
-			"Error on line:", line_num);
-		return (INVALID_INPUT);
+		if (parse_and_normalize_vector(str, &sphere->axis, line_num,
+				SPHERE_AXIS) == -1)
+			return (INVALID_INPUT);
+
+		// TODO: delete this block
+		/*
+		if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
+			return (INVALID_INPUT);
+		sphere->axis.z = 0.0;
+		if (!validate_vector(&sphere->axis, line_num, SPHERE_AXIS))
+			return (INVALID_INPUT);
+		if (!is_valid_tail_when_expecting_more_data(str, line_num))
+			return (INVALID_INPUT);
+		*/
+
+		skip_whitespace_but_not_newline(str);
+		if (!**str || **str == '\n')
+		{
+			display_parsing_error("Unexpected texture input for sphere. If you'd "
+				"like a sphere to be rendered with a texture,\nplease provide "
+				"a valid axis vector for it, followed by the texture's .png file "
+				"name, without the extension and within double quotes.\n"
+				"Error on line:", line_num);
+			return (INVALID_INPUT);
+		}
 	}
 	retval = parse_texture_name(str, sphere, line_num);
 	if (retval)
