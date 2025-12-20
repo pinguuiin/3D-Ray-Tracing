@@ -31,11 +31,11 @@ int	parse_texture(char **str, t_object *object, size_t line_num)
 		skip_whitespace_but_not_newline(str);
 		if (!**str || **str == '\n')
 		{
-			display_parsing_error("Unexpected texture input for sphere. If you'd "
-				"like a sphere to be rendered with a texture,\nplease provide "
-				"a valid axis vector for it, followed by the texture's .png file "
-				"name, without the extension and within double quotes.\n"
-				"Error on line:", line_num);
+			display_parsing_error("Unexpected texture input for sphere. If "
+				"you'd like a sphere to be rendered with a texture,\n"
+				"please provide a valid axis vector for it, followed by the "
+				"texture's .png file name, without the extension and within "
+				"double quotes.\nError on line:", line_num);
 			return (INVALID_INPUT);
 		}
 	}

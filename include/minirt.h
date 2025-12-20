@@ -163,7 +163,7 @@ typedef struct s_info
 	t_cam			cam;
 	t_cam			cam_curr_frame;
 	t_object		*selected_obj;
-	t_object		*obj;  	// array of objects
+	t_object		*obj;	// array of objects
 	int				n_obj;
 	t_light			*light;	// array of lights
 	int				n_light;
@@ -188,6 +188,7 @@ uint32_t	vec_to_color(t_vec color);
 // t_vec		color_to_vec(int r, int g, int b);
 # ifndef BONUS
 # else
+
 double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
