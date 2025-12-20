@@ -117,6 +117,7 @@ int		parse_light(t_parser *parser, char *str, t_light *light);
 # else
 
 int		parse_light(t_parser *parser, char *str);
+int		check_for_texture_and_handle(char **str, t_parser *parser);
 int		handle_texture(char **str, t_parser *parser);
 int		parse_texture(char **str, t_object *object, size_t line_num);
 # endif
