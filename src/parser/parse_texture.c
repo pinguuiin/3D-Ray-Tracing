@@ -42,7 +42,8 @@ int	parse_texture(char **str, t_object *object, size_t line_num)
 	retval = parse_texture_name(str, object, line_num);
 	if (retval)
 		return (retval);
-	get_object_rot_matrix(object->rot, object->axis);
+	if (object->material == TEXTURE)
+		get_object_rot_matrix(object->rot, object->axis);
 	return (0);
 }
 
