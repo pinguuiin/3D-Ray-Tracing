@@ -44,13 +44,6 @@ typedef enum e_vector_id
 	CYLINDER_AXIS
 }	t_vector_id;
 
-typedef enum e_material
-{
-	MONO,
-	TEXTURE,
-	CHECKER
-}	t_material;
-
 # ifndef BONUS
 # else
 /* wrapper for each t_light node, only needed in parsing */
