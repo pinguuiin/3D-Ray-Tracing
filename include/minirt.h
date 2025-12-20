@@ -76,12 +76,16 @@ typedef struct s_cam
 
 }	t_cam;
 
+# ifndef BONUS
+# else
+
 typedef enum e_material
 {
 	MONO,
 	TEXTURE,
 	CHECKER
 }	t_material;
+# endif
 
 # ifndef BONUS
 /* Object information */
