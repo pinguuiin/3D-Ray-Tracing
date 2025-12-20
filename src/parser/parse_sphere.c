@@ -173,10 +173,10 @@ int	check_for_texture_and_handle(char **str, t_parser *parser)
 	int	retval;
 
 	// retval = 0;
-	if (ft_isspace_but_not_newline(**str))
+	if (isspace_but_not_newline(**str))
 	{
 		skip_whitespace_but_not_newline(str);
-		if (**str && (**str != '\n'))
+		if (**str && **str != '\n')
 		{
 			retval = handle_texture(str, parser);
 			return (retval); // in the caller, "if (retval) should be checked, and if true, 'retva' should be returned
@@ -184,7 +184,7 @@ int	check_for_texture_and_handle(char **str, t_parser *parser)
 			// 	return (retval);
 		}
 	}
-	else if (*str && *str != '\n')
+	else if (**str && **str != '\n')
 	{
 		display_parsing_error("Unknown character at tail end of numerical "
 			"value, on line:", parser->line_num);

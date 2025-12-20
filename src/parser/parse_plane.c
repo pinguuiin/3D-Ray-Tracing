@@ -83,3 +83,4 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 	return (NO_ERROR);
 
 }
+#endif
