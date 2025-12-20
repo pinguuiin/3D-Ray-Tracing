@@ -28,18 +28,6 @@ int	parse_texture(char **str, t_object *object, size_t line_num)
 		if (parse_and_normalize_vector(str, &object->axis, line_num,
 				SPHERE_AXIS) == -1)
 			return (INVALID_INPUT);
-
-		// TODO: delete this block
-		/*
-		if (parse_3d_vector(str, &object->axis, line_num) == -1)
-			return (INVALID_INPUT);
-		object->axis.z = 0.0;
-		if (!validate_vector(&object->axis, line_num, SPHERE_AXIS))
-			return (INVALID_INPUT);
-		if (!is_valid_tail_when_expecting_more_data(str, line_num))
-			return (INVALID_INPUT);
-		*/
-
 		skip_whitespace_but_not_newline(str);
 		if (!**str || **str == '\n')
 		{

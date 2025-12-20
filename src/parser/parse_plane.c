@@ -37,7 +37,6 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 }
 #else
 
-// TODO: alternate version for parse_plane, accepting textures.
 int	parse_plane(t_parser *parser, char *str, size_t line_num)
 {
 	int	retval;
@@ -57,30 +56,11 @@ int	parse_plane(t_parser *parser, char *str, size_t line_num)
 	skip_whitespace_but_not_newline(&str);
 	if (parse_color(&str, &parser->current->object.color, NULL, line_num) == -1)
 		return (INVALID_INPUT);
-
-	// TODO: add parsing for texture here.
-	// TODO: add check for the first character - with the option of having a texture,
-	// or not having one - in which case the character could be: \n, \0, OR a whitespace followed
-	// by as many whitespace as you want (except \n) up until either a \n or a \0, and that's it!
-	//
-	// WARN: insufficient version, ameliorated in the block below it:
-	/*
-	skip_whitespace_but_not_newline(&str);
-	retval = handle_texture(&str, parser);
-	if (retval)
-		return (retval);
-	if (validate_object(str, parser) == -1)
-		return (INVALID_INPUT);
-	return (NO_ERROR);
-	*/
-
-	
 	retval = check_for_texture_and_handle(&str, parser);
 	if (retval)
 		return (retval);
 	if (validate_object(str, parser) == -1)
 		return (INVALID_INPUT);
 	return (NO_ERROR);
-
 }
 #endif
