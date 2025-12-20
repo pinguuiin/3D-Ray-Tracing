@@ -21,6 +21,7 @@ t_info	*get_info(void)
 }
 
 #ifndef BONUS
+
 int	free_exit(char *s, int exit_code)
 {
 	t_info	*info;
@@ -39,6 +40,7 @@ int	free_exit(char *s, int exit_code)
 	return (exit_code);
 }
 #else
+
 int	free_exit(char *s, int exit_code)
 {
 	int		i;
@@ -58,7 +60,7 @@ int	free_exit(char *s, int exit_code)
 		{
 			free(info->obj[i].tex_file);
 			free(info->obj[i].normal_file);
-			mlx_delete_texture(info->obj[i].texture);  //need to make sure MLX provides NULL check
+			mlx_delete_texture(info->obj[i].texture);
 			if (info->obj[i].normal)
 				mlx_delete_texture(info->obj[i].normal);
 		}
@@ -93,45 +95,38 @@ void	initialize_mlx(t_info *info)
 }
 
 #ifndef BONUS
+
 int	main(int argc, char *argv[])
 {
 	t_info	*info;
 
 	info = get_info();
-
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
-
 	initialize_mlx(info);
 	preprocessor(info);
-
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);
-
 	(void)free_exit(NULL, 0);
 	return (SUCCESS);
 }
 #else
+
 int	main(int argc, char *argv[])
 {
 	t_info	*info;
 
 	info = get_info();
-
 	parse_argument(argc, argv);
 	parse_scene(info, argv[1]);
-
 	initialize_mlx(info);
 	preprocessor(info);
-
 	initialize_multithreading(info);
-
 	mlx_key_hook(info->mlx, &key_handler, info);
 	mlx_mouse_hook(info->mlx, mouse_hook, info);
 	mlx_loop_hook(info->mlx, renderer, info);
 	mlx_loop(info->mlx);
-
 	(void)free_exit(NULL, 0);
 	return (SUCCESS);
 }
