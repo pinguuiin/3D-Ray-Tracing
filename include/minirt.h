@@ -121,6 +121,7 @@ typedef struct s_object
 	mlx_texture_t	*normal;
 	double			rot[3][3];
 	double			phase;
+	t_material		material;
 
 }	t_object;
 # endif

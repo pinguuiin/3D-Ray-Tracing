@@ -97,23 +97,29 @@ static int	allocate_texture_file_names(t_object *object, size_t len)
 */
 static int	load_textures(t_object *object, char *tex_name, size_t len)
 {
-	ft_memmove(object->tex_file, "./textures/", 11);
-	ft_memmove(object->tex_file + 11, tex_name, len);
-	ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
-	ft_memmove(object->normal_file, "./textures/", 11);
-	ft_memmove(object->normal_file + 11, tex_name, len);
-	ft_memmove(object->normal_file + 11 + len, "_normal.png", 11);
-	object->texture = mlx_load_png(object->tex_file);
-	if (!object->texture)
+	if (len == 7 && !ft_strncmp(tex_name, "checker", 7))
+		object->material = CHECKER;
+	else
 	{
-		free(object->tex_file);
-		free(object->normal_file);
-		object->tex_file = NULL;
-		object->normal_file = NULL;
-		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
-		return (-1);
+		object->material = TEXTURE;
+		ft_memmove(object->tex_file, "./textures/", 11);
+		ft_memmove(object->tex_file + 11, tex_name, len);
+		ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
+		ft_memmove(object->normal_file, "./textures/", 11);
+		ft_memmove(object->normal_file + 11, tex_name, len);
+		ft_memmove(object->normal_file + 11 + len, "_normal.png", 11);
+		object->texture = mlx_load_png(object->tex_file);
+		if (!object->texture)
+		{
+			free(object->tex_file);
+			free(object->normal_file);
+			object->tex_file = NULL;
+			object->normal_file = NULL;
+			ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
+			return (-1);
+		}
+		object->normal = mlx_load_png(object->normal_file);
 	}
-	object->normal = mlx_load_png(object->normal_file);
 	return (0);
 }
 #endif
