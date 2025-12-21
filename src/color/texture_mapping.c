@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/17 22:02:01 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 05:14:26 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	rotate(sphere->rot, &p);
 	phi = fmod(atan2(p.z, p.x) + M_PI + sphere->phase, 2 * M_PI);
 	theta = acos(-p.y / sphere->r);
+	if (sphere->material == CHECKER)
+	{
+		*i = floor(phi / (2.0 * M_PI) * 35.0);
+		*j = floor(theta / M_PI * 11.0);
+		return ;
+	}
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1);
 	*j = theta / M_PI * (sphere->texture->height - 1);
 }
@@ -35,6 +41,12 @@ inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 	info = get_info();
 	p = subtract(p, plane->pos);
 	rotate(plane->rot, &p);
+	if (plane->material == CHECKER)
+	{
+		*i = p.x / info->px / 17;
+		*j = p.z / info->px / 5;
+		return ;
+	}
 	*i = fmod(p.x / info->px, plane->texture->width - 1);
 	*j = fmod(p.z / info->px, plane->texture->height - 1);
 	if (*i < 0)
@@ -44,11 +56,21 @@ inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 }
 
 /* Map pixel location to corresponding color value (r, g, b) */
-inline t_color	px_loc_to_color(mlx_texture_t *map, int i, int j)
+inline t_color	px_loc_to_color(t_object *obj, int i, int j)
 {
-	int		idx;
-	t_color	c;
+	t_color			c;
+	int				idx;
+	mlx_texture_t	*map;
 
+	if (obj->material == CHECKER)
+	{
+		if ((i + j) % 2 == 0)
+			c = vec3(1.0, 1.0, 1.0);
+		else
+			c = vec3(0.0, 0.0, 0.0);
+		return (c);
+	}
+	map = obj->texture;
 	idx = (map->height - j - 1) * map->width + i;
 	idx = idx * map->bytes_per_pixel;
 	c.r = map->pixels[idx] / 255.0;
