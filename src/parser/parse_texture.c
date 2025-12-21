@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:21:42 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/21 22:18:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 22:30:33 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ static int	count_texture_strlen(char *str, size_t line_num, size_t *len)
 	*len = i;
 	return (0);
 }
+
+
 
 /*
 * Loads a texture via the MLX library, from both the color.png and normal.png

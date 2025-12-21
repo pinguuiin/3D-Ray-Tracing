@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_light.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 20:38:58 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/10 20:52:10 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:46:28 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,11 @@ static int	parse_brightness(char **str, t_parser *parser)
 	parser->ratio = 0.0;
 	if (ft_strtod(str, &parser->ratio, parser->line_num) == -1)
 		return (-1);
-	if (!validate_ratio(parser->ratio, parser->line_num))
+	if (parser->ratio < 0.0 || parser->ratio > 1.0)
+	{
+		display_parsing_error("Value provided for light's brightness is out "
+			"of range. Allowed range: 0.0 to 1.0. See line", parser->line_num);
 		return (-1);
+	}
 	return (0);
 }

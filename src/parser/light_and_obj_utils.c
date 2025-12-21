@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   light_and_obj_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:24:08 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/09 17:45:45 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:47:04 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,3 @@ void	copy_light(t_parser *parser, t_info *info)
 	}
 }
 #endif
-
-int	validate_ratio(double ratio, size_t line_num)
-{
-	if (ratio < 0.0 || ratio > 1.0)
-	{
-		display_parsing_error("Value provided for light's brightness is out "
-			"of range. Allowed range: 0.0 to 1.0. See line", line_num);
-		return (0);
-	}
-	return (1);
-}

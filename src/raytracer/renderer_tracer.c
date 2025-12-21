@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/21 05:16:47 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 22:55:22 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	else
 		hit->color = obj->color;
 	color = dot_elem(overlay, reflection(info, obj, ray, hit));
-	overlay = scale(dot_elem(overlay, hit->color), 0.3);  ///define parameter?=======================
+	overlay = scale(dot_elem(overlay, hit->color), KS);  ///define parameter?=======================
 	ray = normalize(hit->bounce);
 	hit->emit_pos = hit->pos;
 	color = add(color, trace_ray(ray, hit, depth - 1, overlay));

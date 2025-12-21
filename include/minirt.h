@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/21 04:20:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 23:47:56 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,6 @@
 # define WIDTH 1500
 # define HEIGHT 1000
 # define EPSILON 1e-8
-# define KS 0.5
-# define KD 0.5
-# define SHININESS 30
 
 # include "../libft/libft.h"
 # include "../MLX42/include/MLX42/MLX42.h"
@@ -112,7 +109,6 @@ typedef struct s_object
 {
 	// general attributes
 	t_type			type;
-	t_material		material;
 	t_vec			pos;
 	t_color			color;
 	t_vec			oc;	// vector from object to camera
@@ -133,6 +129,10 @@ typedef struct s_object
 	mlx_texture_t	*normal;
 	double			rot[3][3];
 	double			phase;
+	t_material		material;
+	double			ks;
+	double			kd;
+	double			shininess;
 
 }	t_object;
 # endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 19:12:54 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/10/03 19:25:20 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:46:36 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ int		parse_and_normalize_vector(char **str, t_vec *vector, size_t line_num,
 
 /* color parsing */
 int		parse_color(char **str, t_color *color, double *ratio, size_t line_num);
-int		validate_ratio(double ratio, size_t line_num);
 void	apply_ratio_to_color(t_color *color, double ratio, bool is_provided);
 
 /* object and light lists */
