@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 06:59:15 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 01:53:29 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 }
 #endif
 
-static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light)
+static inline void	add_diffuse_and_specular(t_object *obj, t_hit *hit, t_light *light)
 {
 	double	flux;
 	double	spec;
@@ -77,13 +77,13 @@ static inline void	add_diffuse_and_specular(t_hit *hit, t_light *light)
 	flux = dot(hit->incoming, hit->normal);
 	if (flux > EPSILON)
 	{
-		flux *= KD;
+		flux *= obj->kd;
 		hit->diffuse = scale(dot_elem(light->color, hit->color), flux);
 		hit->intensity = add(hit->intensity, hit->diffuse);
 		spec = dot(hit->outgoing, hit->ray);
 		if (spec > EPSILON)
 		{
-			spec = KS * pow(spec, SHININESS);
+			spec = obj->ks * pow(spec, obj->shininess);
 			hit->specular = scale(light->color, spec);
 			hit->intensity = add(hit->intensity, hit->specular);
 		}
@@ -116,7 +116,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 		return (hit->intensity);
 	hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 	hit->outgoing = subtract(hit->outgoing, hit->incoming);
-	add_diffuse_and_specular(hit, light);
+	add_diffuse_and_specular(obj, hit, light);
 	return (hit->intensity);
 }
 #else
@@ -142,7 +142,7 @@ inline t_vec	reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit)
 			continue ;
 		hit->outgoing = scale(hit->normal, 2 * dot(hit->incoming, hit->normal));
 		hit->outgoing = subtract(hit->outgoing, hit->incoming);
-		add_diffuse_and_specular(hit, light);
+		add_diffuse_and_specular(obj, hit, light);
 	}
 	hit->bounce = scale(hit->normal, 2 * dot(hit->ray, hit->normal));
 	hit->bounce = subtract(hit->bounce, hit->ray);

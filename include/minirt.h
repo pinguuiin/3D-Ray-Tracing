@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/21 23:47:56 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 01:46:01 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,9 @@ typedef struct s_object
 {
 	// general attributes
 	t_type	type;
+	double	ks;
+	double	kd;
+	double	shininess;
 	t_vec	pos;
 	t_color	color;
 	t_vec	oc;	// vector from object to camera

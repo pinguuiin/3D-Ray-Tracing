@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:24:08 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/21 23:47:04 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 01:47:26 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@ int	create_new_object_node(t_parser *parser)
 	new_node = (t_node_obj *) ft_calloc(1, sizeof (t_node_obj));
 	if (!new_node)
 		return (-1);
+	new_node->object.ks = 0.5;
+	new_node->object.kd = 0.5;
+	new_node->object.shininess = 30;
 	if (!parser->head)
 		parser->head = new_node;
 	else
