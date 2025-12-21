@@ -16,6 +16,7 @@
 #else
 
 static int	parse_texture_name(char **str, t_object *object, size_t line_num);
+static int	count_texture_strlen(char *str, size_t line_num, size_t *len);
 static int	allocate_texture_file_names(t_object *object, size_t len);
 static int	load_textures(t_object *object, char *tex_name, size_t len);
 
@@ -58,20 +59,36 @@ static int	parse_texture_name(char **str, t_object *object, size_t line_num)
 		return (INVALID_INPUT);
 	}
 	(*str)++;
-	len = 0;
-	while ((*str)[len] && (*str)[len] != '\"')
-		len++;
-	if ((*str)[len] != '\"')
+	if (count_texture_strlen(*str, line_num, &len) == -1)
+		return (INVALID_INPUT);
+	if (len == 7 && !ft_strncmp(*str, "checker", 7))
+		object->material = CHECKER;
+	else
+	{
+		object->material = TEXTURE;
+		if (allocate_texture_file_names(object, len) == -1)
+			return (ALLOCATION_FAILURE);
+		if (load_textures(object, *str, len) == -1)
+			return (LOAD_TEXTURE_FAIL);
+	}
+	*str += len + 1;
+	return (0);
+}
+
+static int	count_texture_strlen(char *str, size_t line_num, size_t *len)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i] && str[i] != '\"')
+		i++;
+	if (str[i] != '\"')
 	{
 		display_parsing_error("Texture name has to be delimited by double "
 			"quotes.\nError on line:", line_num);
-		return (INVALID_INPUT);
+		return (-1);
 	}
-	if (allocate_texture_file_names(object, len) == -1)
-		return (ALLOCATION_FAILURE);
-	if (load_textures(object, *str, len) == -1)
-		return (LOAD_TEXTURE_FAIL);
-	*str += len + 1;
+	*len = i;
 	return (0);
 }
 
@@ -98,29 +115,23 @@ static int	allocate_texture_file_names(t_object *object, size_t len)
 */
 static int	load_textures(t_object *object, char *tex_name, size_t len)
 {
-	if (len == 7 && !ft_strncmp(tex_name, "checker", 7))
-		object->material = CHECKER;
-	else
+	ft_memmove(object->tex_file, "./textures/", 11);
+	ft_memmove(object->tex_file + 11, tex_name, len);
+	ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
+	ft_memmove(object->normal_file, "./textures/", 11);
+	ft_memmove(object->normal_file + 11, tex_name, len);
+	ft_memmove(object->normal_file + 11 + len, "_normal.png", 11);
+	object->texture = mlx_load_png(object->tex_file);
+	if (!object->texture)
 	{
-		object->material = TEXTURE;
-		ft_memmove(object->tex_file, "./textures/", 11);
-		ft_memmove(object->tex_file + 11, tex_name, len);
-		ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
-		ft_memmove(object->normal_file, "./textures/", 11);
-		ft_memmove(object->normal_file + 11, tex_name, len);
-		ft_memmove(object->normal_file + 11 + len, "_normal.png", 11);
-		object->texture = mlx_load_png(object->tex_file);
-		if (!object->texture)
-		{
-			free(object->tex_file);
-			free(object->normal_file);
-			object->tex_file = NULL;
-			object->normal_file = NULL;
-			ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
-			return (-1);
-		}
-		object->normal = mlx_load_png(object->normal_file);
+		free(object->tex_file);
+		free(object->normal_file);
+		object->tex_file = NULL;
+		object->normal_file = NULL;
+		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
+		return (-1);
 	}
+	object->normal = mlx_load_png(object->normal_file);
 	return (0);
 }
 #endif
