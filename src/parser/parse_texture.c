@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:21:42 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/21 05:59:11 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 22:18:50 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 static int	parse_texture_name(char **str, t_object *object, size_t line_num);
 static int	count_texture_strlen(char *str, size_t line_num, size_t *len);
-static int	allocate_texture_file_names(t_object *object, size_t len);
 static int	load_textures(t_object *object, char *tex_name, size_t len);
 
 int	parse_texture(char **str, t_object *object, size_t line_num)
@@ -51,6 +50,7 @@ int	parse_texture(char **str, t_object *object, size_t line_num)
 static int	parse_texture_name(char **str, t_object *object, size_t line_num)
 {
 	size_t	len;
+	int		retval;
 
 	if (**str != '\"')
 	{
@@ -66,9 +66,10 @@ static int	parse_texture_name(char **str, t_object *object, size_t line_num)
 	else
 	{
 		object->material = TEXTURE;
-		if (allocate_texture_file_names(object, len) == -1)
+		retval = load_textures(object, *str, len);
+		if (retval == -2)
 			return (ALLOCATION_FAILURE);
-		if (load_textures(object, *str, len) == -1)
+		else if (retval == -1)
 			return (LOAD_TEXTURE_FAIL);
 	}
 	*str += len + 1;
@@ -92,21 +93,6 @@ static int	count_texture_strlen(char *str, size_t line_num, size_t *len)
 	return (0);
 }
 
-static int	allocate_texture_file_names(t_object *object, size_t len)
-{
-	object->tex_file = ft_calloc(len + 22, sizeof (char));
-	if (!object->tex_file)
-		return (-1);
-	object->normal_file = ft_calloc(len + 23, sizeof (char));
-	if (!object->normal_file)
-	{
-		free(object->tex_file);
-		object->tex_file = NULL;
-		return (-1);
-	}
-	return (0);
-}
-
 /*
 * Loads a texture via the MLX library, from both the color.png and normal.png
 * versions of the texture. If a normal.png file is not available for the,
@@ -115,6 +101,10 @@ static int	allocate_texture_file_names(t_object *object, size_t len)
 */
 static int	load_textures(t_object *object, char *tex_name, size_t len)
 {
+	object->tex_file = ft_calloc(len + 22, sizeof (char));
+	object->normal_file = ft_calloc(len + 23, sizeof (char));
+	if (!object->tex_file || !object->normal_file)
+		return (-2);
 	ft_memmove(object->tex_file, "./textures/", 11);
 	ft_memmove(object->tex_file + 11, tex_name, len);
 	ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
@@ -124,10 +114,6 @@ static int	load_textures(t_object *object, char *tex_name, size_t len)
 	object->texture = mlx_load_png(object->tex_file);
 	if (!object->texture)
 	{
-		free(object->tex_file);
-		free(object->normal_file);
-		object->tex_file = NULL;
-		object->normal_file = NULL;
 		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
 		return (-1);
 	}
