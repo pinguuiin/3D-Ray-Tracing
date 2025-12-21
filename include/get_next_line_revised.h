@@ -61,6 +61,12 @@
 *	- be freed AFTER returning from it.
 */
 
+typedef struct s_gnl
+{
+	char	*line;
+	int		line_status;
+}	t_gnl;
+
 int		get_next_line_revised(int fd, char **output);
 int		process_buffer(char **line, char *buffer, size_t *i);
 char	*update_line(char *line, char *buffer, size_t *i);

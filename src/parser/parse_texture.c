@@ -15,101 +15,123 @@
 #ifndef BONUS
 #else
 
-static size_t	strlen_texture_name(char *s);
-static int		allocate_texture_file_names(t_object *sphere, size_t len);
-static void		prepare_tex_names(t_object *sphere, char *tex_name, size_t len);
-static int		load_textures_and_free_them_upon_failure(t_object *sphere);
+static int	parse_texture_name(char **str, t_object *object, size_t line_num);
+static int	count_texture_strlen(char *str, size_t line_num, size_t *len);
+static int	allocate_texture_file_names(t_object *object, size_t len);
+static int	load_textures(t_object *object, char *tex_name, size_t len);
 
-int	parse_texture_for_sphere(char **str, t_object *sphere, size_t line_num)
+int	parse_texture(char **str, t_object *object, size_t line_num)
 {
-	size_t	len;
+	int	retval;
 
-	// parse axis vector
-	if (parse_3d_vector(str, &sphere->axis, line_num) == -1)
-		return (-1);
-
-	// set the z value of the sphere's axis to 0, and normalize the vector.
-	sphere->axis.z = 0.0;
-	sphere->axis = normalize(sphere->axis);
-
-	skip_whitespace_but_not_newline(str);
-
-	if (!**str || **str == '\n')
+	if (object->type == SPHERE)
 	{
-		display_parsing_error("Unexpected texture input for sphere. If you'd "
-			"like a sphere to be rendered with a texture,\nplease provide "
-			"a valid axis vector for it, followed by the texture's .png file "
-			"name (without the extension).\nError on line:", line_num);
-		return (INVALID_INPUT);
+		if (parse_and_normalize_vector(str, &object->axis, line_num,
+				SPHERE_AXIS) == -1)
+			return (INVALID_INPUT);
+		skip_whitespace_but_not_newline(str);
+		if (!**str || **str == '\n')
+		{
+			display_parsing_error("Unexpected texture input for sphere. If "
+				"you'd like a sphere to be rendered with a texture,\n"
+				"please provide a valid axis vector for it, followed by the "
+				"texture's .png file name, without the extension and within "
+				"double quotes.\nError on line:", line_num);
+			return (INVALID_INPUT);
+		}
 	}
-
-	// parse string (texture file name)
-	len = strlen_texture_name(*str);
-	if (allocate_texture_file_names(sphere, len) == -1)
-		return (ALLOCATION_FAILURE);
-	prepare_tex_names(sphere, *str, len);
-
-	if (load_textures_and_free_them_upon_failure(sphere) == -1)
-		return (LOAD_TEXTURE_FAIL);
-
-	get_object_rot_matrix(sphere->rot, sphere->axis);
-	*str += len;
+	retval = parse_texture_name(str, object, line_num);
+	if (retval)
+		return (retval);
+	if (object->material == TEXTURE)
+		get_object_rot_matrix(object->rot, object->axis);
 	return (0);
 }
 
-// this will always be greater than 0, since there is a check for null terminator
-// and newline BEFORE calling it.
-static size_t	strlen_texture_name(char *s)
+static int	parse_texture_name(char **str, t_object *object, size_t line_num)
+{
+	size_t	len;
+
+	if (**str != '\"')
+	{
+		display_parsing_error("Texture name has to be delimited by double "
+			"quotes.\nError on line:", line_num);
+		return (INVALID_INPUT);
+	}
+	(*str)++;
+	if (count_texture_strlen(*str, line_num, &len) == -1)
+		return (INVALID_INPUT);
+	if (len == 7 && !ft_strncmp(*str, "checker", 7))
+		object->material = CHECKER;
+	else
+	{
+		object->material = TEXTURE;
+		if (allocate_texture_file_names(object, len) == -1)
+			return (ALLOCATION_FAILURE);
+		if (load_textures(object, *str, len) == -1)
+			return (LOAD_TEXTURE_FAIL);
+	}
+	*str += len + 1;
+	return (0);
+}
+
+static int	count_texture_strlen(char *str, size_t line_num, size_t *len)
 {
 	size_t	i;
 
 	i = 0;
-	while (s[i] && s[i] != '\n')
+	while (str[i] && str[i] != '\"')
 		i++;
-	return (i);
+	if (str[i] != '\"')
+	{
+		display_parsing_error("Texture name has to be delimited by double "
+			"quotes.\nError on line:", line_num);
+		return (-1);
+	}
+	*len = i;
+	return (0);
 }
 
-static int	allocate_texture_file_names(t_object *sphere, size_t len)
+static int	allocate_texture_file_names(t_object *object, size_t len)
 {
-	sphere->tex_file = ft_calloc(len + 22, sizeof (char));
-	if (!sphere->tex_file)
+	object->tex_file = ft_calloc(len + 22, sizeof (char));
+	if (!object->tex_file)
 		return (-1);
-	sphere->normal_file = ft_calloc(len + 23, sizeof (char));
-	if (!sphere->normal_file)
+	object->normal_file = ft_calloc(len + 23, sizeof (char));
+	if (!object->normal_file)
 	{
-		free(sphere->tex_file);
-		sphere->tex_file = NULL;
+		free(object->tex_file);
+		object->tex_file = NULL;
 		return (-1);
 	}
 	return (0);
 }
 
-static void	prepare_tex_names(t_object *sphere, char *tex_name, size_t len)
+/*
+* Loads a texture via the MLX library, from both the color.png and normal.png
+* versions of the texture. If a normal.png file is not available for the,
+* texture, mlx_load_png() fails, but rendering still occurs, as miniRT handles
+* it gracefully.
+*/
+static int	load_textures(t_object *object, char *tex_name, size_t len)
 {
-	ft_memmove(sphere->tex_file, "./textures/", 11);
-	ft_memmove(sphere->tex_file + 11, tex_name, len);
-	ft_memmove(sphere->tex_file + 11 + len, "_color.png", 10);
-
-	ft_memmove(sphere->normal_file, "./textures/", 11);
-	ft_memmove(sphere->normal_file + 11, tex_name, len);
-	ft_memmove(sphere->normal_file + 11 + len, "_normal.png", 11);
-}
-
-static int	load_textures_and_free_them_upon_failure(t_object *sphere)
-{
-	sphere->texture = mlx_load_png(sphere->tex_file);
-	if (!sphere->texture)
+	ft_memmove(object->tex_file, "./textures/", 11);
+	ft_memmove(object->tex_file + 11, tex_name, len);
+	ft_memmove(object->tex_file + 11 + len, "_color.png", 10);
+	ft_memmove(object->normal_file, "./textures/", 11);
+	ft_memmove(object->normal_file + 11, tex_name, len);
+	ft_memmove(object->normal_file + 11 + len, "_normal.png", 11);
+	object->texture = mlx_load_png(object->tex_file);
+	if (!object->texture)
 	{
-		free(sphere->tex_file);
-		free(sphere->normal_file);
-		sphere->tex_file = NULL;
-		sphere->normal_file = NULL;
+		free(object->tex_file);
+		free(object->normal_file);
+		object->tex_file = NULL;
+		object->normal_file = NULL;
 		ft_putstr_fd("Loading texture map failed. Aborting miniRT.\n", 2);
 		return (-1);
 	}
-	sphere->normal = mlx_load_png(sphere->normal_file);
-	// no need to handle the error, if loading the .png for sphere->normal has
-	// failed after this call, it is okay and we still render without it.
+	object->normal = mlx_load_png(object->normal_file);
 	return (0);
 }
 #endif

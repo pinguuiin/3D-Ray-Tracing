@@ -1,0 +1,132 @@
+
+# CAMERA:
+
+#camera				camera's location					camera's direction			Field of View
+C					45,10,-110							-.4,0.22,+1					90
+
+
+
+# LIGHTS:
+
+#ambient light		ratio (brightness)					color (RGB)
+A					0.9 								240,240,255
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					0,100,15							0.6                    							255,0,100
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					-12.99,15,-7.5						0.4												0,255,0
+
+#light source		light's location					ratio (brightness)								color (RGB)
+L					-80.140,15,-1.5						0.8												255,19,123
+
+
+
+
+# OBJECTS:
+
+# PEARLS:
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					20.5,53.4,8							5												200,123,0
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					18.7,45.2,8							5												255,255,40
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					16.7,37.1,8							5												255,120,88
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					14.7,28.5,8							5												1,1,233
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					12,20,8								5												255,0,0
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					9,12,8								5												0,255,255
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					5,5,8								5												255,10,255
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					0,0,8								5												128,128,128
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-5,-4.7, 8							5												140,40,80
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-10.4,-8.5, 8						5												93,144,0
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-16.3,-11., 8						5												78,40,240
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-23.6,-11., 8						5												253,0,100
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-29.4,-8.5, 8						5												100,50,198
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-34.8,-4.7, 8						5												240,230,230
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-39.9,0.4, 8						5												0,80,20
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-44.3,6.0, 8						5												255,210,90
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-48.4,12.7, 8		 				5												99,0,255
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-51.5,20.6, 8						5												100,255,80
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-54.6,28.5, 8						5												255,4,100
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-57.5,37.1, 8						5												187,179,80
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-59.5,45.2, 8						5												70,140,70
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-61.3,53.4, 8						5												2,1,255
+
+#sphere				sphere's centre location			sphere's diamater								color (RGB)
+sp					-63.0,61.2, 8						5												200,4,80
+
+
+
+# BACKGROUND NECKLACE:
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						-30,30, 45							70												200,100,21
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						-45,58, 45							70												110,0,211
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						-53,73, 45							70												255,255,20
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						-63,93, 45							70												255,160,20
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						0,20, 45							70												255,200,255
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						30,43, 45							70												0,220,115
+
+#sphere (background)	sphere's centre location			sphere's diamater								color (RGB)
+sp						50,61, 45							70												230,0,110
+
+
+
+# OTHER OBJECTS:
+#
+#plane				location of a point on the plane	normal to the plane (perpendicular vector)			color (RGB)
+pl					0,0,80								0,0,0.0000000003									0,125,200
+
+#cylinder			cylinder's center location			axis vector			diameter		height			color (RGB)
+cy					-20.9,68,8							0.9,-0.08,0.0		10.2			90.42			165,20,40

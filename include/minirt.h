@@ -49,7 +49,6 @@ enum e_exit_code
 	MLX_FAILURE		=	1,
 	INPUT_ERROR		=	2,
 	SYSTEM_FAILURE	=	3
-
 };
 
 /* Type of object */
@@ -58,7 +57,6 @@ typedef enum e_type
 	SPHERE,
 	PLANE,
 	CYLINDER
-
 }	t_type;
 
 /* Key light */
@@ -72,113 +70,124 @@ typedef struct s_light
 /* Camera specs */
 typedef struct s_cam
 {
-	double	fov; // converted to rad from degree  ==parsing== (multiply the provided angle by π / 180)
+	double	fov;
 	t_vec	pos;
 	t_vec	direction;
 
 }	t_cam;
 
 # ifndef BONUS
-	/* Object information */
-	typedef struct s_object
-	{
-		// general attributes
-		t_type	type;
-		t_vec	pos;
-		t_color	color;
-		t_vec	oc;  // vector from object to camera
-
-		// sphere and cylinder
-		double	r;
-
-		// plane and cylinder
-		t_vec	axis;
-
-		// cylinder
-		double	h;  // Half height of the cylinder
-
-	}	t_object;
 # else
-	/* Object information */
-	typedef struct s_object
-	{
-		// general attributes
-		t_type			type;
-		t_vec			pos;
-		t_color			color;
-		t_vec			oc;  // vector from object to camera
 
-		// sphere and cylinder
-		double			r;
-
-		// plane and cylinder
-		t_vec			axis;
-
-		// cylinder
-		double			h;  // Half height of the cylinder
-
-		// texture
-		char			*tex_file;
-		char			*normal_file;
-		mlx_texture_t	*texture;
-		mlx_texture_t	*normal;
-		double			rot[3][3];
-		double			phase;
-
-	}	t_object;
+typedef enum e_material
+{
+	MONO,
+	TEXTURE,
+	CHECKER
+}	t_material;
 # endif
 
 # ifndef BONUS
-	// Struct that includes everything
-	typedef struct s_info
-	{
-		mlx_t		*mlx;
-		mlx_image_t	*img;
-		double		focal_length;
-		double		viewport_w;
-		double		viewport_h;
-		double		rot[3][3];
-		double		px;
-		int			ray_depth;
-		t_color		amb;
-		t_cam		cam;
-		t_cam		cam_curr_frame;
-		t_object	*obj;  	// array of objects
-		int			n_obj;
-		t_light		light;	// one single light
-		bool		has_moved;
-		bool		has_rotated;
+/* Object information */
+typedef struct s_object
+{
+	// general attributes
+	t_type	type;
+	t_vec	pos;
+	t_color	color;
+	t_vec	oc;	// vector from object to camera
+	// sphere and cylinder
+	double	r;
 
-	}	t_info;
+	// plane and cylinder
+	t_vec	axis;
+
+	// cylinder
+	double	h;	// Half height of the cylinder
+
+}	t_object;
 # else
-	// Struct that includes everything, as well as data for multithreading
-	typedef struct s_info
-	{
-		mlx_t			*mlx;
-		mlx_image_t		*img;
-		double			focal_length;
-		double			viewport_w;
-		double			viewport_h;
-		double			rot[3][3];
-		double			px;
-		int				ray_depth;
-		t_color			amb;
-		t_cam			cam;
-		t_cam			cam_curr_frame;
-		t_object		*selected_obj;
-		t_object		*obj;  	// array of objects
-		int				n_obj;
-		t_light			*light;	// array of lights
-		int				n_light;
-		bool			has_moved;
-		bool			has_rotated;
-		bool			auto_rotate;
-		bool			prev_mouse;
-		int				prev_x;
-		int				prev_y;
-		t_thread_system	thread_system;
+/* Object information */
+typedef struct s_object
+{
+	// general attributes
+	t_type			type;
+	t_vec			pos;
+	t_color			color;
+	t_vec			oc;	// vector from object to camera
 
-	}	t_info;
+	// sphere and cylinder
+	double			r;
+
+	// plane and cylinder
+	t_vec			axis;
+
+	// cylinder
+	double			h;	// Half height of the cylinder
+
+	// texture
+	char			*tex_file;
+	char			*normal_file;
+	mlx_texture_t	*texture;
+	mlx_texture_t	*normal;
+	double			rot[3][3];
+	double			phase;
+	t_material		material;
+
+}	t_object;
+# endif
+
+# ifndef BONUS
+// Struct that includes everything
+typedef struct s_info
+{
+	mlx_t		*mlx;
+	mlx_image_t	*img;
+	double		focal_length;
+	double		viewport_w;
+	double		viewport_h;
+	double		rot[3][3];
+	double		px;
+	int			ray_depth;
+	t_color		amb;
+	t_cam		cam;
+	t_cam		cam_curr_frame;
+	t_object	*obj;	// array of objects
+	int			n_obj;
+	t_light		light;	// one single light
+	bool		has_moved;
+	bool		has_rotated;
+
+}	t_info;
+# else
+// Struct that includes everything, as well as data for multithreading
+typedef struct s_info
+{
+	mlx_t			*mlx;
+	mlx_image_t		*img;
+	double			focal_length;
+	double			viewport_w;
+	double			viewport_h;
+	double			rot[3][3];
+	double			px;
+	int				ray_depth;
+	t_color			amb;
+	t_cam			cam;
+	t_cam			cam_curr_frame;
+	t_object		*selected_obj;
+	t_object		*obj;	// array of objects
+	int				n_obj;
+	t_light			*light;	// array of lights
+	int				n_light;
+	bool			has_moved;
+	bool			has_rotated;
+	bool			auto_rotate;
+	bool			prev_mouse;
+	int				prev_x;
+	int				prev_y;
+	t_thread_system	thread_system;
+
+}	t_info;
 # endif
 
 /* utils */
@@ -189,21 +198,21 @@ int			free_exit(char *s, int exit_code);
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
 // t_vec		color_to_vec(int r, int g, int b);
-#ifndef BONUS
-#else
+# ifndef BONUS
+# else
+
 double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
 t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
 t_vec		px_loc_to_normal(mlx_texture_t *map, int i, int j);
-void		parse_texture(t_object *obj, char *name);
 void		get_object_rot_matrix(double (*rot)[3], t_vec u);
 void		rotate_object(mlx_key_data_t keydata, t_info *info);
 void		move_selected_object(t_info *info);
 void		mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void *param);
 void		normal_tbn_to_xyz(t_object *obj, t_hit *hit);
 void		adjust_ray_depth(mlx_key_data_t keydata, void *param);
-#endif
+# endif
 
 /* ray tracing */
 double		ray_hit_sphere(t_vec ray, t_object *sphere, t_vec oc);

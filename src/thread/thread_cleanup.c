@@ -14,6 +14,7 @@
 
 #ifndef BONUS
 #else
+
 static void	let_threads_finish(t_painter *threads, int i);
 static void	destruct_barrier(pthread_barrier_t *barrier);
 

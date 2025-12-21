@@ -35,17 +35,27 @@ OBJ_DIR = ./obj
 BONUS_OBJ_DIR = ./obj_bonus
 
 SRC_FILES = main.c \
+			memory/free_exit.c \
 			parser/handle_argv.c \
 			parser/parser.c \
-			parser/parse_setting.c \
-			parser/parse_objects.c \
-			parser/parsing_utils.c \
-			parser/error_handling.c \
+			parser/finalize_parsing.c \
+			parser/parse_light.c \
+			parser/parse_camera.c \
+			parser/parse_sphere.c \
+			parser/parse_plane.c \
+			parser/parse_cylinder.c \
+			parser/parsing_utils_1.c \
+			parser/parsing_utils_2.c \
+			parser/light_and_obj_utils.c \
 			parser/ft_strtod.c \
+			parser/exponent.c \
+			parser/parse_vector.c \
 			parser/parse_triad.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
 			parser/parse_texture.c \
+			parser/error_handling.c \
+			parser/clean_up_parser.c \
 			color/color.c \
 			color/texture_mapping.c \
 			hooks/camera_hooks.c \

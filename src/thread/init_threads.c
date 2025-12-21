@@ -14,8 +14,10 @@
 
 #ifndef BONUS
 #else
+
 static int	init_barrier(t_thread_system *thread_system);
 static void	init_threads(t_info *info);
+
 /*
 * If the barrier's initialization fails, this program falls back on single
 * threaded execution.
@@ -90,7 +92,7 @@ static void	init_threads(t_info *info)
 			ft_putstr_fd("Failed to create a thread; initiating fallback to "
 				"single-threaded rendering.\n", 2);
 			clean_up_threads_and_barrier(&info->thread_system, i);
-			atomic_store(&info->thread_system.is_multithreaded, 0); // signals that we fallback to single-threaded rendering.
+			atomic_store(&info->thread_system.is_multithreaded, 0);
 			return ;
 		}
 		i++;

@@ -12,6 +12,7 @@
 
 #include "parser.h"
 
+static int	parse_buffer(t_gnl *gnl, size_t *i, char **output, char *buffer);
 static char	*review_line_and_clean_buffer(char *line, char *buffer, size_t *i);
 static int	read_and_manage_output(int fd, char *buffer, char **line);
 
@@ -26,11 +27,6 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 		function read_and_manage_output().
 */
 
-// FIXME: cap the BUFFER_SIZE to something reasonable?
-// So we don't have some funny surprises. And handle that error with returning BUFFER_SIZE_ERROR,
-// just as we do for the empty buffer ----> but this would require review of the notes
-// regarding buffer_size_error or handle_parsing_error() etc.
-
 /*
 * Return values:
 *	0: success; next line is either ready or empty (in case EOF is reached).
@@ -41,37 +37,45 @@ static int	read_and_manage_output(int fd, char *buffer, char **line);
 int	get_next_line_revised(int fd, char **output)
 {
 	static char	buffer[BUFFER_SIZE + 1];
-	int			line_status;
+	t_gnl		gnl;
 	size_t		i;
-	char		*line;
 
-	line = NULL;
+	gnl.line = NULL;
+	gnl.line_status = 0;
+	i = 0;
 	if (!BUFFER_SIZE)
 		return (BUFFER_SIZE_ERROR);
-	line_status = 0;
-	i = 0;
 	if (buffer[i])
 	{
-		line_status = process_buffer(&line, buffer, &i);
-		if (line_status == ALLOCATION_FAILURE) // no worries here: 'line' is always NULL before this boolean check, no need to free it.
+		if (parse_buffer(&gnl, &i, output, buffer) == ALLOCATION_FAILURE)
 			return (ALLOCATION_FAILURE);
-		if (line_status == 1) // next line is ready: OK to return
-		{
-			*output = line;
+		if (gnl.line_status == 1)
 			return (0);
-		}
-		line = review_line_and_clean_buffer(line, buffer, &i);
-		if (!line)
-			return (ALLOCATION_FAILURE);
 	}
-	line_status = read_and_manage_output(fd, buffer, &line);
-	if (line_status < 0)
+	gnl.line_status = read_and_manage_output(fd, buffer, &gnl.line);
+	if (gnl.line_status < 0)
 	{
-		free(line);
-		line = NULL;
-		return (line_status);
+		free(gnl.line);
+		gnl.line = NULL;
+		return (gnl.line_status);
 	}
-	*output = line;
+	*output = gnl.line;
+	return (0);
+}
+
+static int	parse_buffer(t_gnl *gnl, size_t *i, char **output, char *buffer)
+{
+	gnl->line_status = process_buffer(&gnl->line, buffer, i);
+	if (gnl->line_status == ALLOCATION_FAILURE)
+		return (ALLOCATION_FAILURE);
+	if (gnl->line_status == 1)
+	{
+		*output = gnl->line;
+		return (0);
+	}
+	gnl->line = review_line_and_clean_buffer(gnl->line, buffer, i);
+	if (!gnl->line)
+		return (ALLOCATION_FAILURE);
 	return (0);
 }
 
