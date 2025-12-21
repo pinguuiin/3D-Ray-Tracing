@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_texture.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:21:42 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/11/29 22:21:53 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/12/21 05:59:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	parse_texture(char **str, t_object *object, size_t line_num)
 	retval = parse_texture_name(str, object, line_num);
 	if (retval)
 		return (retval);
-	if (object->material == TEXTURE)
+	if (object->material != MONO)
 		get_object_rot_matrix(object->rot, object->axis);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/21 05:14:26 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 06:37:35 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 	theta = acos(-p.y / sphere->r);
 	if (sphere->material == CHECKER)
 	{
-		*i = floor(phi / (2.0 * M_PI) * 35.0);
-		*j = floor(theta / M_PI * 11.0);
+		*i = floor(phi / (2.0 * M_PI) * 16.0);
+		*j = floor(theta / M_PI * 8.0);
 		return ;
 	}
 	*i = phi / (2.0 * M_PI) * (sphere->texture->width - 1);
@@ -43,8 +43,8 @@ inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 	rotate(plane->rot, &p);
 	if (plane->material == CHECKER)
 	{
-		*i = p.x / info->px / 17;
-		*j = p.z / info->px / 5;
+		*i = floor(p.x);
+		*j = floor(p.z);
 		return ;
 	}
 	*i = fmod(p.x / info->px, plane->texture->width - 1);
