@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:21:42 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/21 22:30:33 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 08:00:07 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 static int	parse_texture_name(char **str, t_object *object, size_t line_num);
 static int	count_texture_strlen(char *str, size_t line_num, size_t *len);
+static int	assign_material_param(t_object *object, size_t len, char *str);
 static int	load_textures(t_object *object, char *tex_name, size_t len);
 
 int	parse_texture(char **str, t_object *object, size_t line_num)
@@ -61,9 +62,7 @@ static int	parse_texture_name(char **str, t_object *object, size_t line_num)
 	(*str)++;
 	if (count_texture_strlen(*str, line_num, &len) == -1)
 		return (INVALID_INPUT);
-	if (len == 7 && !ft_strncmp(*str, "checker", 7))
-		object->material = CHECKER;
-	else
+	if (assign_material_param(object, len, *str))
 	{
 		object->material = TEXTURE;
 		retval = load_textures(object, *str, len);
@@ -93,7 +92,38 @@ static int	count_texture_strlen(char *str, size_t line_num, size_t *len)
 	return (0);
 }
 
-
+static int	assign_material_param(t_object *object, size_t len, char *str)
+{
+	if (len == 7 && !ft_strncmp(str, "checker", 7))
+	{
+		object->material = CHECKER;
+		return (0);
+	}
+	if (len == 5 && !ft_strncmp(str, "metal", 5))
+	{
+		object->ks = 0.9;
+		object->kd = 0.4;
+		object->shininess = 80;
+	}
+	else if (len == 3 && !ft_strncmp(str, "ice", 3))
+	{
+		object->ks = 0.5;
+		object->kd = 0.5;
+		object->shininess = 30;
+	}
+	else if (len == 4 && !ft_strncmp(str, "snow", 4))
+	{
+		object->ks = 0.02;
+		object->kd = 0.8;
+		object->shininess = 10;
+	}
+	else
+	{
+		object->ks = 0.2;
+		object->kd = 0.8;
+	}
+	return (1);
+}
 
 /*
 * Loads a texture via the MLX library, from both the color.png and normal.png

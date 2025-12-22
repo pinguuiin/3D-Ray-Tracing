@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/22 01:46:01 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 07:15:50 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ typedef enum e_type
 typedef enum e_material
 {
 	MONO,
-	TEXTURE,
-	CHECKER
+	CHECKER,
+	TEXTURE
 }	t_material;
 # endif
 
@@ -92,7 +92,7 @@ typedef struct s_object
 	t_type	type;
 	double	ks;
 	double	kd;
-	double	shininess;
+	int		shininess;
 	t_vec	pos;
 	t_color	color;
 	t_vec	oc;	// vector from object to camera
