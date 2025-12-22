@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 05:33:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 00:58:37 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 07:06:16 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static inline void	update_sphere_phase_for_new_frame(t_info *info)
 	while (i < info->n_obj)
 	{
 		if (info->obj[i].type == SPHERE)
-			info->obj[i].phase -= 0.5 * info->mlx->delta_time;
+			info->obj[i].phase -= 0.3 * info->mlx->delta_time;
 		i++;
 	}
 }

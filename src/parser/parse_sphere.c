@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_sphere.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ykadosh <ykadosh@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 22:39:34 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/11 23:02:11 by ykadosh          ###   ########.fr       */
+/*   Updated: 2025/12/21 22:03:53 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,15 +68,15 @@ static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 
 	while (p_head)
 	{
-		if (p_head->object.tex_file)
-		{
-			p_object = &p_head->object;
+		p_object = &p_head->object;
+		if (p_object->tex_file)
 			free(p_object->tex_file);
+		if (p_object->normal_file)
 			free(p_object->normal_file);
+		if (p_object->texture)
 			mlx_delete_texture(p_object->texture);
-			if (p_object->normal)
-				mlx_delete_texture(p_object->normal);
-		}
+		if (p_object->normal)
+			mlx_delete_texture(p_object->normal);
 		p_head = p_head->next;
 	}
 }

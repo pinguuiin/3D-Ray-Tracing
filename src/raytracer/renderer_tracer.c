@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/16 06:57:52 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 05:12:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 		sphere_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
 	else
 		plane_xyz_to_px_loc(hit->pos, obj, &tex_loc[0], &tex_loc[1]);
-	hit->color = px_loc_to_color(obj->texture, tex_loc[0], tex_loc[1]);
+	hit->color = px_loc_to_color(obj, tex_loc[0], tex_loc[1]);
 	if (obj->normal)
 		hit->normal = px_loc_to_normal(obj->normal, tex_loc[0], tex_loc[1]);
 }
@@ -94,12 +94,12 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 	obj = &info->obj[hit->obj_id];
 	ray = scale(ray, k);
 	hit->pos = add(hit->emit_pos, ray);
-	if (obj->tex_file)
+	if (obj->material != MONO)
 		get_texture_color_and_normal(hit, obj);
 	else
 		hit->color = obj->color;
 	color = dot_elem(overlay, reflection(info, obj, ray, hit));
-	overlay = scale(dot_elem(overlay, hit->color), 0.3);  ///define parameter?=======================
+	overlay = scale(dot_elem(overlay, hit->color), obj->ks);
 	ray = normalize(hit->bounce);
 	hit->emit_pos = hit->pos;
 	color = add(color, trace_ray(ray, hit, depth - 1, overlay));

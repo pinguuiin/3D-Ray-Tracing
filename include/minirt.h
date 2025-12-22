@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 06:56:09 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/22 07:15:50 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,6 @@
 # define WIDTH 1500
 # define HEIGHT 1000
 # define EPSILON 1e-8
-# define KS 0.5
-# define KD 0.5
-# define SHININESS 30
 
 # include "../libft/libft.h"
 # include "../MLX42/include/MLX42/MLX42.h"
@@ -59,6 +56,17 @@ typedef enum e_type
 	CYLINDER
 }	t_type;
 
+# ifndef BONUS
+# else
+
+typedef enum e_material
+{
+	MONO,
+	CHECKER,
+	TEXTURE
+}	t_material;
+# endif
+
 /* Key light */
 typedef struct s_light
 {
@@ -77,22 +85,14 @@ typedef struct s_cam
 }	t_cam;
 
 # ifndef BONUS
-# else
-
-typedef enum e_material
-{
-	MONO,
-	TEXTURE,
-	CHECKER
-}	t_material;
-# endif
-
-# ifndef BONUS
 /* Object information */
 typedef struct s_object
 {
 	// general attributes
 	t_type	type;
+	double	ks;
+	double	kd;
+	int		shininess;
 	t_vec	pos;
 	t_color	color;
 	t_vec	oc;	// vector from object to camera
@@ -133,6 +133,9 @@ typedef struct s_object
 	double			rot[3][3];
 	double			phase;
 	t_material		material;
+	double			ks;
+	double			kd;
+	double			shininess;
 
 }	t_object;
 # endif
@@ -197,19 +200,21 @@ int			free_exit(char *s, int exit_code);
 /* color */
 uint8_t		clamp(double single_channel_color);
 uint32_t	vec_to_color(t_vec color);
-// t_vec		color_to_vec(int r, int g, int b);
+
 # ifndef BONUS
 # else
 
-double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit);
+double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos,
+			t_hit *hit);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
-t_color		px_loc_to_color(mlx_texture_t *map, int i, int j);
+t_color		px_loc_to_color(t_object *obj, int i, int j);
 t_vec		px_loc_to_normal(mlx_texture_t *map, int i, int j);
 void		get_object_rot_matrix(double (*rot)[3], t_vec u);
 void		rotate_object(mlx_key_data_t keydata, t_info *info);
 void		move_selected_object(t_info *info);
-void		mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void *param);
+void		mouse_hook(mouse_key_t button, action_t action,
+			modifier_key_t mods, void *param);
 void		normal_tbn_to_xyz(t_object *obj, t_hit *hit);
 void		adjust_ray_depth(mlx_key_data_t keydata, void *param);
 # endif

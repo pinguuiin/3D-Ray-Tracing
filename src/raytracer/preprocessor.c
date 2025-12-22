@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 04:45:19 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 07:16:31 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/21 05:17:20 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ inline void	update_oc_and_plane_normal(t_info *info)
 
 inline void	get_viewport_data(t_info *info)
 {
-	info->focal_length = 1.0;
 	info->viewport_w = tan(info->cam_curr_frame.fov / 2.0)
 		* 2 * info->focal_length;
 	info->viewport_h = info->viewport_w * info->img->height / info->img->width;
@@ -38,7 +37,8 @@ inline void	get_viewport_data(t_info *info)
 
 void	preprocessor(t_info *info)
 {
-	info->ray_depth = 2;
+	info->ray_depth = 1;
+	info->focal_length = 1.0;
 	info->cam_curr_frame = info->cam;
 	update_oc_and_plane_normal(info);
 	get_rotation_matrix(info->rot, info->cam_curr_frame.direction,
