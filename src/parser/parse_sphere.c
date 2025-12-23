@@ -62,63 +62,14 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	return (NO_ERROR);
 }
 
-/*
- * FIXME: delete this function when ready
-
-static void	free_all_textures_from_linked_list(t_node_obj *p_head)
-{
-	t_object	*p_object;
-
-	while (p_head)
-	{
-		p_object = &p_head->object;
-		if (p_object->tex_file)
-			free(p_object->tex_file);
-		if (p_object->normal_file)
-			free(p_object->normal_file);
-		if (p_object->texture)
-			mlx_delete_texture(p_object->texture);
-		if (p_object->normal)
-			mlx_delete_texture(p_object->normal);
-		p_head = p_head->next;
-	}
-}
-*/
-
-/*
-static int	handle_texture(char **str, t_parser *parser)
-{
-	int	retval;
-
-	retval = 0;
-	if (**str && **str != '\n')
-	{
-		retval = parse_texture(str, &parser->current->object, parser->line_num);
-		if (retval)
-			free_all_textures_from_linked_list(parser->head);
-	}
-	return (retval);
-}
-*/
-
 int	check_for_texture_and_handle(char **str, t_parser *parser)
 {
-	// FIXME: delete this when ready.
-	// int	retval;
-	//
 	if (isspace_but_not_newline(**str))
 	{
 		skip_whitespace_but_not_newline(str);
 		if (**str && **str != '\n')
-			return (parse_texture(str, &parser->current->object, parser->line_num));
-
-
-			/*
-			 * FIXME: delete this block when ready.
-
-			retval = handle_texture(str, parser);
-			return (retval);
-			*/
+			return (parse_texture(str, &parser->current->object,
+					parser->line_num));
 	}
 	else if (**str && **str != '\n')
 	{

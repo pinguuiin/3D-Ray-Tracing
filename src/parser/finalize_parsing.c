@@ -59,43 +59,22 @@ int	finalize_parsing(t_parser *parser, t_info *info)
 			free(info->light);
 			exit (SYSTEM_FAILURE);
 		}
-		// if (clean_up_parser(parser) == CLOSE_FAILURE)
-		// 	exit (SYSTEM_FAILURE);
 	}
 	return (status);
 }
 
 static int	transfer_lists_to_arrays(t_parser *parser, t_info *info)
 {
-	// int	i; // FIXME: delete this when ready
-
 	info->n_light = parser->n_lights;
 	info->light = (t_light *) ft_calloc(parser->n_lights, sizeof (t_light));
 	if (!info->light)
 		return (ALLOCATION_FAILURE);
 	copy_light(parser, info);
-
 	if (transfer_obj_list_to_array(parser, info) == ALLOCATION_FAILURE)
 	{
 		free (info->light);
 		return (ALLOCATION_FAILURE);
 	}
-
-
-	// FIXME: delete this when ready.
-	/*
-	info->n_obj = parser->n_spheres + parser->n_planes + parser->n_cylinders;
-	info->obj = (t_object *) ft_calloc(info->n_obj, sizeof (t_object));
-	if (!info->obj)
-	{
-		free (info->light);
-		return (ALLOCATION_FAILURE);
-	}
-	i = 0;
-	copy_obj(SPHERE, parser, &i, parser->n_spheres);
-	copy_obj(PLANE, parser, &i, parser->n_planes);
-	copy_obj(CYLINDER, parser, &i, parser->n_cylinders);
-	*/
 	return (NO_ERROR);
 }
 #endif
