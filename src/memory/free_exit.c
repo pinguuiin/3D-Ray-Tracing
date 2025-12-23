@@ -33,7 +33,7 @@ int	free_exit(char *s, int exit_code)
 }
 #else
 
-static void	free_all_textures(t_info *info)
+void	free_all_textures(t_info *info)
 {
 	int	i;
 

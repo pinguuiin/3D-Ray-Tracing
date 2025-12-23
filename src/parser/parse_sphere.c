@@ -62,6 +62,9 @@ int	parse_sphere(t_parser *parser, char *str, size_t line_num)
 	return (NO_ERROR);
 }
 
+/*
+ * FIXME: delete this function when ready
+
 static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 {
 	t_object	*p_object;
@@ -80,7 +83,9 @@ static void	free_all_textures_from_linked_list(t_node_obj *p_head)
 		p_head = p_head->next;
 	}
 }
+*/
 
+/*
 static int	handle_texture(char **str, t_parser *parser)
 {
 	int	retval;
@@ -94,19 +99,26 @@ static int	handle_texture(char **str, t_parser *parser)
 	}
 	return (retval);
 }
+*/
 
 int	check_for_texture_and_handle(char **str, t_parser *parser)
 {
-	int	retval;
-
+	// FIXME: delete this when ready.
+	// int	retval;
+	//
 	if (isspace_but_not_newline(**str))
 	{
 		skip_whitespace_but_not_newline(str);
 		if (**str && **str != '\n')
-		{
+			return (parse_texture(str, &parser->current->object, parser->line_num));
+
+
+			/*
+			 * FIXME: delete this block when ready.
+
 			retval = handle_texture(str, parser);
 			return (retval);
-		}
+			*/
 	}
 	else if (**str && **str != '\n')
 	{

@@ -196,6 +196,11 @@ typedef struct s_info
 /* utils */
 t_info		*get_info(void);
 int			free_exit(char *s, int exit_code);
+# ifndef BONUS
+# else
+
+void		free_all_textures(t_info *info);
+# endif
 
 /* color */
 uint8_t		clamp(double single_channel_color);
