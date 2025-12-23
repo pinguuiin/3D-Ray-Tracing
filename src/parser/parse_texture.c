@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:21:42 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/22 08:00:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/23 07:04:44 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ static int	parse_texture_name(char **str, t_object *object, size_t line_num)
 		return (INVALID_INPUT);
 	if (assign_material_param(object, len, *str))
 	{
-		object->material = TEXTURE;
 		retval = load_textures(object, *str, len);
 		if (retval == -2)
 			return (ALLOCATION_FAILURE);
@@ -101,24 +100,28 @@ static int	assign_material_param(t_object *object, size_t len, char *str)
 	}
 	if (len == 5 && !ft_strncmp(str, "metal", 5))
 	{
+		object->material = TEXTURE;
 		object->ks = 0.9;
 		object->kd = 0.4;
 		object->shininess = 80;
 	}
 	else if (len == 3 && !ft_strncmp(str, "ice", 3))
 	{
-		object->ks = 0.5;
-		object->kd = 0.5;
-		object->shininess = 30;
+		object->material = ICE;
+		object->ks = 0.4;
+		object->kd = 0.7;
+		object->shininess = 150;
 	}
 	else if (len == 4 && !ft_strncmp(str, "snow", 4))
 	{
+		object->material = TEXTURE;
 		object->ks = 0.02;
 		object->kd = 0.8;
 		object->shininess = 10;
 	}
 	else
 	{
+		object->material = TEXTURE;
 		object->ks = 0.2;
 		object->kd = 0.8;
 	}

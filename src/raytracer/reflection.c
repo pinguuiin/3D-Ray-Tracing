@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 01:34:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/22 05:48:06 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/23 07:10:58 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ static inline void	get_hit_normal(t_object *obj, t_hit *hit)
 }
 #endif
 
+#ifndef BONUS
+
 static inline void	add_diffuse_and_specular(t_object *obj, t_hit *hit, t_light *light)
 {
 	double	flux;
@@ -89,6 +91,7 @@ static inline void	add_diffuse_and_specular(t_object *obj, t_hit *hit, t_light *
 		}
 	}
 }
+#endif
 
 /* Implement Phong reflection model:
 Diffuse = Kd (incoming light · hit point surface normal)

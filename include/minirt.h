@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/22 07:15:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 00:26:32 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef enum e_material
 {
 	MONO,
 	CHECKER,
+	ICE,
 	TEXTURE
 }	t_material;
 # endif
@@ -211,6 +212,8 @@ uint32_t	vec_to_color(t_vec color);
 
 double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos,
 				t_hit *hit);
+void		add_diffuse_and_specular(t_object *obj, t_hit *hit,
+				t_light *light);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
 t_color		px_loc_to_color(t_object *obj, int i, int j);

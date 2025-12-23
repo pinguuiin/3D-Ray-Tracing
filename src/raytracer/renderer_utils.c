@@ -6,11 +6,41 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 05:33:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/22 07:06:16 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/23 06:44:54 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+
+#ifndef BONUS
+#else
+
+inline void	add_diffuse_and_specular(t_object *obj, t_hit *hit, t_light *light)
+{
+	double	flux;
+	double	spec;
+
+	if (obj->material == ICE)
+		hit->f = obj->ks + (1.0 - obj->ks)
+					* pow(1.0 - dot(hit->normal, hit->ray), 5.0);
+	flux = dot(hit->incoming, hit->normal);
+	if (flux > EPSILON)
+	{
+		flux *= obj->kd;
+		if (obj->material == ICE)
+			flux *= 1.0 - hit->f;
+		hit->diffuse = scale(dot_elem(light->color, hit->color), flux);
+		hit->intensity = add(hit->intensity, hit->diffuse);
+		spec = dot(hit->outgoing, hit->ray);
+		if (spec > EPSILON)
+		{
+			spec = hit->f * pow(spec, obj->shininess);
+			hit->specular = scale(light->color, spec);
+			hit->intensity = add(hit->intensity, hit->specular);
+		}
+	}
+}
+#endif
 
 static inline void	update_camera_for_new_frame(t_info *info)
 {
