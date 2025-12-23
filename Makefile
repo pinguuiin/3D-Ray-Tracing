@@ -36,6 +36,7 @@ BONUS_OBJ_DIR = ./obj_bonus
 
 SRC_FILES = main.c \
 			memory/free_exit.c \
+			memory/clean_up_parser.c \
 			parser/handle_argv.c \
 			parser/parser.c \
 			parser/finalize_parsing.c \
@@ -55,7 +56,6 @@ SRC_FILES = main.c \
 			parser/get_next_line_utils.c \
 			parser/parse_texture.c \
 			parser/error_handling.c \
-			parser/clean_up_parser.c \
 			color/color.c \
 			color/texture_mapping.c \
 			hooks/camera_hooks.c \
