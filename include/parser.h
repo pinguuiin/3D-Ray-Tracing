@@ -93,6 +93,7 @@ typedef struct s_parser
 	int				n_cylinders;
 	int				n_ambs;
 	int				n_cams;
+	bool			is_valid_scene;
 	t_node_obj		*head;
 	t_node_obj		*current;
 	t_node_light	*head_light;
