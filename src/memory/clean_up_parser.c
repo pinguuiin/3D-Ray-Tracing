@@ -102,14 +102,14 @@ static void	destroy_obj_list(t_parser *parser)
 		next = current->next;
 		if (!parser->is_valid_scene)
 		{
-			if (current->tex_file)
-				free(current->tex_file);
-			if (current->normal_file)
-				free(current->normal_file);
-			if (current->texture)
-				mlx_delete_texture(current->texture);
-			if (current->normal)
-				mlx_delete_texture(current->normal);
+			if (current->object.tex_file)
+				free(current->object.tex_file);
+			if (current->object.normal_file)
+				free(current->object.normal_file);
+			if (current->object.texture)
+				mlx_delete_texture(current->object.texture);
+			if (current->object.normal)
+				mlx_delete_texture(current->object.normal);
 		}
 		free(current);
 		current = next;
