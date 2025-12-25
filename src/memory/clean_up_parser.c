@@ -13,6 +13,7 @@
 #include "parser.h"
 
 static void	destroy_obj_list(t_parser *parser);
+
 #ifndef BONUS
 #else
 
@@ -47,6 +48,19 @@ int	clean_up_parser(t_parser *parser)
 	return (0);
 }
 
+static void	destroy_obj_list(t_parser *parser)
+{
+	t_node_obj		*current;
+	t_node_obj		*next;
+
+	current = parser->head;
+	while (current)
+	{
+		next = current->next;
+		free(current);
+		current = next;
+	}
+}
 #else
 
 int	clean_up_parser(t_parser *parser)
@@ -77,8 +91,6 @@ static void	destroy_light_list(t_parser *parser)
 	}
 }
 
-#endif
-
 static void	destroy_obj_list(t_parser *parser)
 {
 	t_node_obj		*current;
@@ -88,7 +100,19 @@ static void	destroy_obj_list(t_parser *parser)
 	while (current)
 	{
 		next = current->next;
+		if (!parser->is_valid_scene)
+		{
+			if (current->object.tex_file)
+				free(current->object.tex_file);
+			if (current->object.normal_file)
+				free(current->object.normal_file);
+			if (current->object.texture)
+				mlx_delete_texture(current->object.texture);
+			if (current->object.normal)
+				mlx_delete_texture(current->object.normal);
+		}
 		free(current);
 		current = next;
 	}
 }
+#endif
