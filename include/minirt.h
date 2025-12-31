@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/31 00:26:32 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 03:14:22 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,7 @@ void		mouse_hook(mouse_key_t button, action_t action,
 				modifier_key_t mods, void *param);
 void		normal_tbn_to_xyz(t_object *obj, t_hit *hit);
 void		adjust_ray_depth(mlx_key_data_t keydata, void *param);
+void		adjust_ambient_brightness(mlx_key_data_t keydata, void *param);
 # endif
 
 /* ray tracing */
