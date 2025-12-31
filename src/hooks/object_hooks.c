@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 22:36:08 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/31 01:09:19 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 06:55:42 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static inline void	update_obj_oc_and_plane_normal(t_info *info, t_object *obj)
 inline void	move_selected_object(t_info *info)
 {
 	int32_t			cursor[2];
-	const double	(*rot)[3] = info->rot;
+	const	double	(*rot)[3] = info->rot;
 	double			depth;
 	t_object		*obj;
 
@@ -43,12 +43,12 @@ inline void	move_selected_object(t_info *info)
 		mlx_get_mouse_pos(info->mlx, &cursor[0], &cursor[1]);
 		if (info->prev_mouse == true)
 		{
-			depth = -dot(obj->oc, vec3(rot[0][2], rot[1][2], rot[2][2]))
-					* info->px;
+			depth = fabs(dot(obj->oc, vec3(rot[0][2], rot[1][2], rot[2][2])))
+				* info->px;
 			obj->pos = add(obj->pos, scale(vec3(rot[0][0], rot[1][0],
-						rot[2][0]), (cursor[0] - info->prev_x) * depth));
+							rot[2][0]), (cursor[0] - info->prev_x) * depth));
 			obj->pos = subtract(obj->pos, scale(vec3(rot[0][1], rot[1][1],
-						rot[2][1]), (cursor[1] - info->prev_y) * depth));
+							rot[2][1]), (cursor[1] - info->prev_y) * depth));
 			update_obj_oc_and_plane_normal(info, obj);
 		}
 		info->prev_x = cursor[0];
@@ -59,7 +59,8 @@ inline void	move_selected_object(t_info *info)
 		info->prev_mouse = false;
 }
 
-inline void	mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void *param)
+inline void	mouse_hook(mouse_key_t button, action_t action,
+	modifier_key_t mods, void *param)
 {
 	t_info	*info;
 	int32_t	cursor[2];

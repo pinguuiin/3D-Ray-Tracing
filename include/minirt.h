@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/31 03:14:22 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 05:33:39 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,44 +89,32 @@ typedef struct s_cam
 /* Object information */
 typedef struct s_object
 {
-	// general attributes
 	t_type	type;
 	double	ks;
 	double	kd;
 	int		shininess;
 	t_vec	pos;
 	t_color	color;
-	t_vec	oc;	// vector from object to camera
-	// sphere and cylinder
+	t_vec	oc;
+
 	double	r;
-
-	// plane and cylinder
 	t_vec	axis;
-
-	// cylinder
-	double	h;	// Half height of the cylinder
+	double	h;
 
 }	t_object;
 # else
 /* Object information */
 typedef struct s_object
 {
-	// general attributes
 	t_type			type;
 	t_vec			pos;
 	t_color			color;
-	t_vec			oc;	// vector from object to camera
+	t_vec			oc;
 
-	// sphere and cylinder
 	double			r;
-
-	// plane and cylinder
 	t_vec			axis;
+	double			h;
 
-	// cylinder
-	double			h;	// Half height of the cylinder
-
-	// texture
 	char			*tex_file;
 	char			*normal_file;
 	mlx_texture_t	*texture;
@@ -241,9 +229,7 @@ bool		is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit);
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
 /* rotation, rotation matrix */
-// void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
-// void		rotate_z(t_vec *vec, double theta);
 void		get_rotation_matrix(double (*rot)[3], t_vec f, t_vec up);
 void		rotate(double rot[3][3], t_vec *v1);
 

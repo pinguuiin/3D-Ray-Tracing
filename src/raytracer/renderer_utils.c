@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 05:33:21 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/31 01:13:11 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 06:25:14 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ inline void	add_diffuse_and_specular(t_object *obj, t_hit *hit, t_light *light)
 
 	if (obj->material == ICE)
 		hit->f = obj->ks + (1.0 - obj->ks)
-					* pow(1.0 - dot(hit->normal, hit->ray), 5.0);
+			* pow(1.0 - dot(hit->normal, hit->ray), 5.0);
 	flux = dot(hit->incoming, hit->normal);
 	if (flux > EPSILON)
 	{

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 22:42:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/31 03:21:07 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 05:34:14 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	resize(int32_t width, int32_t height, void *param)
 
 #ifndef BONUS
 #else
+
 void	adjust_ray_depth(mlx_key_data_t keydata, void *param)
 {
 	t_info	*info;

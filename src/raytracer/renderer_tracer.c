@@ -6,13 +6,14 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 21:15:56 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/23 06:41:46 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 05:39:52 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hit)
+inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos,
+	t_hit *hit)
 {
 	int			id;
 	double		k;
@@ -44,7 +45,8 @@ inline double	nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos, t_hit *hi
 #ifndef BONUS
 /* Color pixel to black when ray doesn't hit.
 k = 0 means camera on the object, ray hits */
-static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overlay)
+static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth,
+	t_color overlay)
 {
 	double		k;
 	t_info		*info;
@@ -78,7 +80,8 @@ static inline void	get_texture_color_and_normal(t_hit *hit, t_object *obj)
 		hit->normal = px_loc_to_normal(obj->normal, tex_loc[0], tex_loc[1]);
 }
 
-static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overlay)
+static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth,
+	t_color overlay)
 {
 	double		k;
 	t_info		*info;
@@ -90,7 +93,7 @@ static inline t_color	trace_ray(t_vec ray, t_hit *hit, int depth, t_color overla
 		return (vec3(0.0, 0.0, 0.0));
 	k = nearest_ray_hit(info, ray, hit->emit_pos, hit);
 	if (k + 1.0 <= EPSILON)
-		return (vec3(0.0, 0.0, 0.0)) ;
+		return (vec3(0.0, 0.0, 0.0));
 	obj = &info->obj[hit->obj_id];
 	ray = scale(ray, k);
 	hit->pos = add(hit->emit_pos, ray);
