@@ -36,9 +36,6 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 
 inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 {
-	t_info	*info;
-
-	info = get_info();
 	p = subtract(p, plane->pos);
 	rotate(plane->rot, &p);
 	if (plane->material == CHECKER)
