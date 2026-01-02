@@ -43,7 +43,7 @@ int	get_next_line_revised(int fd, char **output)
 	gnl.line = NULL;
 	gnl.line_status = 0;
 	i = 0;
-	if (!BUFFER_SIZE)
+	if (BUFFER_SIZE <= 0)
 		return (BUFFER_SIZE_ERROR);
 	if (buffer[i])
 	{
