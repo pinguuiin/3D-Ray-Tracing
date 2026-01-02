@@ -6,20 +6,11 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:35:05 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/16 05:29:29 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 05:27:11 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-inline void	rotate_x(t_vec *vec, double theta)
-{
-	double	temp;
-
-	temp = vec->y;
-	vec->y = vec->y * cos(theta) - vec->z * sin(theta);
-	vec->z = vec->z * cos(theta) + temp * sin(theta);
-}
 
 inline void	rotate_y(t_vec *vec, double theta)
 {
@@ -28,15 +19,6 @@ inline void	rotate_y(t_vec *vec, double theta)
 	temp = vec->x;
 	vec->x = vec->x * cos(theta) + vec->z * sin(theta);
 	vec->z = vec->z * cos(theta) - temp * sin(theta);
-}
-
-inline void	rotate_z(t_vec *vec, double theta)
-{
-	double	temp;
-
-	temp = vec->x;
-	vec->x = vec->x * cos(theta) - vec->y * sin(theta);
-	vec->y = vec->y * cos(theta) + temp * sin(theta);
 }
 
 #ifndef BONUS

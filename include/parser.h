@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 19:12:54 by ykadosh           #+#    #+#             */
-/*   Updated: 2025/12/21 23:46:36 by piyu             ###   ########.fr       */
+/*   Updated: 2026/01/02 04:44:30 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int		parse_light(t_parser *parser, char *str, t_light *light);
 int		parse_light(t_parser *parser, char *str);
 int		check_for_texture_and_handle(char **str, t_parser *parser);
 int		parse_texture(char **str, t_object *object, size_t line_num);
+int		assign_material_param(t_object *object, size_t len, char *str);
 # endif
 
 /* parsing utilities */

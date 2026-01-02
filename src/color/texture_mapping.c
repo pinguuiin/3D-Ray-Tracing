@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:36:18 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/21 06:37:35 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 00:37:43 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,6 @@ inline void	sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j)
 
 inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 {
-	t_info	*info;
-
-	info = get_info();
 	p = subtract(p, plane->pos);
 	rotate(plane->rot, &p);
 	if (plane->material == CHECKER)
@@ -47,8 +44,8 @@ inline void	plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j)
 		*j = floor(p.z);
 		return ;
 	}
-	*i = fmod(p.x / info->px, plane->texture->width - 1);
-	*j = fmod(p.z / info->px, plane->texture->height - 1);
+	*i = fmod(p.x * 100, plane->texture->width - 1);
+	*j = fmod(p.z * 100, plane->texture->height - 1);
 	if (*i < 0)
 		*i += plane->texture->width;
 	if (*j < 0)

@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 16:24:03 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/15 06:22:09 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 02:41:34 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,7 @@ void	key_handler(mlx_key_data_t keydata, void *param)
 		rotate_object(keydata, info);
 	else if (keydata.key == MLX_KEY_B || keydata.key == MLX_KEY_N)
 		adjust_ray_depth(keydata, info);
+	else if (keydata.key == MLX_KEY_L || keydata.key == MLX_KEY_K)
+		adjust_ambient_brightness(keydata, info);
 }
 #endif

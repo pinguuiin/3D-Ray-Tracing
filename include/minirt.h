@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:48:54 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/22 07:15:50 by piyu             ###   ########.fr       */
+/*   Updated: 2025/12/31 05:33:39 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef enum e_material
 {
 	MONO,
 	CHECKER,
+	ICE,
 	TEXTURE
 }	t_material;
 # endif
@@ -88,44 +89,32 @@ typedef struct s_cam
 /* Object information */
 typedef struct s_object
 {
-	// general attributes
 	t_type	type;
 	double	ks;
 	double	kd;
 	int		shininess;
 	t_vec	pos;
 	t_color	color;
-	t_vec	oc;	// vector from object to camera
-	// sphere and cylinder
+	t_vec	oc;
+
 	double	r;
-
-	// plane and cylinder
 	t_vec	axis;
-
-	// cylinder
-	double	h;	// Half height of the cylinder
+	double	h;
 
 }	t_object;
 # else
 /* Object information */
 typedef struct s_object
 {
-	// general attributes
 	t_type			type;
 	t_vec			pos;
 	t_color			color;
-	t_vec			oc;	// vector from object to camera
+	t_vec			oc;
 
-	// sphere and cylinder
 	double			r;
-
-	// plane and cylinder
 	t_vec			axis;
+	double			h;
 
-	// cylinder
-	double			h;	// Half height of the cylinder
-
-	// texture
 	char			*tex_file;
 	char			*normal_file;
 	mlx_texture_t	*texture;
@@ -211,6 +200,8 @@ uint32_t	vec_to_color(t_vec color);
 
 double		nearest_ray_hit(t_info *info, t_vec ray, t_vec emit_pos,
 				t_hit *hit);
+void		add_diffuse_and_specular(t_object *obj, t_hit *hit,
+				t_light *light);
 void		sphere_xyz_to_px_loc(t_vec p, t_object *sphere, int *i, int *j);
 void		plane_xyz_to_px_loc(t_vec p, t_object *plane, int *i, int *j);
 t_color		px_loc_to_color(t_object *obj, int i, int j);
@@ -222,6 +213,7 @@ void		mouse_hook(mouse_key_t button, action_t action,
 				modifier_key_t mods, void *param);
 void		normal_tbn_to_xyz(t_object *obj, t_hit *hit);
 void		adjust_ray_depth(mlx_key_data_t keydata, void *param);
+void		adjust_ambient_brightness(mlx_key_data_t keydata, void *param);
 # endif
 
 /* ray tracing */
@@ -237,9 +229,7 @@ bool		is_shadow(t_info *info, t_vec ray, t_vec pos, t_hit *hit);
 t_vec		reflection(t_info *info, t_object *obj, t_vec ray, t_hit *hit);
 
 /* rotation, rotation matrix */
-// void		rotate_x(t_vec *vec, double theta);
 void		rotate_y(t_vec *vec, double theta);
-// void		rotate_z(t_vec *vec, double theta);
 void		get_rotation_matrix(double (*rot)[3], t_vec f, t_vec up);
 void		rotate(double rot[3][3], t_vec *v1);
 

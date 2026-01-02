@@ -55,6 +55,7 @@ SRC_FILES = main.c \
 			parser/get_next_line_revised.c \
 			parser/get_next_line_utils.c \
 			parser/parse_texture.c \
+			parser/parse_texture_utils.c \
 			parser/error_handling.c \
 			color/color.c \
 			color/texture_mapping.c \
