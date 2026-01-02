@@ -6,7 +6,7 @@
 /*   By: piyu <piyu@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 02:01:58 by piyu              #+#    #+#             */
-/*   Updated: 2025/12/31 06:24:37 by piyu             ###   ########.fr       */
+/*   Updated: 2026/01/02 04:32:39 by piyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static inline double	hit_from_outside(t_object *cy, t_vec ray, t_discrim f,
 }
 
 /* Ray hits from inside the infinite cylinder. Check first if camera is inside
-the finite cylinder first, if so then check if it hits the side or one of the
+the finite cylinder, if so then check if it hits the side or one of the
 flat disk. If camera is not inside then first check if camera is on the object.
 If not, check if the hit point is out of boundary where ray doesn't hit. If not
 then ray hits the flat disk from outside. */
