@@ -40,7 +40,6 @@ t_vec	add(t_vec a, t_vec b);
 t_vec	subtract(t_vec a, t_vec b);
 double	dot(t_vec a, t_vec b);
 t_vec	cross(t_vec a, t_vec b);
-// t_vec	divide(t_vec a, t_vec b);
 t_vec	dot_elem(t_vec a, t_vec b);
 
 #endif
