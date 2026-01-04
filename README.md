@@ -1,7 +1,7 @@
 # 3D-Ray-Tracing
 ## How to use:
 
-### Camera/View Control
+### 🖼️ Camera/View Control
 **Move Camera:** `WASD` and `QZ`
     Press `W` or `S` to move forwards or backwards.
     Press `A` or `D` to move left or right.
@@ -11,9 +11,12 @@
     Press `arrow keys` to rotate the camera view.
 
 **Adjust Ray Depth:**
-    Press `b` or `n` to add or reduce maximum bounces (range from 1 to 5).
+    Press `B` or `N` to add or reduce maximum bounces (range from 1 to 5).
 
-### Object Control
+**Adjust Ambient brightness:**
+    Press `L` or `K` to increase or reduce ambient light brightness.
+
+### 🔵 Object Control
 **Automate Object Rotation:**
     Press `1` to automate rotation for all spheres with a texture.
     Press `2` to stop the autorotation.
@@ -21,7 +24,7 @@
 **Translate Object:**
     Use `left mouse button` to drag the object to your preferred place.
 
-### Window Control
+### 🗔 Window Control
 **Resize Window:**
     Stretch the window frame with mouse to change the size of image (horizontal FOV stays constant).
 
