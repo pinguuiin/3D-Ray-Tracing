@@ -1,4 +1,7 @@
 # 3D-Ray-Tracing
+
+A lightweight ray-tracing project made in C, using the minimal OpenGL-based library MLX42 to render images on screen. Designed with physically based rendering principles.<br><br>
+
 ## How to use:
 
 ### 🖼️ Camera/View Control
@@ -29,4 +32,13 @@
     Stretch the window frame with mouse to change the size of image (horizontal FOV stays constant).
 
 **Close Window:**
-    Press `Esc` or click on the cross on the window frame to close the window and quit the program.
+    Press `Esc` or click on the cross on the window frame to close the window and quit the program.<br><br>
+
+### Examples
+
+![room](https://github.com/user-attachments/assets/4f2155af-25c9-4b58-a963-3266521b81d1)
+*Figure 1 Rotating metal ball in the room with reflections* <br><br>
+
+<img width="3832" height="2064" alt="icelake1" src="https://github.com/user-attachments/assets/edae5fb2-ecb5-4a54-b22f-66956b5d01d0" />
+
+*Figure 2 Snowballs stacked on an ice lake ready for a tournament. The scene shows materials with different reflectance properties - the glossy green pole has high albedo with strong specular (mirror-like) reflection; the snow objects have high albedo dominated by diffuse reflection with negligible specular components; and the rough ice surface has moderate albedo that increases sharply at low viewing angles, producing the observed glitter path*
