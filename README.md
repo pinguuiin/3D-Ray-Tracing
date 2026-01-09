@@ -34,11 +34,15 @@ A lightweight ray-tracing project made in C, using the minimal OpenGL-based libr
 **Close Window:**
     Press `Esc` or click on the cross on the window frame to close the window and quit the program.<br><br>
 
-### Examples
+## Examples
+
+<img width="3832" height="2064" alt="necklace" src="https://github.com/user-attachments/assets/614105d3-85d5-4811-9795-21f33feed9c7" />
+
+*Figure 1 Beaded neon necklace under colored spotlights* <br><br>
 
 ![room](https://github.com/user-attachments/assets/4f2155af-25c9-4b58-a963-3266521b81d1)
-*Figure 1 Rotating metal ball in the room with reflections* <br><br>
+*Figure 2 Rotating metal ball in the room with reflections* <br><br>
 
 <img width="3832" height="2064" alt="icelake1" src="https://github.com/user-attachments/assets/edae5fb2-ecb5-4a54-b22f-66956b5d01d0" />
 
-*Figure 2 Snowballs stacked on an ice lake ready for a tournament. The scene shows materials with different reflectance properties - the glossy green pole has high albedo with strong specular (mirror-like) reflection; the snow objects have high albedo dominated by diffuse reflection with negligible specular components; and the rough ice surface has moderate albedo that increases sharply at low viewing angles, producing the observed glitter path*
+*Figure 3 Snowballs stacked on an ice lake ready for a tournament. The scene shows materials with different reflectance properties - the glossy green pole has high albedo with strong specular (mirror-like) reflection; the snow objects have high albedo dominated by diffuse reflection with negligible specular components; and the rough ice surface has moderate albedo that increases sharply at low viewing angles, producing the observed glitter path*
