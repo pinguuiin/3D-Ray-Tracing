@@ -2,7 +2,18 @@
 
 A lightweight ray-tracing project made in C, using the minimal OpenGL-based library MLX42 to render images on screen. Designed with physically based rendering principles.<br><br>
 
+**Highlights:** &nbsp;Phong reflection model, secondary reflections, texture mapping, bump mapping, hard shadow, multithreading, mouse and key control, automatic rotation
+
 ## How to use:
+For Linux system, run the command below in terminal to compile
+```
+make bonus
+```
+
+then run the binary file with an input map as an argument
+```
+./miniRT scenes/the-name-of-your-map.rt
+```
 
 ### 🖼️ Camera/View Control
 **Move Camera:** `WASD` and `QZ`
@@ -36,13 +47,18 @@ A lightweight ray-tracing project made in C, using the minimal OpenGL-based libr
 
 ## Examples
 
-<img width="3832" height="2064" alt="necklace" src="https://github.com/user-attachments/assets/614105d3-85d5-4811-9795-21f33feed9c7" />
+https://github.com/user-attachments/assets/b79a1d3b-a33f-439f-8799-77f581afee58
 
-*Figure 1 Beaded neon necklace under colored spotlights* <br><br>
-
-![room](https://github.com/user-attachments/assets/4f2155af-25c9-4b58-a963-3266521b81d1)
-*Figure 2 Rotating metal ball in the room with reflections* <br><br>
+*Figure 1 The Earth's rotation* <br><br>
 
 <img width="3832" height="2064" alt="icelake1" src="https://github.com/user-attachments/assets/edae5fb2-ecb5-4a54-b22f-66956b5d01d0" />
 
-*Figure 3 Snowballs stacked on an ice lake ready for a tournament. The scene shows materials with different reflectance properties - the glossy green pole has high albedo with strong specular (mirror-like) reflection; the snow objects have high albedo dominated by diffuse reflection with negligible specular components; and the rough ice surface has moderate albedo that increases sharply at low viewing angles, producing the observed glitter path*
+*Figure 2 Snowballs stacked on an ice lake ready for a tournament. The scene shows materials with different reflectance properties - the glossy green pole has high albedo with strong specular (mirror-like) reflection; the snow objects have high albedo dominated by diffuse reflection with negligible specular components; and the rough ice surface has moderate albedo that increases sharply at low viewing angles, producing the observed glitter path* <br><br>
+
+<img width="1494" height="987" alt="room" src="https://github.com/user-attachments/assets/5d6dc4df-9765-4942-96e5-c2b4d8ed847a" />
+
+*Figure 3 Metal ball in the room with reflections* <br><br>
+
+<img width="3832" height="2064" alt="necklace" src="https://github.com/user-attachments/assets/614105d3-85d5-4811-9795-21f33feed9c7" />
+
+*Figure 4 Beaded neon necklace under colored spotlights* <br>
