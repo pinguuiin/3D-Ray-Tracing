@@ -61,8 +61,9 @@ https://github.com/user-attachments/assets/b79a1d3b-a33f-439f-8799-77f581afee58
 
 <img width="3832" height="2064" alt="necklace" src="https://github.com/user-attachments/assets/614105d3-85d5-4811-9795-21f33feed9c7" />
 
-*Figure 4 Beaded neon necklace under colored spotlights* <br>
+*Figure 4 Beaded neon necklace under colored spotlights* <br><br>
 
 ### Contributors
-Yonatan: parsing input file, advanced multithreading, error handling, key hook optimization
-Ping: ray generation, ray tracing, Phong reflection model, hard shadow, secondary bounces, mouse and key hooks, texture mapping, bump mapping, material generation
+**Yonatan**: parsing input file, advanced multithreading, error handling, key hook optimization
+
+**Ping**: ray generation, ray tracing, Phong reflection model, hard shadow, secondary bounces, mouse and key hooks, texture mapping, bump mapping, material generation
